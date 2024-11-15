@@ -1,0 +1,36 @@
+.admin-dashboard {
+    margin-top: 20px;
+}
+
+.card {
+    border: none;
+    border-radius: 8px;
+}
+
+h2, h3 {
+    font-family: 'Arial', sans-serif;
+    color: #343a40;
+}
+
+.admin-option {
+    font-weight: bold;
+    font-size: 1rem;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.admin-option:hover {
+    transform: translateY(-2px);
+}
+
+.options-section {
+    margin-top: 30px;
+}
+
+.list-group-item {
+    font-size: 1rem;
+    padding: 12px;
+    color: #495057;
+}
