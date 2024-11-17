@@ -1,0 +1,64 @@
+
+
+
+.dashboard-container {
+    background-color: #f4f5f7;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.dashboard-header h2 {
+    font-weight: 700;
+    color: #333;
+}
+
+.dashboard-header p {
+    color: #666;
+}
+
+.actions-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.action-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    min-width: 200px;
+}
+
+.action-card h5 {
+    font-weight: 600;
+    margin-top: 10px;
+    color: #333;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.listing-cards .listing-card {
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.listing-cards .listing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.listing-card .card-title {
+    color: #007bff;
+    font-weight: 700;
+}
