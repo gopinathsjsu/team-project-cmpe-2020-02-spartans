@@ -8,6 +8,7 @@ import AdminDashboard from './AdminDashboard';
 import AddListing from './AddListing';
 import UpdateInfo from './UpdateInfo';
 import Register from './Register';
+import RestaurantList from './RestaurantList';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/AddListing" element={<AddListing />} />
                 <Route path="/UpdateInfo" element={<UpdateInfo />} />
                 <Route path="/Register" element={<Register />} />
+                <Route path="/RestaurantList" element={<RestaurantList />} />
             </Routes>
         </Router>
     );

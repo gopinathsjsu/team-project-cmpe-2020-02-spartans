@@ -52,3 +52,36 @@ class RestaurantSearchView(APIView):
         ]
 
         return Response(results, status=status.HTTP_200_OK)
+
+class RestaurantListView(APIView):
+    def get(self, request):
+        # Extract query parameters
+        name = request.query_params.get('name', '').strip()
+        cuisine_type = request.query_params.get('cuisine_type', '').strip()
+        food_type = request.query_params.get('food_type', '').strip()
+        price_range = request.query_params.get('price_range', '').strip()
+
+        # Filter restaurants based on search criteria
+        restaurants = Restaurant.objects.filter(verified=True)  # Only verified restaurants
+
+        if name:
+            restaurants = restaurants.filter(name__icontains=name)
+        if cuisine_type:
+            restaurants = restaurants.filter(cuisine_type__iexact=cuisine_type)
+        if food_type:
+            restaurants = restaurants.filter(food_type__iexact=food_type)
+        if price_range:
+            restaurants = restaurants.filter(price_range=price_range)
+
+        # Serialize and return filtered data
+        data = [
+            {
+                "name": restaurant.name,
+                "address": restaurant.address,
+                "cuisine_type": restaurant.cuisine_type,
+                "food_type": restaurant.food_type,
+                "price_range": restaurant.price_range,
+            }
+            for restaurant in restaurants
+        ]
+        return Response(data)
