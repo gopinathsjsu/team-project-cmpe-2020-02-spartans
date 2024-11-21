@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Register.css';
+import axios from 'axios';
 
 function Register() {
     const [isBusinessOwner, setIsBusinessOwner] = useState(false);
@@ -14,6 +14,7 @@ function Register() {
         address: '',
         contact: ''
     });
+    const [message, setMessage] = useState('');
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -36,40 +37,93 @@ function Register() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form Data:', formData);
+
+        // Check if passwords match
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+    
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/accounts/register/', {
+                username: formData.username.trim(),
+                email: formData.email.trim(),
+                password: formData.password.trim(),
+                confirm_password: formData.confirmPassword.trim(), // Include confirm_password
+                role: isBusinessOwner ? 'owner' : 'user',
+                business_name: isBusinessOwner ? formData.businessName.trim() : undefined,
+                address: isBusinessOwner ? formData.address.trim() : undefined,
+                contact: isBusinessOwner ? formData.contact.trim() : undefined,
+            });
+            setMessage(response.data.message); // Success
+        } catch (error) {
+            if (error.response) {
+                alert("Error: " + JSON.stringify(error.response.data));
+            } else {
+                alert("An unexpected error occurred.");
+            }
+        }
     };
 
     return (
         <div className="container register-container d-flex justify-content-center align-items-center mt-5">
             <div className="card p-4 shadow-lg register-card">
                 <h2 className="text-center mb-4">Register as {isBusinessOwner ? "Business Owner" : "User"}</h2>
-                
+
                 <button className="btn btn-outline-primary toggle-btn mb-3" onClick={toggleRegistrationType}>
                     Switch to {isBusinessOwner ? "User" : "Business Owner"} Registration
                 </button>
-                
+
                 <form onSubmit={handleSubmit}>
                     {/* Shared Fields */}
                     <div className="form-group mb-3">
                         <label>Username</label>
-                        <input type="text" className="form-control" name="username" value={formData.username} onChange={handleInputChange} required />
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
-                    
+
                     <div className="form-group mb-3">
                         <label>Email</label>
-                        <input type="email" className="form-control" name="email" value={formData.email} onChange={handleInputChange} required />
+                        <input
+                            type="email"
+                            className="form-control"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
 
                     <div className="form-group mb-3">
                         <label>Password</label>
-                        <input type="password" className="form-control" name="password" value={formData.password} onChange={handleInputChange} required />
+                        <input
+                            type="password"
+                            className="form-control"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
 
                     <div className="form-group mb-3">
                         <label>Confirm Password</label>
-                        <input type="password" className="form-control" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} required />
+                        <input
+                            type="password"
+                            className="form-control"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
+                            required
+                        />
                     </div>
 
                     {/* Business Owner Only Fields */}
@@ -77,23 +131,45 @@ function Register() {
                         <>
                             <div className="form-group mb-3">
                                 <label>Business Name</label>
-                                <input type="text" className="form-control" name="businessName" value={formData.businessName} onChange={handleInputChange} required />
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="businessName"
+                                    value={formData.businessName}
+                                    onChange={handleInputChange}
+                                    required
+                                />
                             </div>
-                            
+
                             <div className="form-group mb-3">
                                 <label>Address</label>
-                                <input type="text" className="form-control" name="address" value={formData.address} onChange={handleInputChange} required />
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleInputChange}
+                                    required
+                                />
                             </div>
 
                             <div className="form-group mb-3">
                                 <label>Contact Number</label>
-                                <input type="text" className="form-control" name="contact" value={formData.contact} onChange={handleInputChange} required />
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="contact"
+                                    value={formData.contact}
+                                    onChange={handleInputChange}
+                                    required
+                                />
                             </div>
                         </>
                     )}
 
                     <button type="submit" className="btn btn-primary w-100 mt-3">Register</button>
                 </form>
+                {message && <p className="mt-3 text-center">{message}</p>}
             </div>
         </div>
     );
