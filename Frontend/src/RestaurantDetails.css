@@ -1,0 +1,152 @@
+/* Main container for the details page */
+.details-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Restaurant name styling */
+.details-header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #d32323;
+}
+
+/* Subheading sections (e.g., Cuisine Type, Address) */
+.details-subheading {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* Text content */
+.details-text {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Rating styling */
+.details-rating {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.details-rating span {
+    margin-left: 5px;
+    font-size: 1rem;
+    color: #666;
+}
+
+/* Address section */
+.details-address {
+    margin-bottom: 15px;
+}
+
+/* Hours of operation */
+.details-hours {
+    margin-bottom: 20px;
+}
+
+/* Contact information */
+.details-contact {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Reviews section */
+.details-reviews {
+    margin-top: 30px;
+}
+
+.review-card {
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.review-card h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.review-card p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.review-card .review-date {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* Tags and additional info */
+.details-tags {
+    margin-top: 20px;
+}
+
+.details-tags span {
+    background-color: #eee;
+    color: #555;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+/* Add spacing */
+.section-spacing {
+    margin-bottom: 30px;
+}
+
+/* Button styling */
+.details-button {
+    background-color: #d32323;
+    color: #fff;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.details-button:hover {
+    background-color: #a81919;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .details-container {
+        padding: 10px;
+    }
+
+    .details-header h1 {
+        font-size: 2rem;
+    }
+
+    .details-subheading {
+        font-size: 1rem;
+    }
+
+    .details-text {
+        font-size: 0.9rem;
+    }
+
+    .review-card h4 {
+        font-size: 1rem;
+    }
+}
