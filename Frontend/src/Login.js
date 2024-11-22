@@ -13,7 +13,7 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(""); // Clear previous errors
-        setSuccess(""); // Clear previous success message
+        setSuccess(""); 
 
         // Basic validation
         if (!email || !password) {
