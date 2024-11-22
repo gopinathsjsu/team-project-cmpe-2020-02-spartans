@@ -65,6 +65,11 @@ REST_FRAMEWORK = {
     ),
 }
 
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmailAuthBackend',  # Custom email authentication
+    'django.contrib.auth.backends.ModelBackend',  # Default username authentication
+]
+
 ROOT_URLCONF = "restaurant_review.urls"
 
 TEMPLATES = [
