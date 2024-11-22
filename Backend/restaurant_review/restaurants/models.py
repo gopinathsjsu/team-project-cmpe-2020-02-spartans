@@ -28,7 +28,10 @@ class Restaurant(models.Model):
     cuisine_type = models.CharField(max_length=100)
     food_type = models.CharField(max_length=100)
     price_range = models.CharField(max_length=50, choices=PRICE_RANGE_CHOICES)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
     hours_of_operation = models.CharField(max_length=100)
     website = models.URLField(blank=True, null=True)
     phone_number = models.CharField(max_length=15)
     verified = models.BooleanField(default=False)  # For admin approval
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
