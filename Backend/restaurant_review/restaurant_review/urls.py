@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from restaurants.views import DuplicateListingsView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),  
     path('api/restaurants/', include('restaurants.urls')),
-    path('api/search/', include('restaurants.urls')),
+    path('api/admin/duplicates/', DuplicateListingsView.as_view(), name='admin_duplicate'), 
 ]

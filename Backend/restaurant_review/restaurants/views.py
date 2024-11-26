@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import Q
+from django.db.models import Q, Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -93,3 +93,24 @@ class RestaurantDetailView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Restaurant.DoesNotExist:
             return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+class DuplicateListingsView(APIView):
+    def get(self, request):
+        # Group restaurants by name, address, city, state, and zip_code
+        duplicates = Restaurant.objects.values('name', 'address', 'city', 'state', 'zip_code') \
+            .annotate(count=Count('id')) \
+            .filter(count__gt=1)
+
+        # Collect duplicate listings
+        duplicate_listings = []
+        for duplicate in duplicates:
+            listings = Restaurant.objects.filter(
+                name=duplicate['name'],
+                address=duplicate['address'],
+                city=duplicate['city'],
+                state=duplicate['state'],
+                zip_code=duplicate['zip_code']
+            )
+            duplicate_listings.extend(RestaurantSerializer(listings, many=True).data)
+
+        return Response(duplicate_listings, status=status.HTTP_200_OK)
