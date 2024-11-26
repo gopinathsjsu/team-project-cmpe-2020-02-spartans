@@ -14,5 +14,11 @@ class CustomUser(AbstractUser):
     address = models.TextField(blank=True, null=True)
     contact = models.CharField(max_length=15, blank=True, null=True)
 
+    # Use email as the unique identifier for authentication
+    email = models.EmailField(unique=True)
+
+    USERNAME_FIELD = 'email'  # Set email as the identifier
+    REQUIRED_FIELDS = ['username']  # Keep username as a required field for compatibility
+
     def __str__(self):
-        return f"{self.username} ({self.role})"
+        return f"{self.email} ({self.role})"

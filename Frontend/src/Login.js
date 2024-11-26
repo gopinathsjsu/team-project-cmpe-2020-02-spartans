@@ -8,40 +8,40 @@ function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Clear previous errors
-        setSuccess(""); 
 
-        // Basic validation
+        setError("");
+        setSuccess("");
+        setIsLoading(true);
+
         if (!email || !password) {
             setError("Please fill out all fields");
+            setIsLoading(false);
             return;
         }
 
         try {
-            // Send login request to the backend
             const response = await axios.post("http://127.0.0.1:8000/api/accounts/login/", {
                 email: email.trim(),
                 password: password.trim(),
             });
 
-            // Store tokens in localStorage
-            localStorage.setItem("accessToken", response.data.access);
-            localStorage.setItem("refreshToken", response.data.refresh);
+            sessionStorage.setItem("accessToken", response.data.access);
+            sessionStorage.setItem("refreshToken", response.data.refresh);
+            sessionStorage.setItem("role", response.data.role);
 
-            // Handle successful login
             setSuccess("Login successful!");
 
-            // Redirect based on user role
             if (response.data.role === "user") {
-                navigate("/"); // Redirect to Index
+                navigate("/");
             } else if (response.data.role === "owner") {
-                navigate("/BusinessOwnerDashboard"); // Redirect to BusinessOwnerDashboard
+                navigate("/BusinessOwnerDashboard");
             } else if (response.data.role === "admin") {
-                navigate("/AdminDashboard"); // Redirect to AdminDashboard
+                navigate("/AdminDashboard");
             } else {
                 setError("Unknown role. Contact support.");
             }
@@ -51,6 +51,8 @@ function Login() {
             } else {
                 setError("An unexpected error occurred. Please try again.");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -82,7 +84,9 @@ function Login() {
                         required
                     />
                 </div>
-                <button type="submit" className="login-button">Login</button>
+                <button type="submit" className="login-button" disabled={isLoading}>
+                    {isLoading ? "Logging in..." : "Login"}
+                </button>
             </form>
         </div>
     );

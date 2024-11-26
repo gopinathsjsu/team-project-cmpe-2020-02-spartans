@@ -5,8 +5,10 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.exceptions import AuthenticationFailed
 from .serializers import RegisterSerializer, LoginSerializer
 from .models import CustomUser
+from .permissions import IsAdmin, IsBusinessOwner, IsUser
 from django.contrib.auth import authenticate
 
 class RegisterView(APIView):
@@ -42,9 +44,41 @@ class LoginView(APIView):
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
+        print("Incoming data:", attrs)  # Debugging log
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        if not email or not password:
+            raise AuthenticationFailed('Email and password are required.')
+
+        user = authenticate(username=email, password=password)
+        if not user:
+            raise AuthenticationFailed('Invalid email or password.')
+
+        if not user.is_active:
+            raise AuthenticationFailed('User account is disabled.')
+
         data = super().validate(attrs)
-        data['role'] = self.user.role  # Include the user's role in the response
+        data['role'] = user.role
         return data
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+class AdminDashboardView(APIView):
+    permission_classes = [IsAdmin]
+
+    def get(self, request):
+        return Response({"message": "Welcome, Admin!"})
+
+class BusinessOwnerDashboardView(APIView):
+    permission_classes = [IsBusinessOwner]
+
+    def get(self, request):
+        return Response({"message": "Welcome, Business Owner!"})
+
+class UserDashboardView(APIView):
+    permission_classes = [IsUser]
+
+    def get(self, request):
+        return Response({"message": "Welcome, User!"})
