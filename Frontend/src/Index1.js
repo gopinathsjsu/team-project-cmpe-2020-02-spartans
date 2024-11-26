@@ -4,9 +4,7 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import Select from 'react-select';
 import './Index1.css';
 import Footer from './Footer';
-import BusinessOwnerDashboard from './BusinessOwnerDashboard';
-import AdminDashboard from './BusinessOwnerDashboard';
-import Register from './Register';
+
 function Index() {
     const [searchQuery, setSearchQuery] = useState('');
     const [zipCode, setZipCode] = useState('');
@@ -34,6 +32,7 @@ function Index() {
         { value: 'gluten-free', label: 'Gluten-free' },
     ];
 
+    // Handle Search Submit
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
         let minRating = '';
@@ -45,6 +44,7 @@ function Index() {
                 maxRating = parsedRating < 5 ? parsedRating + 0.99 : parsedRating;
             }
         }
+        console.log("Searching for:", searchQuery, zipCode, cuisine, foodType, priceRange, rating);
 
         try {
             // Build query parameters
@@ -56,24 +56,33 @@ function Index() {
                 min_rating: minRating || '',
                 max_rating: maxRating || '',
             }).toString();
-    
+
             // Make the API call
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);
-            
+
             // Check if the response is OK
             if (!response.ok) {
                 throw new Error("Failed to fetch restaurants");
             }
-    
+
             // Parse the JSON response
             const data = await response.json();
-            
+
             // Update the restaurants state with the API response
             setRestaurants(data);
         } catch (error) {
             console.error("Error fetching restaurants:", error);
         }
-    };    
+    };
+
+    // Get login status and role
+    const isLoggedIn = !!sessionStorage.getItem("accessToken");
+    const role = sessionStorage.getItem("role");
+
+    const handleLogout = () => {
+        sessionStorage.clear(); // Clear session data
+        navigate("/"); // Redirect to the home page
+    };
 
     return (
         <div className="index-container">
@@ -84,12 +93,29 @@ function Index() {
                     <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
                     <div className="nav-links">
                         <button onClick={() => navigate('/')} className="nav-item">Home</button>
-                        <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
-                        <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
-                        <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
+
+                        {/* Conditionally render based on user role */}
+                        {role === "user" && (
+                            <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
+                        )}
+                        {role === "owner" && (
+                            <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
+                        )}
+                        {role === "admin" && (
+                            <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
+                        )}
+
                         <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
-                        <button onClick={() => navigate('/login')} className="login-btn">Login </button>
-                        <button onClick={() => navigate('/register')} className="login-btn">Register </button>
+
+                        {/* Show login/register or logout button based on login status */}
+                        {!isLoggedIn ? (
+                            <>
+                                <button onClick={() => navigate('/login')} className="login-btn">Login</button>
+                                <button onClick={() => navigate('/register')} className="login-btn">Register</button>
+                            </>
+                        ) : (
+                            <button onClick={handleLogout} className="login-btn">Logout</button>
+                        )}
                     </div>
                 </nav>
             </header>
@@ -172,9 +198,9 @@ function Index() {
         </div>
 
             <div>
-            {/* Main Content */}
-            <Footer />
-        </div>
+                {/* Main Content */}
+                <Footer />
+            </div>
         </div>
     );
 }
