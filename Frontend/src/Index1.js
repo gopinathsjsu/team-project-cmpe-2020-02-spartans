@@ -50,6 +50,7 @@ function Index() {
             // Build query parameters
             const queryParams = new URLSearchParams({
                 name: searchQuery,
+                zip_code: zipCode,
                 cuisine_type: cuisine.map((c) => c.value).join(","),
                 food_type: foodType.map((f) => f.value).join(","),
                 price_range: priceRange,

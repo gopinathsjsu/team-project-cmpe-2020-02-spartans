@@ -11,6 +11,7 @@ class RestaurantSearchView(APIView):
     def get(self, request):
         # Extract query parameters
         name = request.query_params.get('name', '').strip()
+        zip_code = request.query_params.get('zip_code', '').strip()
         cuisine_type = request.query_params.get('cuisine_type', '').strip()
         food_type = request.query_params.get('food_type', '').strip()
         price_range = request.query_params.get('price_range', '').strip()
@@ -23,6 +24,8 @@ class RestaurantSearchView(APIView):
         # Apply filters
         if name:
             queryset = queryset.filter(name__icontains=name)
+        if zip_code:
+            queryset = queryset.filter(zip_code=zip_code)
         if cuisine_type:
             queryset = queryset.filter(cuisine_type__iexact=cuisine_type)
         if food_type:
