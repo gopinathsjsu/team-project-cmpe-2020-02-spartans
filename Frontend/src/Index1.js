@@ -36,6 +36,16 @@ function Index() {
 
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
+        let minRating = '';
+        let maxRating = '';
+        if (rating) {
+            const parsedRating = parseInt(rating, 10); // Convert rating to an integer
+            if (!isNaN(parsedRating)) {
+                minRating = parsedRating;
+                maxRating = parsedRating < 5 ? parsedRating + 0.99 : parsedRating;
+            }
+        }
+
         try {
             // Build query parameters
             const queryParams = new URLSearchParams({
@@ -43,7 +53,8 @@ function Index() {
                 cuisine_type: cuisine.map((c) => c.value).join(","),
                 food_type: foodType.map((f) => f.value).join(","),
                 price_range: priceRange,
-                rating: rating,
+                min_rating: minRating || '',
+                max_rating: maxRating || '',
             }).toString();
     
             // Make the API call
