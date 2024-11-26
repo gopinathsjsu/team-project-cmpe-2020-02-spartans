@@ -32,19 +32,10 @@ function Index() {
         { value: 'gluten-free', label: 'Gluten-free' },
     ];
 
+    // Handle Search Submit
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
         console.log("Searching for:", searchQuery, zipCode, cuisine, foodType, priceRange, rating);
-    };
-
-    // Get login status and role
-    const isLoggedIn = !!sessionStorage.getItem("accessToken");
-    const role = sessionStorage.getItem("role");
-
-    const handleLogout = () => {
-        sessionStorage.clear(); // Clear session data
-        navigate("/"); // Redirect to the home page
-    };
 
         try {
             // Build query parameters
@@ -55,24 +46,33 @@ function Index() {
                 price_range: priceRange,
                 rating: rating,
             }).toString();
-    
+
             // Make the API call
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);
-            
+
             // Check if the response is OK
             if (!response.ok) {
                 throw new Error("Failed to fetch restaurants");
             }
-    
+
             // Parse the JSON response
             const data = await response.json();
-            
+
             // Update the restaurants state with the API response
             setRestaurants(data);
         } catch (error) {
             console.error("Error fetching restaurants:", error);
         }
-    };    
+    };
+
+    // Get login status and role
+    const isLoggedIn = !!sessionStorage.getItem("accessToken");
+    const role = sessionStorage.getItem("role");
+
+    const handleLogout = () => {
+        sessionStorage.clear(); // Clear session data
+        navigate("/"); // Redirect to the home page
+    };
 
     return (
         <div className="index-container">
