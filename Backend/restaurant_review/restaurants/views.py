@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RestaurantSerializer
+from .serializers import RestaurantSerializer, RestaurantDetailSerializer
 from .models import Restaurant
 
 class RestaurantSearchView(APIView):
@@ -80,3 +80,13 @@ class RestaurantListView(ListAPIView):
         queryset = queryset.order_by('-rating')
 
         return queryset
+
+class RestaurantDetailView(APIView):
+    def get(self, request, *args, **kwargs):
+        restaurant_id = kwargs.get('id')  # Extract the 'id' from kwargs
+        try:
+            restaurant = Restaurant.objects.get(id=restaurant_id)
+            serializer = RestaurantSerializer(restaurant)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Restaurant.DoesNotExist:
+            return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
