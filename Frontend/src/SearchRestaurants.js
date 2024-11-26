@@ -9,15 +9,31 @@ function SearchRestaurants() {
     const [restaurants, setRestaurants] = useState([]);
 
     const handleSearchSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const queryParams = new URLSearchParams({
-                name: searchQuery,
-                cuisine_type: cuisineType,
-                price_range: priceRange,
-                rating: rating,
-            }).toString();
+        e.preventDefault(); // Prevent default form submission behavior
 
+        // Initialize minRating and maxRating
+        let minRating = '';
+        let maxRating = '';
+
+        if (rating) {
+            const parsedRating = parseInt(rating, 10); // Ensure rating is parsed as an integer
+            if (!isNaN(parsedRating)) {
+                minRating = parsedRating;
+                maxRating = parsedRating < 5 ? parsedRating + 0.99 : parsedRating;
+            }
+        }
+
+        const queryParams = new URLSearchParams({
+            name: searchQuery,
+            cuisine_type: cuisineType,
+            price_range: priceRange,
+            min_rating: minRating || '',
+            max_rating: maxRating || '',
+        }).toString();
+
+        console.log('Constructed Query Params:', queryParams); // Debugging query params
+
+        try {
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);
             if (!response.ok) throw new Error('Failed to fetch restaurants');
             const data = await response.json();
@@ -48,13 +64,13 @@ function SearchRestaurants() {
                     <option value="$$">Medium</option>
                     <option value="$$$">High</option>
                 </select>
-                <select onChange={(e) => setRating(e.target.value)}>
+                <select value={rating} onChange={(e) => setRating(e.target.value)}>
                     <option value="">Rating</option>
-                    <option value="1">1 Star</option>
-                    <option value="2">2 Stars</option>
-                    <option value="3">3 Stars</option>
-                    <option value="4">4 Stars</option>
-                    <option value="5">5 Stars</option>
+                    <option value="1">1 Star (1.0 - 1.99)</option>
+                    <option value="2">2 Stars (2.0 - 2.99)</option>
+                    <option value="3">3 Stars (3.0 - 3.99)</option>
+                    <option value="4">4 Stars (4.0 - 4.99)</option>
+                    <option value="5">5 Stars (5.0 - 5.0)</option>
                 </select>
                 <button type="submit">Search</button>
             </form>
