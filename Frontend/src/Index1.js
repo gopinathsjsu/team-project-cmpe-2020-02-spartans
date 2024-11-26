@@ -152,9 +152,9 @@ function Index() {
                     />
                     <select onChange={(e) => setPriceRange(e.target.value)} className="select-dropdown">
                         <option value="">Price Range</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
+                        <option value="$">Low</option>
+                        <option value="$$">Medium</option>
+                        <option value="$$$">High</option>
                     </select>
                     <select onChange={(e) => setRating(e.target.value)} className="select-dropdown">
                         <option value="">Rating</option>
