@@ -32,7 +32,7 @@ function Index() {
         { value: 'gluten-free', label: 'Gluten-free' },
     ];
 
-    const handleSearchSubmit = (e) => {
+    const handleSearchSubmit = async (e) => {
         e.preventDefault();
         console.log("Searching for:", searchQuery, zipCode, cuisine, foodType, priceRange, rating);
     };
@@ -45,6 +45,34 @@ function Index() {
         sessionStorage.clear(); // Clear session data
         navigate("/"); // Redirect to the home page
     };
+
+        try {
+            // Build query parameters
+            const queryParams = new URLSearchParams({
+                name: searchQuery,
+                cuisine_type: cuisine.map((c) => c.value).join(","),
+                food_type: foodType.map((f) => f.value).join(","),
+                price_range: priceRange,
+                rating: rating,
+            }).toString();
+    
+            // Make the API call
+            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);
+            
+            // Check if the response is OK
+            if (!response.ok) {
+                throw new Error("Failed to fetch restaurants");
+            }
+    
+            // Parse the JSON response
+            const data = await response.json();
+            
+            // Update the restaurants state with the API response
+            setRestaurants(data);
+        } catch (error) {
+            console.error("Error fetching restaurants:", error);
+        }
+    };    
 
     return (
         <div className="index-container">
@@ -143,16 +171,22 @@ function Index() {
             </div>
                             
             <div className="restaurant-list">
-                {restaurants.map((restaurant, index) => (
-                    <div className="restaurant-card" key={index}>
-                        <h3>{restaurant.name}</h3>
-                        <p>Cuisine: {restaurant.cuisine}</p>
-                        <p>Price: {restaurant.price}</p>
-                        <p>Rating: ⭐ {restaurant.rating}</p>
-                        <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
+                 {restaurants.length > 0 ? (
+                    restaurants.map((restaurant, index) => (
+                        <div className="restaurant-card" key={index}>
+                            <h3>{restaurant.name}</h3>
+                            <p>Cuisine: {restaurant.cuisine_type}</p>
+                            <p>Food Type: {restaurant.food_type}</p>
+                            <p>Price: {restaurant.price_range}</p>
+                            <p>Rating: ⭐ {restaurant.rating}</p>
+                            <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
                     </div>
-                ))}
-            </div>
+                ))
+            ) : (
+                <p>No restaurants found matching your criteria.</p>
+            )}
+        </div>
+
             <div>
                 {/* Main Content */}
                 <Footer />

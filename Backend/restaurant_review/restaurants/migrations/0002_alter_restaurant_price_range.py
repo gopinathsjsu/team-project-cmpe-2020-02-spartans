@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.CharField(choices=[('$', 'Low'), ('$$', 'Moderate'), ('$$$', 'Expensive')], max_length=50),
         ),
     ]
+
