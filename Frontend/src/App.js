@@ -8,6 +8,7 @@ import AdminDashboard from './AdminDashboard';
 import AddListing from './AddListing';
 import UpdateInfo from './UpdateInfo';
 import Register from './Register';
+import PrivateRoute from './PrivateRoute';
 
 function App() {
     return (
@@ -15,8 +16,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<Index />} />  {/* This sets Index as the homepage */}
                 <Route path="/login" element={<Login />} />
-                <Route path="/BusinessOwnerDashboard" element={<BusinessOwnerDashboard />} />
-                <Route path="/AdminDashboard" element={<AdminDashboard />} />
+                <Route path="/BusinessOwnerDashboard" element={<privateRoute allowedRoles={["owner"]}><BusinessOwnerDashboard /></privateRoute>} />
+                <Route path="/AdminDashboard" element={<privateRoute allowedRoles={["admin"]}><AdminDashboard /></privateRoute>} />
                 <Route path="/AddListing" element={<AddListing />} />
                 <Route path="/UpdateInfo" element={<UpdateInfo />} />
                 <Route path="/Register" element={<Register />} />
