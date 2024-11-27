@@ -5,9 +5,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.permissions import IsAuthenticated
-from .serializers import RestaurantSerializer, RestaurantDetailSerializer
+from .serializers import RestaurantSerializer, RestaurantDetailSerializer, RestaurantListingSerializer
 from .models import Restaurant
-from accounts.permissions import IsAdmin
+from accounts.permissions import IsAdmin, IsBusinessOwner
 
 class RestaurantSearchView(APIView):
     def get(self, request):
@@ -131,3 +131,45 @@ class DeleteDuplicateListingView(APIView):
         restaurant = get_object_or_404(Restaurant, id=id)
         restaurant.delete()
         return Response({"message": f"Listing with ID {id} has been deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+class AddRestaurantListingView(APIView):
+    permission_classes = [IsBusinessOwner]
+
+    def post(self, request):
+        if request.user.role != 'owner':
+            return Response({"error": "Only business owners can add listings."}, status=status.HTTP_403_FORBIDDEN)
+
+        data = request.data
+        data['owner'] = request.user.id
+        serializer = RestaurantListingSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateRestaurantListingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        try:
+            listing = RestaurantListing.objects.get(pk=pk, owner=request.user)
+        except RestaurantListing.DoesNotExist:
+            return Response({"error": "Listing not found or access denied."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = RestaurantListingSerializer(listing, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class OwnerRestaurantListingsView(APIView):
+    permission_classes = [IsBusinessOwner]
+
+    def get(self, request):
+        if request.user.role != 'owner':
+            return Response({"error": "Only business owners can view listings."}, status=status.HTTP_403_FORBIDDEN)
+
+        listings = RestaurantListing.objects.filter(owner=request.user)
+        serializer = RestaurantListingSerializer(listings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
