@@ -46,20 +46,16 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
         ]
 
 class RestaurantListingSerializer(serializers.ModelSerializer):
-    owner_name = serializers.ReadOnlyField(source='owner.username')  # Display owner's username
-    category_display = serializers.SerializerMethodField()  # Display readable category name
-    food_type_display = serializers.SerializerMethodField()  # Display readable food type
-    price_range_display = serializers.SerializerMethodField()  # Display readable price range
+    owner = serializers.ReadOnlyField(source='owner.username')  # Display owner's username
 
     class Meta:
         model = Restaurant
         fields = [
-            'id', 'name', 'address', 'city', 'state', 'zip_code', 'cuisine_type',
-            'food_type', 'food_type_display', 'price_range', 'price_range_display', 
-            'rating', 'hours_of_operation', 'website', 'phone_number', 'verified',
-            'latitude', 'longitude', 'owner', 'owner_name', 'category_display'
+            'id', 'name', 'address', 'city', 'state', 'zip_code', 'cuisine_type', 
+            'food_type', 'price_range', 'hours_of_operation', 'website', 'phone_number', 
+            'owner'
         ]
-        read_only_fields = ['id', 'owner', 'verified', 'rating']  # Prevent manual updates to these fields
+        read_only_fields = ['id', 'owner']  # Prevent manual updates to these fields
 
     def get_category_display(self, obj):
         # Translate the category choice to a human-readable value

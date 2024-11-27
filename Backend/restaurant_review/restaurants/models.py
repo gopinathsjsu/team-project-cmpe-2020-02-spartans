@@ -35,3 +35,4 @@ class Restaurant(models.Model):
     verified = models.BooleanField(default=False)  # For admin approval
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    review_count = models.IntegerField(default=0) 

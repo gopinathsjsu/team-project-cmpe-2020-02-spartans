@@ -136,16 +136,17 @@ class AddRestaurantListingView(APIView):
     permission_classes = [IsBusinessOwner]
 
     def post(self, request):
-        if request.user.role != 'owner':
-            return Response({"error": "Only business owners can add listings."}, status=status.HTTP_403_FORBIDDEN)
+        print(f"Authenticated User: {request.user}")  # Log the user
+        print(f"Request Auth: {request.auth}")  # Log the token or authentication details
 
-        data = request.data
-        data['owner'] = request.user.id
-        serializer = RestaurantListingSerializer(data=data)
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=401)
+
+        serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save(owner=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
 class UpdateRestaurantListingView(APIView):
     permission_classes = [IsAuthenticated]
