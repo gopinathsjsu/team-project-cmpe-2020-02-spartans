@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminDashboard.css';
+import { refreshAccessToken } from './auth.js';
 
 function AdminDashboard() {
     const [view, setView] = useState(''); // State to track current view ('' by default)
@@ -56,14 +57,22 @@ function AdminDashboard() {
     
     const groupedDuplicates = groupDuplicates(duplicateListings);
 
-    // Delete a regular listing
     const handleDeleteListing = async (id) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this listing? This action cannot be undone.');
         if (!confirmDelete) return;
-
+    
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            alert('You must be logged in to perform this action.');
+            return;
+        }
+    
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
                 method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Include token
+                },
             });
             if (!response.ok) throw new Error('Failed to delete the listing');
             alert('Listing deleted successfully.');
@@ -73,24 +82,53 @@ function AdminDashboard() {
             alert('Failed to delete listing. Please try again.');
         }
     };
-
-    // Delete a duplicate listing
+    
     const handleDeleteDuplicateListing = async (id) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete this duplicate listing? This action cannot be undone.');
+        const confirmDelete = window.confirm(
+            'Are you sure you want to delete this duplicate listing? This action cannot be undone.'
+        );
         if (!confirmDelete) return;
-
+    
+        let accessToken = localStorage.getItem('accessToken'); // Retrieve the access token
+    
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/admin/delete-listing/${id}/`, {
+            let response = await fetch(`http://127.0.0.1:8000/api/admin/delete-listing/${id}/`, {
                 method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
             });
-            if (!response.ok) throw new Error('Failed to delete the listing');
+    
+            // If the token is expired, refresh it
+            if (response.status === 401) {
+                console.log('Access token expired. Refreshing...');
+                accessToken = await refreshAccessToken();
+                if (!accessToken) return; // Stop if refreshing the token failed
+    
+                // Retry the request with the new token
+                response = await fetch(`http://127.0.0.1:8000/api/admin/delete-listing/${id}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+            }
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Failed to delete the listing');
+            }
+    
+            // Update the UI after successful deletion
             alert('Duplicate listing deleted successfully.');
             setDuplicateListings((prev) => prev.filter((listing) => listing.id !== id));
         } catch (err) {
             console.error('Error deleting duplicate listing:', err);
             alert('Failed to delete listing. Please try again.');
         }
-    };
+    };    
 
     useEffect(() => {
         // Fetch listings only when needed

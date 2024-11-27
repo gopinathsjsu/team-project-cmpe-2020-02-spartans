@@ -1,11 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
+from rest_framework.permissions import IsAuthenticated
 from .serializers import RestaurantSerializer, RestaurantDetailSerializer
 from .models import Restaurant
+from accounts.permissions import IsAdmin
 
 class RestaurantSearchView(APIView):
     def get(self, request):
@@ -114,3 +116,18 @@ class DuplicateListingsView(APIView):
             duplicate_listings.extend(RestaurantSerializer(listings, many=True).data)
 
         return Response(duplicate_listings, status=status.HTTP_200_OK)
+    
+class DeleteDuplicateListingView(APIView):
+    permission_classes = [IsAdmin]
+
+    def delete(self, request, id):
+        # Debugging token and user
+        print(f"Authorization Header: {request.headers.get('Authorization', 'None')}")
+        print(f"Authenticated User: {request.user}")
+        
+        if not request.user.is_authenticated:
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        restaurant = get_object_or_404(Restaurant, id=id)
+        restaurant.delete()
+        return Response({"message": f"Listing with ID {id} has been deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
