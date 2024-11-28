@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "restaurants",
     "corsheaders",
     "rest_framework",
+    "rest_framework_simplejwt",
+    
 ]
 
 MIDDLEWARE = [
@@ -100,15 +102,22 @@ WSGI_APPLICATION = "restaurant_review.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+import os
+import environ
+# Initialize environment variables
+env = environ.Env()
+
+# Path to the .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "yelp_app",
-        "USER": "postgres",
-        "PASSWORD": "spartan202",
-        "HOST": "database-1.cvmu6ekge34g.us-west-1.rds.amazonaws.com",
-        "PORT": "5432",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
     }
 }
 
