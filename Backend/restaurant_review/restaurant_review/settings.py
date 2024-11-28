@@ -105,9 +105,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "yelp_app",
-        "USER": "ericpham",
-        "PASSWORD": "yelp",
-        "HOST": "localhost",
+        "USER": "postgres",
+        "PASSWORD": "spartan202",
+        "HOST": "database-1.cvmu6ekge34g.us-west-1.rds.amazonaws.com",
         "PORT": "5432",
     }
 }
