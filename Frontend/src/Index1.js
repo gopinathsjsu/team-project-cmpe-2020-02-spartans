@@ -182,21 +182,24 @@ function Index() {
             </div>
                             
             <div className="restaurant-list">
-                 {restaurants.length > 0 ? (
-                    restaurants.map((restaurant, index) => (
-                        <div className="restaurant-card" key={index}>
-                            <h3>{restaurant.name}</h3>
-                            <p>Cuisine: {restaurant.cuisine_type}</p>
-                            <p>Food Type: {restaurant.food_type}</p>
-                            <p>Price: {restaurant.price_range}</p>
-                            <p>Rating: ⭐ {restaurant.rating}</p>
-                            <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
-                    </div>
-                ))
-            ) : (
-                <p>No restaurants found matching your criteria.</p>
-            )}
-        </div>
+                {restaurants.length > 0 ? (
+                    [...restaurants]
+                        .sort((a, b) => b.rating - a.rating) // Sort by rating (descending order)
+                        .map((restaurant, index) => (
+                            <div className="restaurant-card" key={index}>
+                                <h3>{restaurant.name}</h3>
+                                <p>Cuisine: {restaurant.cuisine_type}</p>
+                                <p>Food Type: {restaurant.food_type}</p>
+                                <p>Price: {restaurant.price_range}</p>
+                                <p>Rating: ⭐ {restaurant.rating}</p>
+                                <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
+                            </div>
+                        ))
+                ) : (
+                    <p>No restaurants found matching your criteria.</p>
+                )}
+            </div>
+
 
             <div>
                 {/* Main Content */}
