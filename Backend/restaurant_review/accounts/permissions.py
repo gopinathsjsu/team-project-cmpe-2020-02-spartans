@@ -10,4 +10,4 @@ class IsBusinessOwner(BasePermission):
 
 class IsUser(BasePermission):
     def has_permission(self, request, view):
-        return request.user.role == 'user'
+        return request.user.is_authenticated and getattr(request.user, 'role', None) == 'user'

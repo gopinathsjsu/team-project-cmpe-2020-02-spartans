@@ -44,3 +44,4 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             }
             for review in obj.review_set.all()
         ]
+    
