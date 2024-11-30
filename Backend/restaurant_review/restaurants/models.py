@@ -37,6 +37,7 @@ class Restaurant(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     review_count = models.PositiveIntegerField(default=0)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="restaurants")
 
     def update_rating(self):
         reviews = self.reviews.all()  # Access all related reviews using related_name

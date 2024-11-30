@@ -131,3 +131,4 @@ class DeleteDuplicateListingView(APIView):
         restaurant = get_object_or_404(Restaurant, id=id)
         restaurant.delete()
         return Response({"message": f"Listing with ID {id} has been deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+

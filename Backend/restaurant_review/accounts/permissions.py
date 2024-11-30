@@ -6,7 +6,7 @@ class IsAdmin(BasePermission):
 
 class IsBusinessOwner(BasePermission):
     def has_permission(self, request, view):
-        return request.user.role == 'owner'
+        return request.user.is_authenticated and getattr(request.user, 'role', None) == 'owner'
 
 class IsUser(BasePermission):
     def has_permission(self, request, view):
