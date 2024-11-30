@@ -16,6 +16,20 @@ function AdminDashboard() {
 
     return (
         <div className="container admin-dashboard">
+            <header className="index-header">
+            <nav className="navbar">
+                    <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
+                    <div className="nav-links">
+                        <button onClick={() => navigate('/')} className="nav-item">Home</button>
+                        <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
+                        <button onClick={() => navigate('/login')} className="nav-item">Business Owner</button>
+                        <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
+                        <button onClick={() => navigate('/login')} className="login-btn">Login </button>
+                        <button onClick={() => navigate('/register')} className="login-btn">Register </button>
+                    </div>
+                </nav>
+                
+            </header>
             <h2 className="text-center mt-4 mb-4">Admin Dashboard</h2>
 
             <div className="card mb-4 p-4 shadow">

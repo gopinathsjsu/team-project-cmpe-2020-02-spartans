@@ -57,6 +57,23 @@ function BusinessOwnerDashboard() {
                 </div>
             ) : (
                 <>
+                <header className="index-header">
+            <nav className="navbar">
+                    <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
+                    <div className="nav-links">
+                        <button onClick={() => navigate('/')} className="nav-item">Home</button>
+                        <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
+                        <button onClick={() => navigate('/login')} className="nav-item">Business Owner</button>
+                        <button onClick={() => navigate('/login')} className="nav-item">Admin</button>
+                        <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
+                        <button onClick={() => navigate('/login')} className="login-btn">Login </button>
+                        <button onClick={() => navigate('/register')} className="login-btn">Register </button>
+                    </div>
+                </nav>
+                <h1>Restaurant Finder</h1>
+                <p>Discover the best places to eat around you</p>
+                
+            </header>
                     <div className="dashboard-header text-center mb-4">
                         <h2>Welcome, {ownerInfo.name}</h2>
                         <p className="text-muted">Email: {ownerInfo.email}</p>
