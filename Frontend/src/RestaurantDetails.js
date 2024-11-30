@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './RestaurantDetails.css';
 import { refreshAccessToken } from './auth';
+import { useNavigate } from 'react-router-dom';
 
 const RestaurantDetails = () => {
     const { id } = useParams();

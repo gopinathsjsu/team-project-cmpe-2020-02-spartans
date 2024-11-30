@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Register.css';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 function Register() {
     const [isBusinessOwner, setIsBusinessOwner] = useState(false);
     const [formData, setFormData] = useState({

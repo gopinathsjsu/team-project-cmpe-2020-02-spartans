@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminDashboard.css';
 import { refreshAccessToken } from './auth.js';
-
+import { useNavigate } from 'react-router-dom';
 function AdminDashboard() {
     const [view, setView] = useState(''); // State to track current view ('' by default)
     const [allListings, setAllListings] = useState([]); // State for all listings
     const [duplicateListings, setDuplicateListings] = useState([]); // State for duplicate listings
     const [isLoading, setIsLoading] = useState(false); // Loading state
     const [error, setError] = useState(null); // Error state
+    const navigate = useNavigate();
 
     // Fetch all listings (Manage Listings)
     const fetchAllListings = async () => {
@@ -135,6 +136,11 @@ function AdminDashboard() {
         if (view === 'manage') fetchAllListings();
         if (view === 'duplicates') fetchDuplicateListings();
     }, [view]); // Triggered when `view` changes
+
+    const handleLogout = () => {
+        sessionStorage.clear(); // Clear session data
+        navigate("/"); // Redirect to the home page
+    };
 
     return (
         <div className="container admin-dashboard">
