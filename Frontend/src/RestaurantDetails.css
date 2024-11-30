@@ -1,0 +1,149 @@
+/* Container styles */
+.details-container {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    line-height: 1.6;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styles */
+.details-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.details-header h1 {
+    font-size: 32px;
+    color: #d32323; /* Yelp-like red */
+    margin: 0;
+}
+
+/* Text styles */
+.details-text {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #555;
+}
+
+.details-address, .details-hours, .details-contact {
+    margin: 15px 0;
+    font-size: 16px;
+    color: #555;
+}
+
+/* Address styles */
+.details-address {
+    font-weight: bold;
+}
+
+/* Hours and contact */
+.details-hours {
+    font-weight: bold;
+}
+
+.details-contact a {
+    color: #0073bb;
+    text-decoration: none;
+}
+
+.details-contact a:hover {
+    text-decoration: underline;
+}
+
+/* Button styles */
+.details-container button {
+    background-color: #d32323;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.details-container button:hover {
+    background-color: #a01919;
+}
+
+/* Link styles */
+.details-contact a {
+    font-weight: bold;
+    color: #0073bb;
+    text-decoration: none;
+}
+
+.details-contact a:hover {
+    text-decoration: underline;
+}
+
+.reviews-container {
+    margin-top: 30px;
+}
+
+.review {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.review p {
+    margin: 5px 0;
+}
+
+.review strong {
+    font-weight: bold;
+}
+
+.success-message {
+    color: green;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.stars {
+    display: inline-block;
+}
+
+.star {
+    color: #ffc107;
+    margin: 0 5px;
+    transition: color 0.2s;
+}
+
+.star.selected {
+    color: #ff9800;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .details-container {
+        padding: 10px;
+    }
+
+    .details-header h1 {
+        font-size: 24px;
+    }
+
+    .details-text, .details-address, .details-hours, .details-contact {
+        font-size: 14px;
+    }
+
+    .details-container button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}
+

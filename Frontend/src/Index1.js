@@ -4,9 +4,7 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import Select from 'react-select';
 import './Index1.css';
 import Footer from './Footer';
-import BusinessOwnerDashboard from './BusinessOwnerDashboard';
-import AdminDashboard from './BusinessOwnerDashboard';
-import Register from './Register';
+
 function Index() {
     const [searchQuery, setSearchQuery] = useState('');
     const [zipCode, setZipCode] = useState('');
@@ -34,10 +32,57 @@ function Index() {
         { value: 'gluten-free', label: 'Gluten-free' },
     ];
 
-    const handleSearchSubmit = (e) => {
+    // Handle Search Submit
+    const handleSearchSubmit = async (e) => {
         e.preventDefault();
+        let minRating = '';
+        let maxRating = '';
+        if (rating) {
+            const parsedRating = parseInt(rating, 10); // Convert rating to an integer
+            if (!isNaN(parsedRating)) {
+                minRating = parsedRating;
+                maxRating = parsedRating < 5 ? parsedRating + 0.99 : parsedRating;
+            }
+        }
         console.log("Searching for:", searchQuery, zipCode, cuisine, foodType, priceRange, rating);
-        // Implement search logic here (API call or filter based on criteria)
+
+        try {
+            // Build query parameters
+            const queryParams = new URLSearchParams({
+                name: searchQuery,
+                zip_code: zipCode,
+                cuisine_type: cuisine.map((c) => c.value).join(","),
+                food_type: foodType.map((f) => f.value).join(","),
+                price_range: priceRange,
+                min_rating: minRating || '',
+                max_rating: maxRating || '',
+            }).toString();
+
+            // Make the API call
+            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);
+
+            // Check if the response is OK
+            if (!response.ok) {
+                throw new Error("Failed to fetch restaurants");
+            }
+
+            // Parse the JSON response
+            const data = await response.json();
+
+            // Update the restaurants state with the API response
+            setRestaurants(data);
+        } catch (error) {
+            console.error("Error fetching restaurants:", error);
+        }
+    };
+
+    // Get login status and role
+    const isLoggedIn = !!sessionStorage.getItem("accessToken");
+    const role = sessionStorage.getItem("role");
+
+    const handleLogout = () => {
+        sessionStorage.clear(); // Clear session data
+        navigate("/"); // Redirect to the home page
     };
 
     return (
@@ -48,11 +93,19 @@ function Index() {
                     <div className="nav-links">
                         <button onClick={() => navigate('/')} className="nav-item">Home</button>
                         <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
-                        <button onClick={() => navigate('/login')} className="nav-item">Business Owner</button>
-                        <button onClick={() => navigate('/login')} className="nav-item">Admin</button>
+                        <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
+                        <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
                         <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
-                        <button onClick={() => navigate('/login')} className="login-btn">Login </button>
-                        <button onClick={() => navigate('/register')} className="login-btn">Register </button>
+
+                        {/* Show login/register or logout button based on login status */}
+                        {!isLoggedIn ? (
+                            <>
+                                <button onClick={() => navigate('/login')} className="login-btn">Login</button>
+                                <button onClick={() => navigate('/register')} className="login-btn">Register</button>
+                            </>
+                        ) : (
+                            <button onClick={handleLogout} className="login-btn">Logout</button>
+                        )}
                     </div>
                 </nav>
                 <h1>Restaurant Finder</h1>
@@ -92,9 +145,9 @@ function Index() {
                     />
                     <select onChange={(e) => setPriceRange(e.target.value)} className="select-dropdown">
                         <option value="">Price Range</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
+                        <option value="$">Low</option>
+                        <option value="$$">Medium</option>
+                        <option value="$$$">High</option>
                     </select>
                     <select onChange={(e) => setRating(e.target.value)} className="select-dropdown">
                         <option value="">Rating</option>
@@ -121,20 +174,29 @@ function Index() {
             </div>
                             
             <div className="restaurant-list">
-                {restaurants.map((restaurant, index) => (
-                    <div className="restaurant-card" key={index}>
-                        <h3>{restaurant.name}</h3>
-                        <p>Cuisine: {restaurant.cuisine}</p>
-                        <p>Price: {restaurant.price}</p>
-                        <p>Rating: ⭐ {restaurant.rating}</p>
-                        <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
-                    </div>
-                ))}
+                {restaurants.length > 0 ? (
+                    [...restaurants]
+                        .sort((a, b) => b.rating - a.rating) // Sort by rating (descending order)
+                        .map((restaurant, index) => (
+                            <div className="restaurant-card" key={index}>
+                                <h3>{restaurant.name}</h3>
+                                <p>Cuisine: {restaurant.cuisine_type}</p>
+                                <p>Food Type: {restaurant.food_type}</p>
+                                <p>Price: {restaurant.price_range}</p>
+                                <p>Rating: ⭐ {restaurant.rating}</p>
+                                <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
+                            </div>
+                        ))
+                ) : (
+                    <p>No restaurants found matching your criteria.</p>
+                )}
             </div>
+
+
             <div>
-            {/* Main Content */}
-            <Footer />
-        </div>
+                {/* Main Content */}
+                <Footer />
+            </div>
         </div>
     );
 }
