@@ -111,9 +111,9 @@ function BusinessOwnerDashboard() {
                         </div>
 
                         <div className="col-md-4">
-                            <div className="action-card" onClick={() => navigate('/view-listings')}>
+                            <div className="action-card" onClick={() => navigate('/manage-listings')}>
                                 <span role="img" aria-label="view">📋</span>
-                                <h5>View Your Listings</h5>
+                                <h5>Manage Your Listings</h5>
                             </div>
                         </div>
                     </div>

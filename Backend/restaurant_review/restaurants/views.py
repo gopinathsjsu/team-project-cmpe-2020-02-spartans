@@ -95,6 +95,23 @@ class RestaurantDetailView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Restaurant.DoesNotExist:
             return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
+    def put(self, request, *args, **kwargs):
+        restaurant_id = kwargs.get('id')  # Extract the 'id' from kwargs
+        try:
+            restaurant = Restaurant.objects.get(id=restaurant_id)
+
+            # Check if the logged-in user is the owner of the restaurant
+            if restaurant.owner != request.user:
+                return Response({"error": "You are not authorized to edit this restaurant."}, status=status.HTTP_403_FORBIDDEN)
+
+            # Deserialize the data
+            serializer = RestaurantDetailSerializer(restaurant, data=request.data, partial=True)  # Use `partial=True` to allow partial updates
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Restaurant.DoesNotExist:
+            return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
         
 class DuplicateListingsView(APIView):
     def get(self, request):
