@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/restaurants/', include('restaurants.urls')),
     path('api/admin/duplicates/', DuplicateListingsView.as_view(), name='admin_duplicate'), 
     path('api/admin/delete-listing/<int:id>/', DeleteDuplicateListingView.as_view(), name='delete_listing'),
+    path('api/reviews/', include('reviews.urls')),
 ]

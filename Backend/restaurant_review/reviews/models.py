@@ -2,6 +2,7 @@
 from django.db import models
 from accounts.models import CustomUser
 from restaurants.models import Restaurant
+
 class Review(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)

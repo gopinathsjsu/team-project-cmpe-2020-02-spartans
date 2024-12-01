@@ -88,24 +88,13 @@ function Index() {
     return (
         <div className="index-container">
             <header className="index-header">
-                <h1>Restaurant Finder</h1>
-                <p>Discover the best places to eat around you</p>
-                <nav className="navbar">
+            <nav className="navbar">
                     <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
                     <div className="nav-links">
                         <button onClick={() => navigate('/')} className="nav-item">Home</button>
-
-                        {/* Conditionally render based on user role */}
-                        {role === "user" && (
-                            <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
-                        )}
-                        {role === "owner" && (
-                            <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
-                        )}
-                        {role === "admin" && (
-                            <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
-                        )}
-
+                        <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
+                        <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
+                        <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
                         <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
 
                         {/* Show login/register or logout button based on login status */}
@@ -119,6 +108,9 @@ function Index() {
                         )}
                     </div>
                 </nav>
+                <h1>Restaurant Finder</h1>
+                <p>Discover the best places to eat around you</p>
+                
             </header>
 
             <div className="search-section">
@@ -182,21 +174,24 @@ function Index() {
             </div>
                             
             <div className="restaurant-list">
-                 {restaurants.length > 0 ? (
-                    restaurants.map((restaurant, index) => (
-                        <div className="restaurant-card" key={index}>
-                            <h3>{restaurant.name}</h3>
-                            <p>Cuisine: {restaurant.cuisine_type}</p>
-                            <p>Food Type: {restaurant.food_type}</p>
-                            <p>Price: {restaurant.price_range}</p>
-                            <p>Rating: ⭐ {restaurant.rating}</p>
-                            <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
-                    </div>
-                ))
-            ) : (
-                <p>No restaurants found matching your criteria.</p>
-            )}
-        </div>
+                {restaurants.length > 0 ? (
+                    [...restaurants]
+                        .sort((a, b) => b.rating - a.rating) // Sort by rating (descending order)
+                        .map((restaurant, index) => (
+                            <div className="restaurant-card" key={index}>
+                                <h3>{restaurant.name}</h3>
+                                <p>Cuisine: {restaurant.cuisine_type}</p>
+                                <p>Food Type: {restaurant.food_type}</p>
+                                <p>Price: {restaurant.price_range}</p>
+                                <p>Rating: ⭐ {restaurant.rating}</p>
+                                <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
+                            </div>
+                        ))
+                ) : (
+                    <p>No restaurants found matching your criteria.</p>
+                )}
+            </div>
+
 
             <div>
                 {/* Main Content */}

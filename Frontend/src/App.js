@@ -11,6 +11,8 @@ import Register from './Register';
 import PrivateRoute from './PrivateRoute';
 import RestaurantList from './RestaurantList';
 import RestaurantDetails from './RestaurantDetails';
+import ManageListing from './ManageListing';
+import EditListing from './EditListing';
 
 function App() {
     return (
@@ -25,6 +27,8 @@ function App() {
                 <Route path="/Register" element={<Register />} />
                 <Route path="/RestaurantList" element={<RestaurantList />} />
                 <Route path="/restaurant/:id" element={<RestaurantDetails />} />
+                <Route path="/manage-listings" element={<ManageListing />} />
+                <Route path="/manage-listings/edit/:id" element={<EditListing />} />
             </Routes>
         </Router>
     );

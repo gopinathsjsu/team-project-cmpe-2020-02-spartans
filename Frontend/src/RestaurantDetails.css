@@ -83,6 +83,50 @@
     text-decoration: underline;
 }
 
+.reviews-container {
+    margin-top: 30px;
+}
+
+.review {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.review p {
+    margin: 5px 0;
+}
+
+.review strong {
+    font-weight: bold;
+}
+
+.success-message {
+    color: green;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.stars {
+    display: inline-block;
+}
+
+.star {
+    color: #ffc107;
+    margin: 0 5px;
+    transition: color 0.2s;
+}
+
+.star.selected {
+    color: #ff9800;
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
     .details-container {
@@ -102,3 +146,4 @@
         padding: 8px 16px;
     }
 }
+

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RestaurantList from './RestaurantList';
+import { useNavigate } from 'react-router-dom';
 
 function SearchRestaurants() {
     const [searchQuery, setSearchQuery] = useState('');

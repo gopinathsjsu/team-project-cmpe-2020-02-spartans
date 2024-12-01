@@ -8,6 +8,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 from .serializers import RegisterSerializer, LoginSerializer
 from .models import CustomUser
+from restaurants.models import Restaurant
+from restaurants.serializers import RestaurantSerializer
 from .permissions import IsAdmin, IsBusinessOwner, IsUser
 from django.contrib.auth import authenticate
 
@@ -82,3 +84,12 @@ class UserDashboardView(APIView):
 
     def get(self, request):
         return Response({"message": "Welcome, User!"})
+    
+class OwnerListingsView(APIView):
+    permission_classes = [IsBusinessOwner]
+
+    def get(self, request):
+        # Fetch restaurants owned by the logged-in user
+        restaurants = Restaurant.objects.filter(owner=request.user)
+        serializer = RestaurantSerializer(restaurants, many=True)
+        return Response(serializer.data)

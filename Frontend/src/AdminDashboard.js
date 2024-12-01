@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminDashboard.css';
 import { refreshAccessToken } from './auth.js';
-
+import { useNavigate } from 'react-router-dom';
 function AdminDashboard() {
     const [view, setView] = useState(''); // State to track current view ('' by default)
     const [allListings, setAllListings] = useState([]); // State for all listings
     const [duplicateListings, setDuplicateListings] = useState([]); // State for duplicate listings
     const [isLoading, setIsLoading] = useState(false); // Loading state
     const [error, setError] = useState(null); // Error state
+    const navigate = useNavigate();
 
     // Fetch all listings (Manage Listings)
     const fetchAllListings = async () => {
@@ -136,8 +137,27 @@ function AdminDashboard() {
         if (view === 'duplicates') fetchDuplicateListings();
     }, [view]); // Triggered when `view` changes
 
+    const handleLogout = () => {
+        sessionStorage.clear(); // Clear session data
+        navigate("/"); // Redirect to the home page
+    };
+
     return (
         <div className="container admin-dashboard">
+            <header className="index-header">
+            <nav className="navbar">
+                    <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
+                    <div className="nav-links">
+                        <button onClick={() => navigate('/')} className="nav-item">Home</button>
+                        <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
+                        <button onClick={() => navigate('/login')} className="nav-item">Business Owner</button>
+                        <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
+                        <button onClick={() => navigate('/login')} className="login-btn">Login </button>
+                        <button onClick={() => navigate('/register')} className="login-btn">Register </button>
+                    </div>
+                </nav>
+                
+            </header>
             <h2 className="text-center mt-4 mb-4">Admin Dashboard</h2>
 
             {/* Admin Action Buttons */}

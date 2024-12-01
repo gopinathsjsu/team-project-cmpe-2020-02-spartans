@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Register.css';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 function Register() {
     const [isBusinessOwner, setIsBusinessOwner] = useState(false);
     const [formData, setFormData] = useState({
@@ -68,6 +68,7 @@ function Register() {
     };
 
     return (
+        
         <div className="container register-container d-flex justify-content-center align-items-center mt-5">
             <div className="card p-4 shadow-lg register-card">
                 <h2 className="text-center mb-4">Register as {isBusinessOwner ? "Business Owner" : "User"}</h2>
