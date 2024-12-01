@@ -100,8 +100,6 @@ function BusinessOwnerDashboard() {
                                 )}
                             </div>
                         </nav>
-                        <h1>Restaurant Finder</h1>
-                        <p>Discover the best places to eat around you</p>
                     </header>
 
                     <div className="dashboard-header text-center mb-4">

@@ -1,149 +1,11 @@
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import './AddListing.css';
-
-
-// function AddListing() {
-//     const [formData, setFormData] = useState({
-//         name: '',
-//         address: '',
-//         contact: '',
-//         hours: '',
-//         category: '',
-//         website: '',
-//         description: '',
-//         photos: null,
-//         menu: '',
-//         priceRange: '',
-//         amenities: [],
-//         features: [],
-//         paymentOptions: [],
-//         reservationLink: '',
-//         deliveryOptions: '',
-//         healthSafety: '',
-//         policies: ''
-//     });
-
-//     const handleChange = (e) => {
-//         const { name, value, files } = e.target;
-//         if (name === "photos") {
-//             setFormData({ ...formData, photos: files });
-//         } else {
-//             setFormData({ ...formData, [name]: value });
-//         }
-//     };
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         // Handle form submission, e.g., API call to save listing
-//         console.log(formData);
-//     };
-
-//     return (
-//         <div className="container add-listing-container p-4">
-//             <h2 className="text-center mb-4">Add New Listing</h2>
-//             <form onSubmit={handleSubmit} className="add-listing-form">
-                
-//                 <div className="mb-3">
-//                     <label className="form-label">Business Name</label>
-//                     <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} required />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Address</label>
-//                     <input type="text" className="form-control" name="address" value={formData.address} onChange={handleChange} required />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Contact Information</label>
-//                     <input type="text" className="form-control" name="contact" value={formData.contact} onChange={handleChange} required />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Operating Hours</label>
-//                     <input type="text" className="form-control" name="hours" value={formData.hours} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Category</label>
-//                     <input type="text" className="form-control" name="category" value={formData.category} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Website Link</label>
-//                     <input type="url" className="form-control" name="website" value={formData.website} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Business Description</label>
-//                     <textarea className="form-control" name="description" value={formData.description} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Upload Photos</label>
-//                     <input type="file" className="form-control" name="photos" multiple onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Menu / Services Offered</label>
-//                     <textarea className="form-control" name="menu" value={formData.menu} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Price Range</label>
-//                     <input type="text" className="form-control" name="priceRange" value={formData.priceRange} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Amenities</label>
-//                     <input type="text" className="form-control" name="amenities" value={formData.amenities} onChange={handleChange} placeholder="E.g., Wi-Fi, Parking" />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Special Features</label>
-//                     <input type="text" className="form-control" name="features" value={formData.features} onChange={handleChange} placeholder="E.g., Live Music, Pet-Friendly" />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Payment Options</label>
-//                     <input type="text" className="form-control" name="paymentOptions" value={formData.paymentOptions} onChange={handleChange} placeholder="E.g., Cash, Credit Card" />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Reservation Options</label>
-//                     <input type="text" className="form-control" name="reservationLink" value={formData.reservationLink} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Delivery / Takeout Options</label>
-//                     <textarea className="form-control" name="deliveryOptions" value={formData.deliveryOptions} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Health & Safety Protocols</label>
-//                     <textarea className="form-control" name="healthSafety" value={formData.healthSafety} onChange={handleChange} />
-//                 </div>
-
-//                 <div className="mb-3">
-//                     <label className="form-label">Business Policies</label>
-//                     <textarea className="form-control" name="policies" value={formData.policies} onChange={handleChange} />
-//                 </div>
-
-//                 <button type="submit" className="btn btn-primary w-100">Submit Listing</button>
-//             </form>
-//         </div>
-//     );
-// }
-
-// export default AddListing;
-
-
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddListing.css';
 import { useNavigate } from 'react-router-dom';
+
 function AddListing() {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -153,135 +15,159 @@ function AddListing() {
         website: '',
         description: '',
         photos: null,
-        menu: '',
         priceRange: '',
-        amenities: [],
-        features: [],
-        paymentOptions: [],
-        reservationLink: '',
-        deliveryOptions: '',
-        healthSafety: '',
-        policies: ''
     });
+    const [error, setError] = useState(null); // Error handling
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
         setFormData({
             ...formData,
-            [name]: name === "photos" ? files : value
+            [name]: name === "photos" ? files : value,
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+        setIsSubmitting(true);
+        setError(null);
+
+        const accessToken = sessionStorage.getItem('accessToken');
+        if (!accessToken) {
+            alert('You must be logged in to perform this action.');
+            navigate('/login');
+            return;
+        }
+
+        const formDataToSend = new FormData();
+        for (let key in formData) {
+            if (key === 'photos' && formData[key]) {
+                Array.from(formData[key]).forEach((file) => formDataToSend.append('photos', file));
+            } else {
+                formDataToSend.append(key, formData[key]);
+            }
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/accounts/owner/add-listing/', {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: formDataToSend,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add listing. Please check your inputs.');
+            }
+
+            alert('Listing added successfully!');
+            navigate('/BusinessOwnerDashboard'); // Redirect to dashboard
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
         <div className="add-listing-container d-flex flex-column align-items-center">
             <div className="card listing-card shadow-lg p-4 mt-5">
                 <h2 className="text-center mb-4">Create a New Listing</h2>
+                {error && <p className="text-danger text-center">{error}</p>}
                 <form onSubmit={handleSubmit}>
-                    {/* Business Name */}
                     <div className="form-group mb-3">
                         <label>Business Name</label>
-                        <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} required />
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
-                    
-                    {/* Address */}
                     <div className="form-group mb-3">
                         <label>Address</label>
-                        <input type="text" className="form-control" name="address" value={formData.address} onChange={handleChange} required />
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
-
-                    {/* Contact */}
                     <div className="form-group mb-3">
                         <label>Contact Information</label>
-                        <input type="text" className="form-control" name="contact" value={formData.contact} onChange={handleChange} required />
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="contact"
+                            value={formData.contact}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
-
-                    {/* Hours */}
                     <div className="form-group mb-3">
                         <label>Operating Hours</label>
-                        <input type="text" className="form-control" name="hours" value={formData.hours} onChange={handleChange} />
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="hours"
+                            value={formData.hours}
+                            onChange={handleChange}
+                        />
                     </div>
-
-                    {/* Category */}
                     <div className="form-group mb-3">
                         <label>Category</label>
-                        <input type="text" className="form-control" name="category" value={formData.category} onChange={handleChange} />
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="category"
+                            value={formData.category}
+                            onChange={handleChange}
+                        />
                     </div>
-
-                    {/* Description */}
                     <div className="form-group mb-3">
                         <label>Business Description</label>
-                        <textarea className="form-control" name="description" value={formData.description} onChange={handleChange} />
+                        <textarea
+                            className="form-control"
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                        />
                     </div>
-
-                    {/* Photos */}
                     <div className="form-group mb-3">
                         <label>Upload Photos</label>
-                        <input type="file" className="form-control" name="photos" multiple onChange={handleChange} />
+                        <input
+                            type="file"
+                            className="form-control"
+                            name="photos"
+                            multiple
+                            onChange={handleChange}
+                        />
                     </div>
-
-                    {/* Amenities */}
                     <div className="form-group mb-3">
-                        <label>Amenities</label>
-                        <input type="text" className="form-control" name="amenities" value={formData.amenities} onChange={handleChange} placeholder="E.g., Wi-Fi, Parking" />
+                        <label>Price Range</label>
+                        <select
+                            className="form-control"
+                            name="priceRange"
+                            value={formData.priceRange}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Select Price Range</option>
+                            <option value="$">Low ($)</option>
+                            <option value="$$">Moderate ($$)</option>
+                            <option value="$$$">Expensive ($$$)</option>
+                        </select>
                     </div>
-
-                    <div className="mb-3">
-                     <label className="form-label">Website Link</label>
-                  <input type="url" className="form-control" name="website" value={formData.website} onChange={handleChange} />
-             </div>
-
-             <div className="mb-3">
-                   <label className="form-label">Menu / Services Offered</label>
-                  <textarea className="form-control" name="menu" value={formData.menu} onChange={handleChange} />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Price Range</label>
-                    <input type="text" className="form-control" name="priceRange" value={formData.priceRange} onChange={handleChange} />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Amenities</label>
-                    <input type="text" className="form-control" name="amenities" value={formData.amenities} onChange={handleChange} placeholder="E.g., Wi-Fi, Parking" />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Special Features</label>
-                    <input type="text" className="form-control" name="features" value={formData.features} onChange={handleChange} placeholder="E.g., Live Music, Pet-Friendly" />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Payment Options</label>
-                    <input type="text" className="form-control" name="paymentOptions" value={formData.paymentOptions} onChange={handleChange} placeholder="E.g., Cash, Credit Card" />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Reservation Options</label>
-                    <input type="text" className="form-control" name="reservationLink" value={formData.reservationLink} onChange={handleChange} />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Delivery / Takeout Options</label>
-                    <textarea className="form-control" name="deliveryOptions" value={formData.deliveryOptions} onChange={handleChange} />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Health & Safety Protocols</label>
-                    <textarea className="form-control" name="healthSafety" value={formData.healthSafety} onChange={handleChange} />
-                </div>
-
-                <div className="mb-3">
-                    <label className="form-label">Business Policies</label>
-                    <textarea className="form-control" name="policies" value={formData.policies} onChange={handleChange} />
-                </div>
-
-                    {/* Submission */}
-                    <button type="submit" className="btn btn-primary w-100 mt-4 animate-submit">Add Listing</button>
+                    <button type="submit" className="btn btn-primary w-100 mt-4" disabled={isSubmitting}>
+                        {isSubmitting ? 'Submitting...' : 'Add Listing'}
+                    </button>
                 </form>
             </div>
         </div>
@@ -289,5 +175,3 @@ function AddListing() {
 }
 
 export default AddListing;
-
-
