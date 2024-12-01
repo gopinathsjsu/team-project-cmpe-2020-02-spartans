@@ -148,6 +148,16 @@ class DeleteDuplicateListingView(APIView):
         restaurant = get_object_or_404(Restaurant, id=id)
         restaurant.delete()
         return Response({"message": f"Listing with ID {id} has been deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    
+class AddListingView(APIView):
+    permission_classes = [IsBusinessOwner]
+
+    def post(self, request, *args, **kwargs):
+        serializer = RestaurantSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner=request.user)  # Set the owner to the authenticated user
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AddRestaurantListingView(APIView):
     permission_classes = [IsBusinessOwner]

@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import RestaurantSearchView, RestaurantListView, RestaurantDetailView, AddRestaurantListingView
+
 from reviews.views import GetReviewsView, SubmitReviewView
 urlpatterns = [
     path('search/', RestaurantSearchView.as_view(), name='restaurant_search'),  # For search functionality
@@ -8,4 +9,5 @@ urlpatterns = [
     path('add/', AddRestaurantListingView.as_view(), name='add-restaurant'),
     path('<int:restaurant_id>/reviews/', GetReviewsView.as_view(), name='get-reviews'),
     path('<int:restaurant_id>/reviews/add/', SubmitReviewView.as_view(), name='submit-review'),
+    path('add/', AddListingView.as_view(), name='add-restaurant'),
 ]

@@ -4,11 +4,7 @@ from .models import Restaurant
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = [
-            'id', 'name', 'cuisine_type', 'food_type', 'price_range', 
-            'rating', 'address','city', 'state', 'latitude', 'longitude', 
-            'zip_code', 'hours_of_operation', 'website', 'phone_number'
-        ]
+        exclude = ['owner'] 
 
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):

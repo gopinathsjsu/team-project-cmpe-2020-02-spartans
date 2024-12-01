@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddListing.css';
-import { useNavigate } from 'react-router-dom';
+import api from './api';
+
 function AddListing() {
     const [formData, setFormData] = useState({
         name: '',
@@ -45,51 +46,34 @@ function AddListing() {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log("Submitting form data:", formData);
-
-        try {
-            const token = localStorage.getItem('accessToken');
-            console.log("Access Token:", token);
-            if (!token) {
-                console.error("Access token is missing");
-                setErrorMessage("You must be logged in to add a listing.");
-                return;
-            }
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            };
-
-            const response = await axios.post('http://127.0.0.1:8000/api/restaurants/add/', formData, config);
-
-            if (response.status === 201) {
-                setSuccessMessage('Restaurant listing added successfully!');
-                setFormData({
-                    name: '',
-                    address: '',
-                    city: '',
-                    state: '',
-                    zip_code: '',
-                    cuisine_type: '',
-                    food_type: '',
-                    price_range: '',
-                    hours_of_operation: '',
-                    website: '',
-                    phone_number: '',
-                });
-            }
-        } catch (error) {
-            if (error.response && error.response.data) {
-                setErrorMessage(error.response.data.error || 'Failed to add listing.');
-            } else {
-                setErrorMessage('An error occurred. Please try again later.');
-            }
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const response = await api.post('/restaurants/add/', formData);
+        if (response.status === 201) {
+            setSuccessMessage('Restaurant listing added successfully!');
+            setFormData({
+                name: '',
+                address: '',
+                city: '',
+                state: '',
+                zip_code: '',
+                cuisine_type: '',
+                food_type: '',
+                price_range: '',
+                hours_of_operation: '',
+                website: '',
+                phone_number: '',
+            });
         }
-    };
+    } catch (error) {
+        if (error.response && error.response.data) {
+            setErrorMessage(error.response.data.error || 'Failed to add listing.');
+        } else {
+            setErrorMessage('An error occurred. Please try again later.');
+        }
+    }
+};
 
     return (
         <div className="add-listing-container d-flex flex-column align-items-center">
