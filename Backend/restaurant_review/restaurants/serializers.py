@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Restaurant
+from .models import Restaurant, RestaurantPhoto
 
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,6 +29,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             "longitude",
             "verified",
             "reviews",
+            "photos",
         ]
 
     def get_reviews(self, obj):
@@ -49,7 +50,7 @@ class RestaurantListingSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'address', 'city', 'state', 'zip_code', 'cuisine_type', 
             'food_type', 'price_range', 'hours_of_operation', 'website', 'phone_number', 
-            'owner'
+            'owner', 'photos'
         ]
         read_only_fields = ['id', 'owner']  # Prevent manual updates to these fields
 
@@ -64,3 +65,9 @@ class RestaurantListingSerializer(serializers.ModelSerializer):
     def get_price_range_display(self, obj):
         # Translate the price range choice to a human-readable value
         return dict(Restaurant.PRICE_RANGE_CHOICES).get(obj.price_range, obj.price_range)
+
+class RestaurantPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RestaurantPhoto
+        fields = ['id', 'photo_key', 'uploaded_at']
+

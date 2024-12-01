@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.permissions import IsAuthenticated
 from .serializers import RestaurantSerializer, RestaurantDetailSerializer, RestaurantListingSerializer
-from .models import Restaurant
+from .models import Restaurant, RestaurantPhoto
+from .utils import upload_to_s3, delete_s3_object
 from accounts.permissions import IsAdmin, IsBusinessOwner
 
 class RestaurantSearchView(APIView):
@@ -171,7 +172,12 @@ class AddRestaurantListingView(APIView):
 
         serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=request.user)
+            restaurant = serializer.save(owner=request.user)
+            photos = request.FILES.getlist('photos')  # Expecting multiple photos
+            for photo in photos:
+                photo_key = upload_to_s3(photo)  # Implement this function to upload and return the S3 key
+                RestaurantPhoto.objects.create(restaurant=restaurant, photo_key=photo_key)
+
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
@@ -180,13 +186,18 @@ class UpdateRestaurantListingView(APIView):
 
     def patch(self, request, pk):
         try:
-            listing = RestaurantListing.objects.get(pk=pk, owner=request.user)
-        except RestaurantListing.DoesNotExist:
+            listing = Restaurant.objects.get(pk=pk, owner=request.user)
+        except Restaurant.DoesNotExist:
             return Response({"error": "Listing not found or access denied."}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = RestaurantListingSerializer(listing, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            listing = serializer.save()
+            photos = request.FILES.getlist('photos')
+            for photo in photos:
+                photo_key = upload_to_s3(photo)
+                RestaurantPhoto.objects.create(restaurant=listing, photo_key=photo_key)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -197,7 +208,39 @@ class OwnerRestaurantListingsView(APIView):
         if request.user.role != 'owner':
             return Response({"error": "Only business owners can view listings."}, status=status.HTTP_403_FORBIDDEN)
 
-        listings = RestaurantListing.objects.filter(owner=request.user)
+        listings = Restaurant.objects.filter(owner=request.user)
         serializer = RestaurantListingSerializer(listings, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DeletePhotoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, photo_id):
+        """
+        Deletes a specific photo for a restaurant from S3 and database.
+        """
+        try:
+            # Fetch the photo record
+            photo = RestaurantPhoto.objects.get(id=photo_id)
+
+            # Check ownership: ensure the photo belongs to a restaurant owned by the user
+            if photo.restaurant.owner != request.user:
+                return Response({"error": "Access denied."}, status=status.HTTP_403_FORBIDDEN)
+
+            # Delete the photo from S3
+            if delete_s3_object(photo.s3_key):
+                # If S3 deletion is successful, delete the record from the database
+                photo.delete()
+                return Response({"message": "Photo deleted successfully."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Failed to delete photo from S3."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+        except RestaurantPhoto.DoesNotExist:
+            return Response({"error": "Photo not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
