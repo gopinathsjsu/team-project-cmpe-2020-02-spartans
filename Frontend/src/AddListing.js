@@ -1,85 +1,88 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddListing.css';
-import { useNavigate } from 'react-router-dom';
+import api from './api';
 
 function AddListing() {
-    const navigate = useNavigate();
-
     const [formData, setFormData] = useState({
         name: '',
         address: '',
-        contact: '',
-        hours: '',
-        category: '',
+        city: '',
+        state: '',
+        zip_code: '',
+        cuisine_type: '',
+        food_type: '',
+        price_range: '',
+        hours_of_operation: '',
         website: '',
-        description: '',
-        photos: null,
-        priceRange: '',
+        phone_number: '',
     });
-    const [error, setError] = useState(null); // Error handling
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const CUISINE_CHOICES = [
+        { value: 'greek', label: 'Greek' },
+        { value: 'mexican', label: 'Mexican' },
+        { value: 'italian', label: 'Italian' },
+        { value: 'chinese', label: 'Chinese' },
+    ];
+
+    const FOOD_TYPE_CHOICES = [
+        { value: 'vegan', label: 'Vegan' },
+        { value: 'vegetarian', label: 'Vegetarian' },
+        { value: 'non_veg', label: 'Non-Vegetarian' },
+    ];
+
+    const PRICE_RANGE_CHOICES = [
+        { value: '$', label: 'Low ($)' },
+        { value: '$$', label: 'Moderate ($$)' },
+        { value: '$$$', label: 'Expensive ($$$)' },
+    ];
 
     const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        setFormData({
-            ...formData,
-            [name]: name === "photos" ? files : value,
-        });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setError(null);
-
-        const accessToken = sessionStorage.getItem('accessToken');
-        if (!accessToken) {
-            alert('You must be logged in to perform this action.');
-            navigate('/login');
-            return;
-        }
-
-        const formDataToSend = new FormData();
-        for (let key in formData) {
-            if (key === 'photos' && formData[key]) {
-                Array.from(formData[key]).forEach((file) => formDataToSend.append('photos', file));
-            } else {
-                formDataToSend.append(key, formData[key]);
-            }
-        }
-
-        try {
-            const response = await fetch('http://127.0.0.1:8000/api/accounts/owner/add-listing/', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-                body: formDataToSend,
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const response = await api.post('/restaurants/add/', formData);
+        if (response.status === 201) {
+            setSuccessMessage('Restaurant listing added successfully!');
+            setFormData({
+                name: '',
+                address: '',
+                city: '',
+                state: '',
+                zip_code: '',
+                cuisine_type: '',
+                food_type: '',
+                price_range: '',
+                hours_of_operation: '',
+                website: '',
+                phone_number: '',
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to add listing. Please check your inputs.');
-            }
-
-            alert('Listing added successfully!');
-            navigate('/BusinessOwnerDashboard'); // Redirect to dashboard
-        } catch (err) {
-            console.error(err);
-            setError(err.message);
-        } finally {
-            setIsSubmitting(false);
         }
-    };
+    } catch (error) {
+        if (error.response && error.response.data) {
+            setErrorMessage(error.response.data.error || 'Failed to add listing.');
+        } else {
+            setErrorMessage('An error occurred. Please try again later.');
+        }
+    }
+};
 
     return (
         <div className="add-listing-container d-flex flex-column align-items-center">
             <div className="card listing-card shadow-lg p-4 mt-5">
-                <h2 className="text-center mb-4">Create a New Listing</h2>
-                {error && <p className="text-danger text-center">{error}</p>}
+                <h2 className="text-center mb-4">Add a New Restaurant</h2>
                 <form onSubmit={handleSubmit}>
+                    {/* Business Name */}
                     <div className="form-group mb-3">
-                        <label>Business Name</label>
+                        <label>Restaurant Name</label>
                         <input
                             type="text"
                             className="form-control"
@@ -89,6 +92,8 @@ function AddListing() {
                             required
                         />
                     </div>
+
+                    {/* Address */}
                     <div className="form-group mb-3">
                         <label>Address</label>
                         <input
@@ -100,75 +105,146 @@ function AddListing() {
                             required
                         />
                     </div>
+
+                    {/* City */}
                     <div className="form-group mb-3">
-                        <label>Contact Information</label>
+                        <label>City</label>
                         <input
                             type="text"
                             className="form-control"
-                            name="contact"
-                            value={formData.contact}
+                            name="city"
+                            value={formData.city}
                             onChange={handleChange}
                             required
                         />
                     </div>
+
+                    {/* State */}
                     <div className="form-group mb-3">
-                        <label>Operating Hours</label>
+                        <label>State</label>
                         <input
                             type="text"
                             className="form-control"
-                            name="hours"
-                            value={formData.hours}
+                            name="state"
+                            value={formData.state}
                             onChange={handleChange}
+                            required
                         />
                     </div>
+
+                    {/* Zip Code */}
                     <div className="form-group mb-3">
-                        <label>Category</label>
+                        <label>Zip Code</label>
                         <input
                             type="text"
                             className="form-control"
-                            name="category"
-                            value={formData.category}
+                            name="zip_code"
+                            value={formData.zip_code}
                             onChange={handleChange}
+                            required
                         />
                     </div>
+
+                    {/* Cuisine Type */}
                     <div className="form-group mb-3">
-                        <label>Business Description</label>
-                        <textarea
+                        <label>Cuisine Type</label>
+                        <select
                             className="form-control"
-                            name="description"
-                            value={formData.description}
+                            name="cuisine_type"
+                            value={formData.cuisine_type}
                             onChange={handleChange}
-                        />
+                            required
+                        >
+                            <option value="">Select Cuisine Type</option>
+                            {CUISINE_CHOICES.map((choice) => (
+                                <option key={choice.value} value={choice.value}>
+                                    {choice.label}
+                                </option>
+                            ))}
+                        </select>
                     </div>
+
+                    {/* Food Type */}
                     <div className="form-group mb-3">
-                        <label>Upload Photos</label>
-                        <input
-                            type="file"
+                        <label>Food Type</label>
+                        <select
                             className="form-control"
-                            name="photos"
-                            multiple
+                            name="food_type"
+                            value={formData.food_type}
                             onChange={handleChange}
-                        />
+                            required
+                        >
+                            <option value="">Select Food Type</option>
+                            {FOOD_TYPE_CHOICES.map((choice) => (
+                                <option key={choice.value} value={choice.value}>
+                                    {choice.label}
+                                </option>
+                            ))}
+                        </select>
                     </div>
+
+                    {/* Price Range */}
                     <div className="form-group mb-3">
                         <label>Price Range</label>
                         <select
                             className="form-control"
-                            name="priceRange"
-                            value={formData.priceRange}
+                            name="price_range"
+                            value={formData.price_range}
                             onChange={handleChange}
                             required
                         >
                             <option value="">Select Price Range</option>
-                            <option value="$">Low ($)</option>
-                            <option value="$$">Moderate ($$)</option>
-                            <option value="$$$">Expensive ($$$)</option>
+                            {PRICE_RANGE_CHOICES.map((choice) => (
+                                <option key={choice.value} value={choice.value}>
+                                    {choice.label}
+                                </option>
+                            ))}
                         </select>
                     </div>
-                    <button type="submit" className="btn btn-primary w-100 mt-4" disabled={isSubmitting}>
-                        {isSubmitting ? 'Submitting...' : 'Add Listing'}
+
+                    {/* Hours of Operation */}
+                    <div className="form-group mb-3">
+                        <label>Hours of Operation</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="hours_of_operation"
+                            value={formData.hours_of_operation}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    {/* Website */}
+                    <div className="form-group mb-3">
+                        <label>Website</label>
+                        <input
+                            type="url"
+                            className="form-control"
+                            name="website"
+                            value={formData.website}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    {/* Phone Number */}
+                    <div className="form-group mb-3">
+                        <label>Phone Number</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="phone_number"
+                            value={formData.phone_number}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <button type="submit" className="btn btn-primary w-100 mt-3">
+                        Add Restaurant
                     </button>
                 </form>
+                {successMessage && <div className="alert alert-success mt-4">{successMessage}</div>}
+                {errorMessage && <div className="alert alert-danger mt-4">{errorMessage}</div>}
             </div>
         </div>
     );
