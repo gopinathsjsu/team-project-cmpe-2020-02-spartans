@@ -3,15 +3,31 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminDashboard.css';
 import { refreshAccessToken } from './auth.js';
 import { useNavigate } from 'react-router-dom';
+
 function AdminDashboard() {
-    const [view, setView] = useState(''); // State to track current view ('' by default)
-    const [allListings, setAllListings] = useState([]); // State for all listings
-    const [duplicateListings, setDuplicateListings] = useState([]); // State for duplicate listings
-    const [isLoading, setIsLoading] = useState(false); // Loading state
-    const [error, setError] = useState(null); // Error state
+    const [view, setView] = useState(''); // State to track current view
+    const [allListings, setAllListings] = useState([]);
+    const [duplicateListings, setDuplicateListings] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [role, setRole] = useState(null); // Role state
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status
     const navigate = useNavigate();
 
-    // Fetch all listings (Manage Listings)
+    // Fetch user role and login status
+    useEffect(() => {
+        const accessToken = sessionStorage.getItem('accessToken');
+        const userRole = sessionStorage.getItem('role');
+        setRole(userRole);
+        setIsLoggedIn(!!accessToken);
+
+        if (!accessToken || userRole !== 'admin') {
+            alert('You are not authorized to access this page.');
+            navigate('/login'); // Redirect if not logged in as admin
+        }
+    }, [navigate]);
+
+    // Fetch all listings
     const fetchAllListings = async () => {
         setIsLoading(true);
         setError(null);
@@ -55,24 +71,24 @@ function AdminDashboard() {
         });
         return groups;
     };
-    
+
     const groupedDuplicates = groupDuplicates(duplicateListings);
 
     const handleDeleteListing = async (id) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this listing? This action cannot be undone.');
         if (!confirmDelete) return;
-    
-        const accessToken = localStorage.getItem('accessToken');
+
+        const accessToken = sessionStorage.getItem('accessToken');
         if (!accessToken) {
             alert('You must be logged in to perform this action.');
             return;
         }
-    
+
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
                 method: 'DELETE',
                 headers: {
-                    Authorization: `Bearer ${accessToken}`, // Include token
+                    Authorization: `Bearer ${accessToken}`,
                 },
             });
             if (!response.ok) throw new Error('Failed to delete the listing');
@@ -83,84 +99,47 @@ function AdminDashboard() {
             alert('Failed to delete listing. Please try again.');
         }
     };
-    
-    const handleDeleteDuplicateListing = async (id) => {
-        const confirmDelete = window.confirm(
-            'Are you sure you want to delete this duplicate listing? This action cannot be undone.'
-        );
-        if (!confirmDelete) return;
-    
-        let accessToken = localStorage.getItem('accessToken'); // Retrieve the access token
-    
-        try {
-            let response = await fetch(`http://127.0.0.1:8000/api/admin/delete-listing/${id}/`, {
-                method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-    
-            // If the token is expired, refresh it
-            if (response.status === 401) {
-                console.log('Access token expired. Refreshing...');
-                accessToken = await refreshAccessToken();
-                if (!accessToken) return; // Stop if refreshing the token failed
-    
-                // Retry the request with the new token
-                response = await fetch(`http://127.0.0.1:8000/api/admin/delete-listing/${id}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-            }
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Failed to delete the listing');
-            }
-    
-            // Update the UI after successful deletion
-            alert('Duplicate listing deleted successfully.');
-            setDuplicateListings((prev) => prev.filter((listing) => listing.id !== id));
-        } catch (err) {
-            console.error('Error deleting duplicate listing:', err);
-            alert('Failed to delete listing. Please try again.');
-        }
-    };    
 
     useEffect(() => {
-        // Fetch listings only when needed
         if (view === 'manage') fetchAllListings();
         if (view === 'duplicates') fetchDuplicateListings();
-    }, [view]); // Triggered when `view` changes
+    }, [view]);
 
     const handleLogout = () => {
         sessionStorage.clear(); // Clear session data
-        navigate("/"); // Redirect to the home page
+        navigate('/'); // Redirect to the home page
     };
 
     return (
         <div className="container admin-dashboard">
             <header className="index-header">
-            <nav className="navbar">
+                <nav className="navbar">
                     <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
                     <div className="nav-links">
                         <button onClick={() => navigate('/')} className="nav-item">Home</button>
-                        <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
-                        <button onClick={() => navigate('/login')} className="nav-item">Business Owner</button>
+                        {role === 'user' && (
+                            <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
+                        )}
+                        {role === 'owner' && (
+                            <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner Dashboard</button>
+                        )}
+                        {role === 'admin' && (
+                            <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin Dashboard</button>
+                        )}
                         <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
-                        <button onClick={() => navigate('/login')} className="login-btn">Login </button>
-                        <button onClick={() => navigate('/register')} className="login-btn">Register </button>
+                        {isLoggedIn ? (
+                            <button onClick={handleLogout} className="login-btn">Logout</button>
+                        ) : (
+                            <>
+                                <button onClick={() => navigate('/login')} className="login-btn">Login</button>
+                                <button onClick={() => navigate('/register')} className="login-btn">Register</button>
+                            </>
+                        )}
                     </div>
                 </nav>
-                
             </header>
             <h2 className="text-center mt-4 mb-4">Admin Dashboard</h2>
 
-            {/* Admin Action Buttons */}
             <div className="card mb-4 p-4 shadow">
                 <h3>Admin Actions</h3>
                 <div className="d-flex flex-column flex-md-row justify-content-around mt-3">
@@ -179,7 +158,6 @@ function AdminDashboard() {
                 </div>
             </div>
 
-            {/* Conditional Rendering of Content Based on View */}
             {view === 'manage' && (
                 <div className="card p-4 shadow">
                     <h3>Manage Listings</h3>
@@ -192,7 +170,7 @@ function AdminDashboard() {
                             {allListings.map((listing) => (
                                 <li key={listing.id} className="list-group-item d-flex justify-content-between align-items-center">
                                     <span>
-                                        <strong>{listing.name}</strong> - {listing.address}, {listing.city}, {listing.state}, {listing.zip_code}
+                                        <strong>{listing.name}</strong> - {listing.address}
                                     </span>
                                     <button
                                         className="btn btn-danger"
@@ -205,59 +183,6 @@ function AdminDashboard() {
                         </ul>
                     ) : (
                         <p>No listings found.</p>
-                    )}
-                </div>
-            )}
-
-{view === 'duplicates' && (
-                <div className="card p-4 shadow">
-                    <h3>Potential Duplicate Listings</h3>
-                    {isLoading ? (
-                        <p>Loading duplicate listings...</p>
-                    ) : error ? (
-                        <p className="text-danger">{error}</p>
-                    ) : Object.keys(groupedDuplicates).length > 0 ? (
-                        <div>
-                            {Object.entries(groupedDuplicates).map(([groupKey, listings]) => (
-                                <div key={groupKey} className="mb-4">
-                                    <h5 className="text-primary">{listings[0].name}</h5>
-                                    <p>
-                                        Address: {listings[0].address}, {listings[0].city}, {listings[0].state}, {listings[0].zip_code}
-                                    </p>
-                                    <table className="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Website</th>
-                                                <th>Phone Number</th>
-                                                <th>Rating</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {listings.map((listing) => (
-                                                <tr key={listing.id}>
-                                                    <td>{listing.id}</td>
-                                                    <td>{listing.website}</td>
-                                                    <td>{listing.phone_number}</td>
-                                                    <td>{listing.rating}</td>
-                                                    <td>
-                                                        <button
-                                                            className="btn btn-danger btn-sm"
-                                                            onClick={() => handleDeleteDuplicateListing(listing.id)}
-                                                        >
-                                                            🗑️ Delete
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p>No duplicate listings found.</p>
                     )}
                 </div>
             )}

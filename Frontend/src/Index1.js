@@ -92,9 +92,18 @@ function Index() {
                     <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
                     <div className="nav-links">
                         <button onClick={() => navigate('/')} className="nav-item">Home</button>
-                        <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
-                        <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
-                        <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
+                        
+                        {/* Conditionally render based on user role */}
+                        {role === "user" && (
+                            <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
+                        )}
+                        {role === "owner" && (
+                            <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
+                        )}
+                        {role === "admin" && (
+                            <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
+                        )}
+
                         <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
 
                         {/* Show login/register or logout button based on login status */}
