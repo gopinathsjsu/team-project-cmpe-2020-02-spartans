@@ -4,8 +4,17 @@ from django.conf import settings
 import uuid
 from PIL import Image
 from io import BytesIO
+import logging
 
-def upload_to_s3(file):
+logger = logging.getLogger(__name__)
+
+from io import BufferedReader
+
+class NonCloseableBufferedReader(BufferedReader):
+    def close(self):
+        self.flush()
+
+def upload_to_s3(file, key=None):
     """
     Upload a file to S3 and return the object key.
 
@@ -25,15 +34,19 @@ def upload_to_s3(file):
             endpoint_url='http://localhost:9004',
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION,
+            aws_session_token=None,
+            config=boto3.session.Config(signature_version='s3v4'),
+            verify=False
         )
 
         bucket_name = settings.AWS_S3_BUCKET_NAME
         file_extension = file.name.split('.')[-1]
-        object_key = f"restaurant_photos/{uuid.uuid4()}.{file_extension}"  # Unique file key
+        object_key = f"restaurant_photos/{uuid.uuid4()}.{file_extension}"  if not key else key  # Unique file key
 
+        buffer = NonCloseableBufferedReader(file)
         # Upload file
         s3_client.upload_fileobj(
-            file,
+            buffer,
             bucket_name,
             object_key,
             ExtraArgs={
@@ -48,6 +61,7 @@ def upload_to_s3(file):
         raise Exception("AWS credentials are not configured properly.") from e
 
     except Exception as e:
+        print("Exception" + str(e))
         raise Exception("Failed to upload file to S3.") from e
     
 
@@ -66,9 +80,12 @@ def delete_s3_object(s3_key):
         s3_client = boto3.client(
             's3',
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             endpoint_url='http://localhost:9004',
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION,
+            aws_session_token=None,
+            config=boto3.session.Config(signature_version='s3v4'),
+            verify=False
         )
         s3_client.delete_object(Bucket=settings.AWS_S3_BUCKET_NAME, Key=s3_key)
         return True
@@ -77,12 +94,17 @@ def delete_s3_object(s3_key):
         print(f"Error deleting object {s3_key}: {e}")
         return False
 
-def generate_thumbnail(self, photo_file):
+def generate_thumbnail(photo_file):
+        print("generating thumbnail")
         image = Image.open(photo_file)
+        if image.mode == 'RGBA':
+            image = image.convert('RGB')
         image.thumbnail((150, 150))  # Resize the image to a thumbnail
 
         buffer = BytesIO()
         image.save(buffer, format='JPEG')
         buffer.seek(0)
+        buffer.name = "thumbnail.jpg"
+        buffer.content_type = 'image/jpeg'
 
         return buffer

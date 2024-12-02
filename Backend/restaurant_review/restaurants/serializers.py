@@ -8,9 +8,18 @@ class   RestaurantSerializer(serializers.ModelSerializer):
         model = Restaurant
         exclude = ['owner'] 
 
+class RestaurantPhotoSerializer(serializers.ModelSerializer):
+    thumbnail_url = serializers.SerializerMethodField()
+    class Meta:
+        model = RestaurantPhoto
+        fields = ['id', 'thumbnail_url', 'uploaded_at']
+    
+    def get_thumbnail_url(self, obj):
+        return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.thumbnail_s3_key}"
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField()
+    photos = RestaurantPhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Restaurant
@@ -46,7 +55,7 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
 
 class RestaurantListingSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')  # Display owner's username
-
+    photos = RestaurantPhotoSerializer(many=True, read_only=True, source='photos')
     class Meta:
         model = Restaurant
         fields = [
@@ -54,7 +63,7 @@ class RestaurantListingSerializer(serializers.ModelSerializer):
             'food_type', 'price_range', 'hours_of_operation', 'website', 'phone_number', 
             'owner', 'photos'
         ]
-        read_only_fields = ['id', 'owner']  # Prevent manual updates to these fields
+        read_only_fields = ['id', 'owner','photos']  # Prevent manual updates to these fields
 
     def get_category_display(self, obj):
         # Translate the category choice to a human-readable value
@@ -68,12 +77,4 @@ class RestaurantListingSerializer(serializers.ModelSerializer):
         # Translate the price range choice to a human-readable value
         return dict(Restaurant.PRICE_RANGE_CHOICES).get(obj.price_range, obj.price_range)
 
-class RestaurantPhotoSerializer(serializers.ModelSerializer):
-    thumbnail_url = serializers.SerializerMethodField()
-    class Meta:
-        model = RestaurantPhoto
-        fields = ['id', 'thumbnail_url', 'uploaded_at']
-    
-    def get_thumbnail_url(self, obj):
-        return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.thumbnail_s3_key}"
 

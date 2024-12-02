@@ -176,3 +176,8 @@ AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
 # Validate configuration
 if not all([AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME]):
     raise ValueError("AWS configuration is incomplete. Please set all required environment variables.")
+
+
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+]

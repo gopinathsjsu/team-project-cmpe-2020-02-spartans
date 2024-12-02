@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 from .serializers import RestaurantSerializer, RestaurantDetailSerializer, RestaurantListingSerializer
 from .models import Restaurant, RestaurantPhoto
-from .utils import upload_to_s3, delete_s3_object
+from .utils import upload_to_s3, delete_s3_object, generate_thumbnail
 from accounts.permissions import IsAdmin, IsBusinessOwner
 
 class RestaurantSearchView(APIView):
@@ -94,7 +94,7 @@ class RestaurantDetailView(APIView):
         restaurant_id = kwargs.get('id')  # Extract the 'id' from kwargs
         try:
             restaurant = Restaurant.objects.get(id=restaurant_id)
-            serializer = RestaurantSerializer(restaurant)
+            serializer = RestaurantDetailSerializer(restaurant)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Restaurant.DoesNotExist:
             return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -177,8 +177,12 @@ class AddRestaurantListingView(APIView):
             restaurant = serializer.save(owner=request.user)
             photos = request.FILES.getlist('photos')  # Expecting multiple photos
             for photo in photos:
-                photo_key = upload_to_s3(photo)  # Implement this function to upload and return the S3 key
-                RestaurantPhoto.objects.create(restaurant=restaurant, photo_key=photo_key)
+                photo_key = upload_to_s3(photo)
+                thumbnail_file = generate_thumbnail(photo)
+                thumbnail_key = "thumbnail/" + photo_key
+                upload_to_s3(thumbnail_file, thumbnail_key)
+                RestaurantPhoto.objects.create(restaurant=restaurant, photo_key=photo_key, thumbnail_s3_key = thumbnail_key)
+
 
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
@@ -198,7 +202,11 @@ class UpdateRestaurantListingView(APIView):
             photos = request.FILES.getlist('photos')
             for photo in photos:
                 photo_key = upload_to_s3(photo)
-                RestaurantPhoto.objects.create(restaurant=listing, photo_key=photo_key)
+                thumbnail_file = generate_thumbnail(photo)
+                thumbnail_key = "thumbnail/" + photo_key
+                upload_to_s3(thumbnail_file, thumbnail_key)
+                RestaurantPhoto.objects.create(restaurant=listing, photo_key=photo_key, thumbnail_s3_key = thumbnail_key)
+
 
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -268,7 +276,11 @@ class UploadPhotoView(APIView):
             photos = request.FILES.getlist('photos')
             for photo in photos:
                 photo_key = upload_to_s3(photo)
-                RestaurantPhoto.objects.create(restaurant=restaurant, photo_key=photo_key)
+                print("resetting buffer")
+                thumbnail_file = generate_thumbnail(photo)
+                thumbnail_key = "thumbnail/" + photo_key
+                upload_to_s3(thumbnail_file, thumbnail_key)
+                RestaurantPhoto.objects.create(restaurant=restaurant, photo_key=photo_key, thumbnail_s3_key = thumbnail_key)
 
 
             return Response({"message": "Photos uploaded successfully.", "status": "uploaded"}, status=status.HTTP_201_CREATED)

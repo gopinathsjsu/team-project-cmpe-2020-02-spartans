@@ -144,3 +144,5 @@ media/
 
 # Jenkins specific files
 *.jenkins
+*.miniodata
+*.tmp
