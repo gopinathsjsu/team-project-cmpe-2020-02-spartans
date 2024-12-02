@@ -2,6 +2,8 @@ import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 from django.conf import settings
 import uuid
+from PIL import Image
+from io import BytesIO
 
 def upload_to_s3(file):
     """
@@ -20,6 +22,7 @@ def upload_to_s3(file):
         s3_client = boto3.client(
             's3',
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            endpoint_url='http://localhost:9004',
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION,
         )
@@ -64,6 +67,7 @@ def delete_s3_object(s3_key):
             's3',
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            endpoint_url='http://localhost:9004',
             region_name=settings.AWS_REGION,
         )
         s3_client.delete_object(Bucket=settings.AWS_S3_BUCKET_NAME, Key=s3_key)
@@ -72,3 +76,13 @@ def delete_s3_object(s3_key):
         # Log the error for debugging
         print(f"Error deleting object {s3_key}: {e}")
         return False
+
+def generate_thumbnail(self, photo_file):
+        image = Image.open(photo_file)
+        image.thumbnail((150, 150))  # Resize the image to a thumbnail
+
+        buffer = BytesIO()
+        image.save(buffer, format='JPEG')
+        buffer.seek(0)
+
+        return buffer

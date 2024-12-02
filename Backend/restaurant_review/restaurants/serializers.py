@@ -1,7 +1,9 @@
 from rest_framework import serializers
+
+from django.conf import settings
 from .models import Restaurant, RestaurantPhoto
 
-class RestaurantSerializer(serializers.ModelSerializer):
+class   RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         exclude = ['owner'] 
@@ -67,7 +69,11 @@ class RestaurantListingSerializer(serializers.ModelSerializer):
         return dict(Restaurant.PRICE_RANGE_CHOICES).get(obj.price_range, obj.price_range)
 
 class RestaurantPhotoSerializer(serializers.ModelSerializer):
+    thumbnail_url = serializers.SerializerMethodField()
     class Meta:
         model = RestaurantPhoto
-        fields = ['id', 'photo_key', 'uploaded_at']
+        fields = ['id', 'thumbnail_url', 'uploaded_at']
+    
+    def get_thumbnail_url(self, obj):
+        return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.thumbnail_s3_key}"
 

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RestaurantSearchView, RestaurantListView, RestaurantDetailView, AddRestaurantListingView, DeletePhotoView
+from .views import RestaurantSearchView, RestaurantListView, RestaurantDetailView, AddRestaurantListingView, DeletePhotoView, PhotoDetailView, UploadPhotoView
 
 from reviews.views import GetReviewsView, SubmitReviewView
 urlpatterns = [
@@ -10,5 +10,8 @@ urlpatterns = [
     path('<int:restaurant_id>/reviews/', GetReviewsView.as_view(), name='get-reviews'),
     path('<int:restaurant_id>/reviews/add/', SubmitReviewView.as_view(), name='submit-review'),
     path('photos/<int:photo_id>/delete/', DeletePhotoView.as_view(), name='delete-photo'),
+    path('restaurants/<int:restaurant_id>/photos/upload/', UploadPhotoView.as_view(), name='upload-photo'),
+    path('photos/<int:photo_id>/', PhotoDetailView.as_view(), name='photo-detail'),
+
 
 ]

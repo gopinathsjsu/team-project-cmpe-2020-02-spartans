@@ -58,6 +58,7 @@ class RestaurantPhoto(models.Model):
         related_name='photos'
     )
     photo_key = models.CharField(max_length=255)  # Store the S3 object key
+    thumbnail_s3_key = models.CharField(max_length=255, blank=True, null=True)  # Thumbnail
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

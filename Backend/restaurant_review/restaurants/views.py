@@ -5,6 +5,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.permissions import IsAuthenticated
+
+from django.conf import settings
 from .serializers import RestaurantSerializer, RestaurantDetailSerializer, RestaurantListingSerializer
 from .models import Restaurant, RestaurantPhoto
 from .utils import upload_to_s3, delete_s3_object
@@ -244,3 +246,46 @@ class DeletePhotoView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class UploadPhotoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, restaurant_id):
+        """
+        Upload photos for a restaurant.
+        """
+        try:
+            # Fetch the restaurant object to ensure the user owns it
+            restaurant = Restaurant.objects.get(id=restaurant_id)
+
+            if restaurant.owner != request.user:
+                return Response({"error": "Access denied."}, status=status.HTTP_403_FORBIDDEN)
+
+            # Check if the file is in the request
+            if 'photos' not in request.FILES:
+                return Response({"error": "No photos provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+            photos = request.FILES.getlist('photos')
+            for photo in photos:
+                photo_key = upload_to_s3(photo)
+                RestaurantPhoto.objects.create(restaurant=restaurant, photo_key=photo_key)
+
+
+            return Response({"message": "Photos uploaded successfully.", "status": "uploaded"}, status=status.HTTP_201_CREATED)
+
+        except Restaurant.DoesNotExist:
+            return Response({"error": "Restaurant not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class PhotoDetailView(APIView):
+    def get(self, request, photo_id):
+        try:
+            photo = RestaurantPhoto.objects.get(id=photo_id)
+            full_resolution_url = f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{photo.s3_key}"
+            return Response({"photo_url": full_resolution_url}, status=status.HTTP_200_OK)
+        except RestaurantPhoto.DoesNotExist:
+            return Response({"error": "Photo not found."}, status=status.HTTP_404_NOT_FOUND)
