@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Register.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
 function Register() {
     const [isBusinessOwner, setIsBusinessOwner] = useState(false);
     const [formData, setFormData] = useState({
@@ -51,13 +52,13 @@ function Register() {
                 username: formData.username.trim(),
                 email: formData.email.trim(),
                 password: formData.password.trim(),
-                confirm_password: formData.confirmPassword.trim(), // Include confirm_password
+                confirm_password: formData.confirmPassword.trim(),
                 role: isBusinessOwner ? 'owner' : 'user',
                 business_name: isBusinessOwner ? formData.businessName.trim() : undefined,
                 address: isBusinessOwner ? formData.address.trim() : undefined,
                 contact: isBusinessOwner ? formData.contact.trim() : undefined,
             });
-            setMessage(response.data.message); // Success
+            setMessage(response.data.message); 
         } catch (error) {
             if (error.response) {
                 alert("Error: " + JSON.stringify(error.response.data));

@@ -9,9 +9,9 @@ from .serializers import RestaurantSerializer, RestaurantDetailSerializer
 from .models import Restaurant
 from accounts.permissions import IsAdmin, IsBusinessOwner
 
+# View for searching restaurants using search bar
 class RestaurantSearchView(APIView):
     def get(self, request):
-        # Extract query parameters
         name = request.query_params.get('name', '').strip()
         zip_code = request.query_params.get('zip_code', '').strip()
         cuisine_type = request.query_params.get('cuisine_type', '').strip()
@@ -20,10 +20,8 @@ class RestaurantSearchView(APIView):
         min_rating = request.query_params.get('min_rating', '')
         max_rating = request.query_params.get('max_rating', '')
 
-        # Start with all restaurants
         queryset = Restaurant.objects.filter(verified=True)
 
-        # Apply filters
         if name:
             queryset = queryset.filter(name__icontains=name)
         if zip_code:
@@ -42,18 +40,16 @@ class RestaurantSearchView(APIView):
             except ValueError:
                 return Response({"error": "Invalid rating range"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Serialize and return filtered results
         serializer = RestaurantSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+# View for listing restaurants in DB
 class RestaurantListView(ListAPIView):
     serializer_class = RestaurantSerializer
 
     def get_queryset(self):
         queryset = Restaurant.objects.all()
 
-        # Query Parameters
         search = self.request.query_params.get('search', None)
         category = self.request.query_params.get('category', None)
         cuisine = self.request.query_params.get('cuisine', None)
@@ -62,7 +58,6 @@ class RestaurantListView(ListAPIView):
         min_rating = self.request.query_params.get('min_rating', '')
         max_rating = self.request.query_params.get('max_rating', '')
 
-        # Filters
         if search:
             queryset = queryset.filter(Q(name__icontains=search) | Q(cuisine_type__icontains=search))
         if category:
@@ -81,14 +76,14 @@ class RestaurantListView(ListAPIView):
             except ValueError:
                 pass
 
-        # Sort by recommendation (e.g., highest rating first)
         queryset = queryset.order_by('-rating')
 
         return queryset
 
+# view for restaurant details page
 class RestaurantDetailView(APIView):
     def get(self, request, *args, **kwargs):
-        restaurant_id = kwargs.get('id')  # Extract the 'id' from kwargs
+        restaurant_id = kwargs.get('id')  
         try:
             restaurant = Restaurant.objects.get(id=restaurant_id)
             serializer = RestaurantSerializer(restaurant)
@@ -96,15 +91,13 @@ class RestaurantDetailView(APIView):
         except Restaurant.DoesNotExist:
             return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
     def put(self, request, *args, **kwargs):
-        restaurant_id = kwargs.get('id')  # Extract the 'id' from kwargs
+        restaurant_id = kwargs.get('id') 
         try:
             restaurant = Restaurant.objects.get(id=restaurant_id)
 
-            # Check if the logged-in user is the owner of the restaurant
             if restaurant.owner != request.user:
                 return Response({"error": "You are not authorized to edit this restaurant."}, status=status.HTTP_403_FORBIDDEN)
 
-            # Deserialize the data
             serializer = RestaurantDetailSerializer(restaurant, data=request.data, partial=True)  # Use `partial=True` to allow partial updates
             if serializer.is_valid():
                 serializer.save()
@@ -112,15 +105,14 @@ class RestaurantDetailView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Restaurant.DoesNotExist:
             return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+
+# view for duplicate listing        
 class DuplicateListingsView(APIView):
     def get(self, request):
-        # Group restaurants by name, address, city, state, and zip_code
         duplicates = Restaurant.objects.values('name', 'address', 'city', 'state', 'zip_code') \
             .annotate(count=Count('id')) \
             .filter(count__gt=1)
 
-        # Collect duplicate listings
         duplicate_listings = []
         for duplicate in duplicates:
             listings = Restaurant.objects.filter(
@@ -155,7 +147,7 @@ class AddListingView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=request.user)  # Set the owner to the authenticated user
+            serializer.save(owner=request.user) 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

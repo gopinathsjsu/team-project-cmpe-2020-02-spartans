@@ -32,13 +32,12 @@ function Index() {
         { value: 'gluten-free', label: 'Gluten-free' },
     ];
 
-    // Handle Search Submit
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
         let minRating = '';
         let maxRating = '';
         if (rating) {
-            const parsedRating = parseInt(rating, 10); // Convert rating to an integer
+            const parsedRating = parseInt(rating, 10); 
             if (!isNaN(parsedRating)) {
                 minRating = parsedRating;
                 maxRating = parsedRating < 5 ? parsedRating + 0.99 : parsedRating;
@@ -47,7 +46,6 @@ function Index() {
         console.log("Searching for:", searchQuery, zipCode, cuisine, foodType, priceRange, rating);
 
         try {
-            // Build query parameters
             const queryParams = new URLSearchParams({
                 name: searchQuery,
                 zip_code: zipCode,
@@ -58,18 +56,11 @@ function Index() {
                 max_rating: maxRating || '',
             }).toString();
 
-            // Make the API call
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);
-
-            // Check if the response is OK
             if (!response.ok) {
                 throw new Error("Failed to fetch restaurants");
             }
-
-            // Parse the JSON response
             const data = await response.json();
-
-            // Update the restaurants state with the API response
             setRestaurants(data);
         } catch (error) {
             console.error("Error fetching restaurants:", error);

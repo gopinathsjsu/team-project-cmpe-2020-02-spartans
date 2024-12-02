@@ -29,7 +29,7 @@ api.interceptors.request.use(
     }
 );
 
-// Helper function to check token expiration
+// Check if token is expired
 const isTokenExpired = (token) => {
     try {
         const [, payload] = token.split('.');

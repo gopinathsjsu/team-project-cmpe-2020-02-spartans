@@ -19,7 +19,6 @@ class RegisterView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
-        # Log validation errors to console
         print("Validation Errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -28,7 +27,6 @@ class LoginView(APIView):
         email = request.data.get("email")
         password = request.data.get("password")
 
-        # Log incoming data for debugging
         print("Email:", email)
         print("Password:", password)
 
@@ -39,14 +37,14 @@ class LoginView(APIView):
             return Response({
                 "refresh": str(refresh),
                 "access": str(refresh.access_token),
-                "role": user.role  # Assuming role is in your CustomUser model
+                "role": user.role 
             }, status=status.HTTP_200_OK)
 
         return Response({"error": "Invalid email or password"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        print("Incoming data:", attrs)  # Debugging log
+        print("Incoming data:", attrs) 
         email = attrs.get('email')
         password = attrs.get('password')
 
@@ -69,27 +67,22 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 class AdminDashboardView(APIView):
     permission_classes = [IsAdmin]
-
     def get(self, request):
         return Response({"message": "Welcome, Admin!"})
 
 class BusinessOwnerDashboardView(APIView):
     permission_classes = [IsBusinessOwner]
-
     def get(self, request):
         return Response({"message": "Welcome, Business Owner!"})
 
 class UserDashboardView(APIView):
     permission_classes = [IsUser]
-
     def get(self, request):
         return Response({"message": "Welcome, User!"})
     
 class OwnerListingsView(APIView):
     permission_classes = [IsBusinessOwner]
-
     def get(self, request):
-        # Fetch restaurants owned by the logged-in user
         restaurants = Restaurant.objects.filter(owner=request.user)
         serializer = RestaurantSerializer(restaurants, many=True)
         return Response(serializer.data)
