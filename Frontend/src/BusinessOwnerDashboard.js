@@ -145,6 +145,7 @@ function BusinessOwnerDashboard() {
                                     >
                                         <div className="listing-card card">
                                             <div className="card-body">
+                                           
                                                 <h5 className="card-title">{listing.name}</h5>
                                                 <p className="card-text">{listing.description}</p>
                                                 <p><strong>Address:</strong> {listing.address}</p>
