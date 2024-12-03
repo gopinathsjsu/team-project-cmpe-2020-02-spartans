@@ -91,11 +91,12 @@ class RestaurantDetailView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Restaurant.DoesNotExist:
             return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
+        
     def put(self, request, *args, **kwargs):
         restaurant_id = kwargs.get('id') 
         try:
             restaurant = Restaurant.objects.get(id=restaurant_id)
-
+            
             if restaurant.owner != request.user:
                 return Response({"error": "You are not authorized to edit this restaurant."}, status=status.HTTP_403_FORBIDDEN)
 

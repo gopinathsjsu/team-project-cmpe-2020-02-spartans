@@ -1,10 +1,13 @@
 from rest_framework import serializers
-from .models import Restaurant
+from .models import Restaurant, CuisineType, FoodType
 
 class RestaurantSerializer(serializers.ModelSerializer):
-    cuisine_type = serializers.SerializerMethodField()
-    food_type = serializers.SerializerMethodField()
-
+    cuisine_type = serializers.SlugRelatedField(
+        many=True, slug_field='name', queryset=CuisineType.objects.all()
+    )
+    food_type = serializers.SlugRelatedField(
+        many=True, slug_field='name', queryset=FoodType.objects.all()
+    )
     class Meta:
         model = Restaurant
         fields = [
