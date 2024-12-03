@@ -44,6 +44,13 @@ function EditListing() {
 
             if (response.ok) {
                 const data = await response.json();
+                const mappedCuisine = data.cuisine_type.map((name) =>
+                    CUISINE_CHOICES.find((choice) => choice.label === name)
+                );
+                const mappedFoodType = data.food_type.map((name) =>
+                    FOOD_TYPE_CHOICES.find((choice) => choice.label === name)
+                );
+
                 setFormData({
                     name: data.name,
                     hours_of_operation: data.hours_of_operation,
@@ -51,8 +58,8 @@ function EditListing() {
                     phone_number: data.phone_number,
                     description: data.description,
                     photos: null, // Photos will be uploaded separately
-                    cuisine_type: data.cuisine_type.map((cuisine) => ({ value: cuisine, label: cuisine })),
-                    food_type: data.food_type.map((food) => ({ value: food, label: food })),
+                    cuisine_type: mappedCuisine,
+                    food_type: mappedFoodType,
                 });
             } else {
                 throw new Error('Failed to fetch restaurant details.');
@@ -82,14 +89,14 @@ function EditListing() {
             const form = new FormData();
             Object.keys(formData).forEach((key) => {
                 if (key === "cuisine_type" || key === "food_type") {
-                    formData[key].forEach((item) => form.append(key, item.value))
+                    formData[key]?.forEach((item) => form.append(key, item.value));
                 } else if (formData[key]) {
                     form.append(key, formData[key]);
                 }
             });
-
+    
             console.log("Submitting Form Data:", Array.from(form.entries()));
-
+    
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
                 method: 'PUT',
                 headers: {
@@ -97,17 +104,19 @@ function EditListing() {
                 },
                 body: form,
             });
-
+    
             if (response.ok) {
                 alert('Restaurant updated successfully!');
-                navigate('/manage-listings');
+                fetchRestaurantDetails(); // Re-fetch data to refresh the form
             } else {
-                throw new Error('Failed to update restaurant.');
+                const errorData = await response.json();
+                console.error("Error Details:", errorData);
+                alert('Failed to update restaurant. Please check your input.');
             }
         } catch (err) {
-            console.error(err);
+            console.error('An error occurred:', err);
         }
-    };
+    };    
 
     return (
         <div className="container">
