@@ -1,4 +1,4 @@
-
+/* 
 
 
 .dashboard-container {
@@ -61,4 +61,97 @@
 .listing-card .card-title {
     color: #007bff;
     font-weight: 700;
+} */
+
+
+.dashboard-container {
+    background-color: #ffffff; /* Clean white background for a modern look */
+    border-radius: 15px; /* Slightly rounded corners for a smoother design */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* Deeper shadow for better depth */
+    padding: 30px; /* Extra padding for a more spacious feel */
+    margin: 20px auto; /* Center the container and add spacing */
+    max-width: 1200px; /* Limit width for better readability */
+}
+
+.dashboard-header h2 {
+    font-weight: 700;
+    color: #2c3e50; /* Darker shade for better readability */
+    font-size: 2rem; /* Larger, more impactful title */
+    margin-bottom: 10px; /* Add spacing below the title */
+}
+
+.dashboard-header p {
+    color: #7f8c8d; /* Muted gray for subtitle */
+    font-size: 1rem; /* Slightly smaller font for hierarchy */
+    margin-bottom: 20px; /* Add spacing below the paragraph */
+}
+
+.actions-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px; /* Increase gap for better spacing */
+}
+
+.action-card {
+    background-color: #f9fafc; /* Softer white background for contrast */
+    border-radius: 12px; /* More rounded corners for a modern touch */
+    padding: 25px; /* More padding for balance */
+    text-align: center;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+    transition: transform 0.4s ease, box-shadow 0.4s ease; /* Longer transition for smoother effect */
+    cursor: pointer;
+    min-width: 220px; /* Increase width for better design */
+    max-width: 300px; /* Limit width for uniformity */
+}
+
+.action-card h5 {
+    font-weight: 600;
+    margin-top: 15px; /* More spacing for hierarchy */
+    color: #34495e; /* Darker gray for better readability */
+    font-size: 1.2rem; /* Slightly larger for emphasis */
+}
+
+.action-card:hover {
+    transform: translateY(-10px); /* Lift effect for a more dynamic feel */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+.listing-cards .listing-card {
+    background-color: #fdfdfd; /* Light off-white for subtle contrast */
+    border: 1px solid #e1e5eb; /* Add a light border for separation */
+    border-radius: 12px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    overflow: hidden; /* Clip content to fit card shape */
+}
+
+.listing-cards .listing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Add depth on hover */
+}
+
+.listing-card .card-title {
+    color: #2980b9; /* Vibrant blue for better focus */
+    font-weight: 700;
+    font-size: 1.25rem; /* Larger font for emphasis */
+    text-transform: uppercase; /* Capitalized for stronger hierarchy */
+    margin-bottom: 10px; /* Add spacing below the title */
+}
+
+/* Additional Styling for Buttons or Interactive Elements */
+.action-card button, .listing-card button {
+    background-color: #2980b9; /* Primary blue for action buttons */
+    color: #fff; /* White text for contrast */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.action-card button:hover, .listing-card button:hover {
+    background-color: #1f648b; /* Darker blue on hover */
+    transform: translateY(-3px); /* Slight lift for interactivity */
 }
