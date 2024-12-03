@@ -5,7 +5,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RestaurantSerializer, RestaurantDetailSerializer
-from .models import Restaurant
+from .models import Restaurant, CuisineType, FoodType
 from accounts.permissions import IsAdmin, IsBusinessOwner
 
 # View for searching restaurants using search bar
@@ -19,7 +19,7 @@ class RestaurantSearchView(APIView):
         min_rating = request.query_params.get('min_rating', '')
         max_rating = request.query_params.get('max_rating', '')
 
-        queryset = Restaurant.objects.filter(verified=True)
+        queryset = Restaurant.objects.filter()
 
         if name:
             queryset = queryset.filter(name__icontains=name)
@@ -147,18 +147,31 @@ class AddListingView(APIView):
     permission_classes = [IsBusinessOwner]
 
     def post(self, request, *args, **kwargs):
-        cuisine_type_ids = request.data.pop('cuisine_type', [])
-        food_type_ids = request.data.pop('food_type', [])
+        cuisine_type_input = request.data.get('cuisine_type', [])
+        food_type_input = request.data.get('food_type', [])
+
+        try:
+            # convert id of cuisine type to name
+            if isinstance(cuisine_type_input[0], int):
+                cuisine_names = list(CuisineType.objects.filter(id__in=cuisine_type_input).values_list('name', flat=True))
+            else:
+                cuisine_names = cuisine_type_input
+            # convert id of food type to name
+            if isinstance(food_type_input[0], int):
+                food_names = list(FoodType.objects.filter(id__in=food_type_input).values_list('name', flat=True))
+            else:
+                food_names = food_type_input
+        except Exception as e:
+            return Response({"error": f"Error processing cuisine_type or food_type: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.data['cuisine_type'] = cuisine_names
+        request.data['food_type'] = food_names
 
         serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
-            restaurant = serializer.save(owner=request.user) 
-
-            if cuisine_type_ids:
-                restaurant.cuisine_type.add(*cuisine_type_ids)
-            if food_type_ids:
-                restaurant.food_type.add(*food_type_ids)
-                
+            restaurant = serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        # error debugging
+        print("Validation Errors:", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

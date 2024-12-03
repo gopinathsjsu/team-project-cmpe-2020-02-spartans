@@ -48,7 +48,6 @@ class Restaurant(models.Model):
     hours_of_operation = models.CharField(max_length=100)
     website = models.URLField(blank=True, null=True)
     phone_number = models.CharField(max_length=15)
-    verified = models.BooleanField(default=False)  
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     review_count = models.PositiveIntegerField(default=0)

@@ -42,7 +42,8 @@ function AddListing() {
     ];
 
     const handleSelectChange = (selected, field) => {
-        setFormData({ ...formData, [field]: selected.map((option) => option.value) });
+        const updatedValues = selected.map((option) => option.label); 
+        setFormData({ ...formData, [field]: updatedValues });
     };
 
     const handleChange = (e) => {
@@ -50,34 +51,35 @@ function AddListing() {
         setFormData({ ...formData, [name]: value });
     };
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+        console.log('Submitting Data:', formData);
         const response = await api.post('/restaurants/add/', formData);
-        if (response.status === 201) {
-            setSuccessMessage('Restaurant listing added successfully!');
-            setFormData({
-                name: '',
-                address: '',
-                city: '',
-                state: '',
-                zip_code: '',
-                cuisine_type: [],
-                food_type: [],
-                price_range: '',
-                hours_of_operation: '',
-                website: '',
-                phone_number: '',
-            });
-        }
-    } catch (error) {
-        if (error.response && error.response.data) {
+            if (response.status === 201) {
+                setSuccessMessage('Restaurant listing added successfully!');
+                setFormData({
+                    name: '',
+                    address: '',
+                    city: '',
+                    state: '',
+                    zip_code: '',
+                    cuisine_type: [],
+                    food_type: [],
+                    price_range: '',
+                    hours_of_operation: '',
+                    website: '',
+                    phone_number: '',
+                });
+            }
+        } catch (error) {
+            if (error.response && error.response.data) {
             setErrorMessage(error.response.data.error || 'Failed to add listing.');
-        } else {
-            setErrorMessage('An error occurred. Please try again later.');
+            } else {
+                setErrorMessage('An error occurred. Please try again later.');
+            }
         }
-    }
-};
+    };
 
     return (
         <div className="add-listing-container d-flex flex-column align-items-center">

@@ -36,7 +36,6 @@ def repopulate_restaurants(n=50):
                 hours_of_operation=f"{random.randint(8, 11)}:00 AM - {random.randint(8, 11)}:00 PM",
                 website=fake.url(),
                 phone_number=fake.phone_number()[:15],
-                verified=True,
                 latitude=fake.latitude(),
                 longitude=fake.longitude(),
             )

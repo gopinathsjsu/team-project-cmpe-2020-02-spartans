@@ -41,7 +41,6 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             "phone_number",
             "latitude",
             "longitude",
-            "verified",
             "reviews",
         ]
 
