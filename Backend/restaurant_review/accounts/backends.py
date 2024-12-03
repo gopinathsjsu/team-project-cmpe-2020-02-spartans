@@ -1,10 +1,8 @@
 from django.contrib.auth.backends import ModelBackend
 from .models import CustomUser
 
+
 class EmailAuthBackend(ModelBackend):
-    """
-    Authenticate users using their email and password.
-    """
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
             # Use email for authentication

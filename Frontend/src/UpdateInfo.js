@@ -24,7 +24,6 @@ function UpdateInfo({ existingData }) {
     });
 
     useEffect(() => {
-        // Load existing data if available
         if (existingData) {
             setFormData(existingData);
         }

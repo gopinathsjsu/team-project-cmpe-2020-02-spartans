@@ -10,14 +10,14 @@ function SearchRestaurants() {
     const [restaurants, setRestaurants] = useState([]);
 
     const handleSearchSubmit = async (e) => {
-        e.preventDefault(); // Prevent default form submission behavior
+        e.preventDefault(); 
 
         // Initialize minRating and maxRating
         let minRating = '';
         let maxRating = '';
 
         if (rating) {
-            const parsedRating = parseInt(rating, 10); // Ensure rating is parsed as an integer
+            const parsedRating = parseInt(rating, 10); 
             if (!isNaN(parsedRating)) {
                 minRating = parsedRating;
                 maxRating = parsedRating < 5 ? parsedRating + 0.99 : parsedRating;
@@ -32,7 +32,7 @@ function SearchRestaurants() {
             max_rating: maxRating || '',
         }).toString();
 
-        console.log('Constructed Query Params:', queryParams); // Debugging query params
+        console.log('Constructed Query Params:', queryParams); 
 
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);

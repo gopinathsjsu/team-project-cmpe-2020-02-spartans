@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminDashboard.css';
-import { refreshAccessToken } from './auth.js';
 import { useNavigate } from 'react-router-dom';
 
 function AdminDashboard() {

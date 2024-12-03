@@ -13,15 +13,12 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError({"password": "Passwords do not match."})
-
-        # Validate Business Owner fields if role is "owner"
         if data.get('role') == 'owner' and not (data.get('business_name') and data.get('address') and data.get('contact')):
             raise serializers.ValidationError({"role": "Business owners must provide business details."})
-        
         return data
 
     def create(self, validated_data):
-        validated_data.pop('confirm_password')  # Remove confirm_password before saving
+        validated_data.pop('confirm_password') 
         user = CustomUser.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],

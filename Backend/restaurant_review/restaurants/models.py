@@ -1,13 +1,12 @@
 from django.db import models
 from django.conf import settings
-from accounts.models import CustomUser  # Import the CustomUser model to link owners
+from accounts.models import CustomUser  
 
 class Restaurant(models.Model):
     CATEGORY_CHOICES = [
         ('fast_food', 'Fast Food'),
         ('fine_dining', 'Fine Dining'),
         ('cafe', 'Cafe'),
-        # Add more categories as needed
     ]
     FOOD_TYPE_CHOICES = [
         ('vegan', 'Vegan'),
@@ -33,7 +32,7 @@ class Restaurant(models.Model):
     hours_of_operation = models.CharField(max_length=100)
     website = models.URLField(blank=True, null=True)
     phone_number = models.CharField(max_length=15)
-    verified = models.BooleanField(default=False)  # For admin approval
+    verified = models.BooleanField(default=False)  
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
 
@@ -41,7 +40,7 @@ class Restaurant(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="restaurants")
 
     def update_rating(self):
-        reviews = self.reviews.all()  # Access all related reviews using related_name
+        reviews = self.reviews.all() 
         if reviews.exists():
             self.average_rating = reviews.aggregate(models.Avg('rating'))['rating__avg']
         else:

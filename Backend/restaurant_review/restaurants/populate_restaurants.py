@@ -6,13 +6,11 @@ from accounts.models import CustomUser
 fake = Faker()
 
 def repopulate_restaurants(n=50):
-    # Fetch owners
     owners = CustomUser.objects.filter(role='owner')
     if not owners.exists():
         print("No owners available. Please create some owner accounts first.")
         return
 
-    # Define options
     cuisines = ['Mexican', 'Greek', 'Italian', 'Chinese']
     food_types = ['vegetarian', 'vegan', 'gluten-free']
     price_ranges = ['$', '$$', '$$$']
@@ -46,5 +44,4 @@ def repopulate_restaurants(n=50):
         except Exception as e:
             print(f"Error adding restaurant: {e}")
 
-# Run the script
-repopulate_restaurants(100)  # Populate with 100 restaurants
+repopulate_restaurants(100)  
