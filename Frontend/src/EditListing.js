@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function EditListing() {
@@ -11,7 +12,22 @@ function EditListing() {
         phone_number: '',
         description: '',
         photos: null,
+        cuisine_type: [],
+        food_type: [],
     });
+
+    const CUISINE_CHOICES = [
+        { value: 1, label: 'Greek' },
+        { value: 2, label: 'Mexican' },
+        { value: 3, label: 'Italian' },
+        { value: 4, label: 'Chinese' },
+    ];
+
+    const FOOD_TYPE_CHOICES = [
+        { value: 1, label: 'Vegan' },
+        { value: 2, label: 'Vegetarian' },
+        { value: 3, label: 'Gluten-free' },
+    ];
 
     useEffect(() => {
         fetchRestaurantDetails();
@@ -35,6 +51,8 @@ function EditListing() {
                     phone_number: data.phone_number,
                     description: data.description,
                     photos: null, // Photos will be uploaded separately
+                    cuisine_type: data.cuisine_type.map((cuisine) => ({ value: cuisine, label: cuisine })),
+                    food_type: data.food_type.map((food) => ({ value: food, label: food })),
                 });
             } else {
                 throw new Error('Failed to fetch restaurant details.');
@@ -49,6 +67,10 @@ function EditListing() {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleSelectChange = (selected, field) => {
+        setFormData({ ...formData, [field]: selected });
+    };
+
     const handleFileChange = (e) => {
         setFormData({ ...formData, photos: e.target.files[0] });
     };
@@ -59,10 +81,14 @@ function EditListing() {
             const accessToken = sessionStorage.getItem('accessToken');
             const form = new FormData();
             Object.keys(formData).forEach((key) => {
-                if (formData[key]) {
+                if (key === "cuisine_type" || key === "food_type") {
+                    formData[key].forEach((item) => form.append(key, item.value))
+                } else if (formData[key]) {
                     form.append(key, formData[key]);
                 }
             });
+
+            console.log("Submitting Form Data:", Array.from(form.entries()));
 
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
                 method: 'PUT',
@@ -95,6 +121,26 @@ function EditListing() {
                         value={formData.name}
                         onChange={handleInputChange}
                         className="form-control"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Cuisine Type</label>
+                    <Select
+                        options={CUISINE_CHOICES}
+                        isMulti
+                        value={formData.cuisine_type}
+                        onChange={(selected) => handleSelectChange(selected, 'cuisine_type')}
+                        placeholder="Select Cuisine Types"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Food Type</label>
+                    <Select
+                        options={FOOD_TYPE_CHOICES}
+                        isMulti
+                        value={formData.food_type}
+                        onChange={(selected) => handleSelectChange(selected, 'food_type')}
+                        placeholder="Select Food Types"
                     />
                 </div>
                 <div className="form-group">

@@ -3,8 +3,7 @@ from django.db.models import Q, Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from .serializers import RestaurantSerializer, RestaurantDetailSerializer
 from .models import Restaurant
 from accounts.permissions import IsAdmin, IsBusinessOwner
@@ -27,9 +26,11 @@ class RestaurantSearchView(APIView):
         if zip_code:
             queryset = queryset.filter(zip_code=zip_code)
         if cuisine_type:
-            queryset = queryset.filter(cuisine_type__iexact=cuisine_type)
-        if food_type:
-            queryset = queryset.filter(food_type__iexact=food_type)
+            cuisine_type_ids = [int(c) for c in cuisine_type.split(",")]
+            queryset = queryset.filter(cuisine_type__id__in=cuisine_type_ids).distinct()
+        if food_type and any(food_type):
+            food_type_ids = [int(c) for c in food_type.split(",")]
+            queryset = queryset.filter(food_type__id__in=food_type_ids).distinct()
         if price_range:
             queryset = queryset.filter(price_range=price_range)
         if min_rating and max_rating:
@@ -145,9 +146,18 @@ class AddListingView(APIView):
     permission_classes = [IsBusinessOwner]
 
     def post(self, request, *args, **kwargs):
+        cuisine_type_ids = request.data.pop('cuisine_type', [])
+        food_type_ids = request.data.pop('food_type', [])
+
         serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=request.user) 
+            restaurant = serializer.save(owner=request.user) 
+
+            if cuisine_type_ids:
+                restaurant.cuisine_type.add(*cuisine_type_ids)
+            if food_type_ids:
+                restaurant.food_type.add(*food_type_ids)
+                
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

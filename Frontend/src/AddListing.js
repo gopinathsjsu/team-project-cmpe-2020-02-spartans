@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddListing.css';
 import api from './api';
@@ -10,8 +11,8 @@ function AddListing() {
         city: '',
         state: '',
         zip_code: '',
-        cuisine_type: '',
-        food_type: '',
+        cuisine_type: [],
+        food_type: [],
         price_range: '',
         hours_of_operation: '',
         website: '',
@@ -22,16 +23,16 @@ function AddListing() {
     const [errorMessage, setErrorMessage] = useState('');
 
     const CUISINE_CHOICES = [
-        { value: 'greek', label: 'Greek' },
-        { value: 'mexican', label: 'Mexican' },
-        { value: 'italian', label: 'Italian' },
-        { value: 'chinese', label: 'Chinese' },
+        { value: 1, label: 'Greek' },
+        { value: 2, label: 'Mexican' },
+        { value: 3, label: 'Italian' },
+        { value: 4, label: 'Chinese' },
     ];
 
     const FOOD_TYPE_CHOICES = [
-        { value: 'vegan', label: 'Vegan' },
-        { value: 'vegetarian', label: 'Vegetarian' },
-        { value: 'non_veg', label: 'Non-Vegetarian' },
+        { value: 1, label: 'Vegan' },
+        { value: 2, label: 'Vegetarian' },
+        { value: 3, label: 'Gluten-free' },
     ];
 
     const PRICE_RANGE_CHOICES = [
@@ -39,6 +40,10 @@ function AddListing() {
         { value: '$$', label: 'Moderate ($$)' },
         { value: '$$$', label: 'Expensive ($$$)' },
     ];
+
+    const handleSelectChange = (selected, field) => {
+        setFormData({ ...formData, [field]: selected.map((option) => option.value) });
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -57,8 +62,8 @@ const handleSubmit = async (e) => {
                 city: '',
                 state: '',
                 zip_code: '',
-                cuisine_type: '',
-                food_type: '',
+                cuisine_type: [],
+                food_type: [],
                 price_range: '',
                 hours_of_operation: '',
                 website: '',
@@ -147,39 +152,23 @@ const handleSubmit = async (e) => {
                     {/* Cuisine Type */}
                     <div className="form-group mb-3">
                         <label>Cuisine Type</label>
-                        <select
-                            className="form-control"
-                            name="cuisine_type"
-                            value={formData.cuisine_type}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select Cuisine Type</option>
-                            {CUISINE_CHOICES.map((choice) => (
-                                <option key={choice.value} value={choice.value}>
-                                    {choice.label}
-                                </option>
-                            ))}
-                        </select>
+                        <Select
+                            options={CUISINE_CHOICES}
+                            isMulti
+                            onChange={(selected) => handleSelectChange(selected, 'cuisine_type')}
+                            placeholder="Select Cuisine Types"
+                        />
                     </div>
 
                     {/* Food Type */}
                     <div className="form-group mb-3">
                         <label>Food Type</label>
-                        <select
-                            className="form-control"
-                            name="food_type"
-                            value={formData.food_type}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select Food Type</option>
-                            {FOOD_TYPE_CHOICES.map((choice) => (
-                                <option key={choice.value} value={choice.value}>
-                                    {choice.label}
-                                </option>
-                            ))}
-                        </select>
+                        <Select
+                            options={FOOD_TYPE_CHOICES}
+                            isMulti
+                            onChange={(selected) => handleSelectChange(selected, 'food_type')}
+                            placeholder="Select Food Types"
+                        />
                     </div>
 
                     {/* Price Range */}

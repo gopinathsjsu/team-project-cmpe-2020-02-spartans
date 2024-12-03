@@ -20,16 +20,16 @@ function Index() {
     const center = { lat: 37.7749, lng: -122.4194 }; // Example coordinates (San Francisco)
 
     const cuisinesOptions = [
-        { value: 'greek', label: 'Greek' },
-        { value: 'mexican', label: 'Mexican' },
-        { value: 'italian', label: 'Italian' },
-        { value: 'chinese', label: 'Chinese' },
+        { value: 1, label: 'Greek' },
+        { value: 2, label: 'Mexican' },
+        { value: 3, label: 'Italian' },
+        { value: 4, label: 'Chinese' },
     ];
 
     const foodTypeOptions = [
-        { value: 'vegetarian', label: 'Vegetarian' },
-        { value: 'vegan', label: 'Vegan' },
-        { value: 'gluten-free', label: 'Gluten-free' },
+        { value: 1, label: 'Vegan' },
+        { value: 2, label: 'Vegetarian' },
+        { value: 3, label: 'Gluten-free' },
     ];
 
     const handleSearchSubmit = async (e) => {
@@ -180,8 +180,8 @@ function Index() {
                         .map((restaurant, index) => (
                             <div className="restaurant-card" key={index}>
                                 <h3>{restaurant.name}</h3>
-                                <p>Cuisine: {restaurant.cuisine_type}</p>
-                                <p>Food Type: {restaurant.food_type}</p>
+                                <p>Cuisine: {restaurant.cuisine_type?.join(', ')}</p>
+                                <p>Food Type: {restaurant.food_type?.join(', ')}</p>
                                 <p>Price: {restaurant.price_range}</p>
                                 <p>Rating: ⭐ {restaurant.rating}</p>
                                 <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>

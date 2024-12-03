@@ -167,8 +167,8 @@ const RestaurantDetails = () => {
             <div className="details-header">
                 <h1>{restaurant.name}</h1>
             </div>
-            <p className="details-text">Cuisine Type: {restaurant.cuisine_type}</p>
-            <p className="details-text">Food Type: {restaurant.food_type}</p>
+            <p className="details-text">Cuisine Type: {restaurant.cuisine_type?.join(', ')}</p>
+            <p className="details-text">Food Type: {restaurant.food_type?.join(', ')}</p>
             <p className="details-text">Price: {restaurant.price_range}</p>
             <p className="details-text">Rating: ⭐ {restaurant.rating}</p>
             <p className="details-address">

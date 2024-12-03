@@ -2,10 +2,21 @@ from rest_framework import serializers
 from .models import Restaurant
 
 class RestaurantSerializer(serializers.ModelSerializer):
+    cuisine_type = serializers.SerializerMethodField()
+    food_type = serializers.SerializerMethodField()
+
     class Meta:
         model = Restaurant
-        exclude = ['owner'] 
+        fields = [
+            'id', 'name', 'address', 'city', 'state', 'zip_code', 'price_range', 
+            'rating', 'hours_of_operation', 'website', 'phone_number', 
+            'cuisine_type', 'food_type'
+        ]
+    def get_cuisine_type(self, obj):
+        return [cuisine.name for cuisine in obj.cuisine_type.all()]
 
+    def get_food_type(self, obj):
+        return [food.name for food in obj.food_type.all()]
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField()
