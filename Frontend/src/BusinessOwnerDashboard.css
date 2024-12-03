@@ -1,74 +1,9 @@
-/* 
-
-
-.dashboard-container {
-    background-color: #f4f5f7;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
-
-.dashboard-header h2 {
-    font-weight: 700;
-    color: #333;
-}
-
-.dashboard-header p {
-    color: #666;
-}
-
-.actions-section {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.action-card {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-    min-width: 200px;
-}
-
-.action-card h5 {
-    font-weight: 600;
-    margin-top: 10px;
-    color: #333;
-}
-
-.action-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
-.listing-cards .listing-card {
-    background-color: #fff;
-    border: none;
-    border-radius: 8px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.listing-cards .listing-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
-.listing-card .card-title {
-    color: #007bff;
-    font-weight: 700;
-} */
-
 
 
 
 /* Container Styles */
 .dashboard-container {
-    background: linear-gradient(135deg, #2d3436, #636e72); /* Gradient background for a sleek look */
+    background: linear-gradient(135deg, #3998b5, #636e72, #66706b); /* Enhanced gradient with green */
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow for depth */
     padding: 30px;
@@ -81,7 +16,7 @@
 .dashboard-header h2 {
     font-weight: 800;
     font-size: 2.5rem;
-    color: #dfe6e9; /* Soft white for a clean design */
+    color: #1a1c1c; /* Soft white for a clean design */
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
 }
@@ -102,7 +37,7 @@
 
 /* Action Card Styles */
 .action-card {
-    background: linear-gradient(145deg, #6c5ce7, #81ecec); /* Eye-catching gradient */
+    background: linear-gradient(145deg, #e5e5ea00, #756262, #c8bab7); /* Tri-color gradient */
     border-radius: 12px;
     padding: 25px;
     text-align: center;
@@ -153,8 +88,8 @@
 
 /* Listing Cards */
 .listing-cards .listing-card {
-    background: linear-gradient(135deg, #00cec9, #0984e3); /* Gradient with a modern touch */
-    border: 1px solid #00cec9;
+    background: linear-gradient(135deg, #bfcccc, #262224, #aba397); /* Enhanced gradient with pink and yellow */
+    border: 1px solid transparent;
     border-radius: 12px;
     transition: transform 0.4s ease, box-shadow 0.4s ease;
     overflow: hidden;
@@ -193,7 +128,7 @@
 
 /* Buttons (Optional Enhancements) */
 button {
-    background-color: #e84393; /* Vivid pink for buttons */
+    background: linear-gradient(135deg, #e84393, #d63031, #0984e3); /* Vibrant multi-color gradient */
     color: #ffffff;
     border: none;
     padding: 12px 25px;
@@ -205,7 +140,7 @@ button {
 }
 
 button:hover {
-    background-color: #d63031; /* Slightly darker on hover */
+    background: linear-gradient(135deg, #a1959a, #7a7270, #b5bdc5); /* Lighter gradient on hover */
     transform: translateY(-3px); /* Lift effect */
 }
 
