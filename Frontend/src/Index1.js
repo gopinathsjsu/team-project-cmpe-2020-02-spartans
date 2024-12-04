@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import Select from 'react-select';
 import './Index1.css';
 import Footer from './Footer';
@@ -14,10 +13,6 @@ function Index() {
     const [rating, setRating] = useState('');
     const [restaurants, setRestaurants] = useState([]);
     const navigate = useNavigate();
-
-    // Google Maps Configuration
-    const mapContainerStyle = { width: '100%', height: '300px' };
-    const center = { lat: 37.7749, lng: -122.4194 }; // Example coordinates (San Francisco)
 
     const cuisinesOptions = [
         { value: 1, label: 'Greek' },
@@ -157,20 +152,6 @@ function Index() {
                     </select>
                     <button type="submit" className="search-btn">Search</button>
                 </form>
-            </div>
-
-            <div className="map-section">
-                <LoadScript googleMapsApiKey="AIzaSyC8ArnRrgrsSp34RuGVOqGbbh0JuXBj2ug">
-                    <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={10}>
-                        {restaurants.map((restaurant, index) => (
-                            <Marker 
-                                key={index} 
-                                position={{ lat: restaurant.latitude, lng: restaurant.longitude }}
-                                title={restaurant.name}
-                            />
-                        ))}
-                    </GoogleMap>
-                </LoadScript>
             </div>
                             
             <div className="restaurant-list">
