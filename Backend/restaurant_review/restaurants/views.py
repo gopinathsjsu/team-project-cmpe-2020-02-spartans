@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.permissions import IsAuthenticated
 from accounts.permissions import IsAdmin, IsBusinessOwner
-from .services import fetch_google_places, normalize_google_place_result
+from .services import fetch_google_places, normalize_google_place_result, fetch_google_place_details
 from .serializers import RestaurantSerializer, RestaurantDetailSerializer, RestaurantListingSerializer
 from .models import Restaurant, RestaurantPhoto, CuisineType, FoodType
 from .utils import upload_to_s3, delete_s3_object, generate_thumbnail
@@ -374,3 +374,15 @@ class PhotoDetailView(APIView):
         except RestaurantPhoto.DoesNotExist:
             return Response({"error": "Photo not found."}, status=status.HTTP_404_NOT_FOUND)
 
+class GooglePlaceDetailView(APIView):
+    def get(self, request, *args, **kwargs):
+        place_id = kwargs.get('place_id')
+        if not place_id:
+            return Response({"error": "Missing place_id parameter."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Fetch details from Google Places
+        details = fetch_google_place_details(place_id)
+        if not details:
+            return Response({"error": "Could not fetch details for the provided place_id."}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(details, status=status.HTTP_200_OK)

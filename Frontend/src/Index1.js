@@ -161,18 +161,32 @@ function Index() {
                         .map((restaurant, index) => (
                             <div className="restaurant-card" key={index}>
                                 <h3>{restaurant.name}</h3>
-                                <p>Cuisine: {restaurant.cuisine_type?.join(', ')}</p>
-                                <p>Food Type: {restaurant.food_type?.join(', ')}</p>
-                                <p>Price: {restaurant.price_range}</p>
+                                <p>Address: {restaurant.address || 'N/A'}</p>
+                                <p>
+                                    Cuisine: {restaurant.cuisine_type && restaurant.cuisine_type.length > 0
+                                        ? restaurant.cuisine_type.join(', ')
+                                        : 'N/A'}
+                                </p>
+                                <p>
+                                    Food Type: {restaurant.food_type && restaurant.food_type.length > 0
+                                        ? restaurant.food_type.join(', ')
+                                        : 'N/A'}
+                                </p>
+                                <p>Price: {restaurant.price_range || 'N/A'}</p>
                                 <p>Rating: ⭐ {restaurant.rating}</p>
-                                <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
+                                <button onClick={() => {
+                                    if (restaurant.source === 'google') {
+                                        navigate(`/restaurant/${restaurant.place_id}`);
+                                    } else {
+                                        navigate(`/restaurant/${restaurant.id}`);
+                                    }
+                                }}>View Details</button>
                             </div>
                         ))
                 ) : (
                     <p>No restaurants found matching your criteria.</p>
                 )}
             </div>
-
 
             <div>
                 {/* Main Content */}
