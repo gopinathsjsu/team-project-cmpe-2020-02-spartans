@@ -1,4 +1,4 @@
-.index-container {
+/* .index-container {
     background-color: #f8f8f8;
     color: #333;
     padding: 20px;
@@ -9,8 +9,31 @@
     color: #ff6347;
     text-align: center;
     margin-top: 20px;
-} 
- 
+}  */
+.index-container {
+    position: relative;
+    overflow: hidden; /* Ensure no overflow issues with animations */
+}
+
+.index-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #53354a);
+    background-size: 300% 300%;
+    animation: gradientAnimation 12s ease infinite;
+    z-index: -1; /* Place it behind the existing content */
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 
 
 .navbar {
