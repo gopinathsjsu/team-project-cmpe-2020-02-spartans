@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './BusinessOwnerDashboard.css';
 import { refreshAccessToken } from './auth';
+import Footer from './Footer';
 
 function BusinessOwnerDashboard() {
     const navigate = useNavigate();
@@ -163,6 +164,10 @@ function BusinessOwnerDashboard() {
                     </div>
                 </>
             )}
+            <div>
+                {/* Main Content */}
+                <Footer />
+            </div>
         </div>
     );
 }

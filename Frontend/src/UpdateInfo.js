@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './UpdateInfo.css';
+import Footer from './Footer';
 
 function UpdateInfo({ existingData }) {
     const [formData, setFormData] = useState({
@@ -142,6 +143,10 @@ function UpdateInfo({ existingData }) {
                     {/* Submission */}
                     <button type="submit" className="btn btn-primary w-100 mt-4">Save Updates</button>
                 </form>
+            </div>
+            <div>
+                {/* Main Content */}
+                <Footer />
             </div>
         </div>
     );

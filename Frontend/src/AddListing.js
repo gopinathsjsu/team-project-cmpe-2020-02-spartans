@@ -4,7 +4,7 @@ import './AddListing.css';
 import api from './api';
 import { useNavigate } from 'react-router-dom';
 import { refreshAccessToken } from './auth';
-
+import Footer from './Footer';
 function AddListing() {
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -337,6 +337,10 @@ const handleSubmit = async (e) => {
                 </form>
                 {successMessage && <div className="alert alert-success mt-4">{successMessage}</div>}
                 {errorMessage && <div className="alert alert-danger mt-4">{errorMessage}</div>}
+            </div>
+            <div>
+                {/* Main Content */}
+                <Footer />
             </div>
         </div>
         </>
