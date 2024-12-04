@@ -1,9 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddListing.css';
 import api from './api';
+import { useNavigate } from 'react-router-dom';
+import { refreshAccessToken } from './auth';
 
 function AddListing() {
+    const navigate = useNavigate();
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [listings, setListings] = useState([]);
+    const [ownerInfo, setOwnerInfo] = useState({ name: "John Doe", email: "john.doe@example.com" });
+    const [role, setRole] = useState(null);
+    useEffect(() => {
+        const accessToken = sessionStorage.getItem('accessToken');
+        const userRole = sessionStorage.getItem('role');
+        setIsAuthenticated(!!accessToken);
+        setRole(userRole);
+
+        if (accessToken) {
+            fetchListings();
+        } else {
+            alert('You are not logged in. Redirecting to login.');
+            navigate('/login');
+        }
+    }, [navigate]);
+
+    const fetchListings = async () => {
+        try {
+            let accessToken = sessionStorage.getItem('accessToken');
+            if (!accessToken) {
+                accessToken = await refreshAccessToken();
+                if (!accessToken) {
+                    navigate('/login');
+                    return;
+                }
+            }
+
+            const response = await fetch('http://127.0.0.1:8000/api/accounts/owner/listings/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setListings(data);
+        } catch (err) {
+            console.error('Failed to fetch listings:', err);
+        }
+    };
+
+    const handleLogout = () => {
+        sessionStorage.clear(); // Clear session data
+        setIsAuthenticated(false);
+        setRole(null);
+        navigate('/'); // Redirect to home page
+    };
+
+    const handleRestaurantClick = (restaurantId) => {
+        navigate(`/restaurant/${restaurantId}`);
+    };
+
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -75,7 +137,38 @@ const handleSubmit = async (e) => {
 };
 
     return (
+        
+            <>
+                {/* Navbar */}
+                <header className="index-header">
+                    <nav className="navbar">
+                        <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
+                        <div className="nav-links">
+                            <button onClick={() => navigate('/')} className="nav-item">Home</button>
+                            {role === 'user' && (
+                                <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
+                            )}
+                            {role === 'owner' && (
+                                <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
+                            )}
+                            {role === 'admin' && (
+                                <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
+                            )}
+                            <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
+                            {isAuthenticated ? (
+                                <button onClick={handleLogout} className="login-btn">Logout</button>
+                            ) : (
+                                <>
+                                    <button onClick={() => navigate('/login')} className="login-btn">Login</button>
+                                    <button onClick={() => navigate('/register')} className="login-btn">Register</button>
+                                </>
+                            )}
+                        </div>
+                    </nav>
+                </header>
+    
         <div className="add-listing-container d-flex flex-column align-items-center">
+            
             <div className="card listing-card shadow-lg p-4 mt-5">
                 <h2 className="text-center mb-4">Add a New Restaurant</h2>
                 <form onSubmit={handleSubmit}>
@@ -246,6 +339,7 @@ const handleSubmit = async (e) => {
                 {errorMessage && <div className="alert alert-danger mt-4">{errorMessage}</div>}
             </div>
         </div>
+        </>
     );
 }
 
