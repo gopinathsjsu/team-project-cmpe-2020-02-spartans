@@ -13,6 +13,7 @@ import RestaurantList from './RestaurantList';
 import RestaurantDetails from './RestaurantDetails';
 import ManageListing from './ManageListing';
 import EditListing from './EditListing';
+import about from './about';
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/restaurant/:id" element={<RestaurantDetails />} />
                 <Route path="/manage-listings" element={<ManageListing />} />
                 <Route path="/manage-listings/edit/:id" element={<EditListing />} />
+                <Route path="/about" element={<about />} />
             </Routes>
         </Router>
     );
