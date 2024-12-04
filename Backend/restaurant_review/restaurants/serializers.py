@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from django.db.models import Avg, Count
-from .models import Restaurant, CuisineType, FoodType
+from .models import Restaurant, CuisineType, FoodType, RestaurantPhoto
 from reviews.models import Review
 from django.conf import settings
-from .models import Restaurant, RestaurantPhoto
+from accounts.serializers import AccountSerializer
 
 class RestaurantSerializer(serializers.ModelSerializer):
+    owner = AccountSerializer()
     cuisine_type = serializers.SlugRelatedField(
         many=True, slug_field='name', queryset=CuisineType.objects.all()
     )
@@ -19,7 +20,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         model = Restaurant
         fields = [
             'id', 'name', 'address', 'city', 'state', 'zip_code', 'price_range', 
-            'rating', 'hours_of_operation', 'website', 'phone_number', 
+            'rating', 'hours_of_operation', 'website', 'phone_number', 'owner',
             'cuisine_type', 'food_type', 'description', 'review_count', 'average_rating'
         ]
         

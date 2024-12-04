@@ -96,7 +96,7 @@ function AdminDashboard() {
     const groupDuplicates = (listings) => {
         const groups = {};
         listings.forEach((listing) => {
-            const key = `${listing.name}-${listing.address}-${listing.city}-${listing.state}-${listing.zip_code}`;
+            const key = `${listing.name.toLowerCase().trim()}-${listing.address.toLowerCase().trim()}-${listing.city.toLowerCase().trim()}-${listing.state.toLowerCase().trim()}-${listing.zip_code}`;
             if (!groups[key]) {
                 groups[key] = [];
             }
@@ -266,22 +266,61 @@ function AdminDashboard() {
                         <div>
                             {Object.entries(groupedDuplicates).map(([key, duplicates], index) => (
                                 <div key={index} className="mb-4">
-                                    <h5 className="text-warning">Group {index + 1}</h5>
-                                    <ul className="list-group">
-                                        {duplicates.map((listing) => (
-                                            <li key={listing.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                                <span>
-                                                    <strong>{listing.name}</strong> - {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
-                                                </span>
-                                                <button
-                                                    className="btn btn-danger btn-sm"
-                                                    onClick={() => handleDeleteListing(listing.id)}
-                                                >
-                                                    🗑️ Delete Listing
-                                                </button>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <h5 className="text-warning">Duplicate Group {index + 1}</h5>
+                                    <div className="table-responsive">
+                                        <table className="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Business Owner</th>
+                                                    <th>Name</th>
+                                                    <th>Address</th>
+                                                    <th>Last Updated</th>
+                                                    <th>Review Count</th>
+                                                    <th>Rating</th>
+                                                    <th>Website</th>
+                                                    <th>Phone Number</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {duplicates.map((listing) => (
+                                                    <tr key={listing.id}>
+                                                        <td>{listing.owner.first_name} {listing.owner.last_name}</td>
+                                                        <td>{listing.name}</td>
+                                                        <td>
+                                                            {listing.address}, {listing.city}, {listing.state}{' '}
+                                                            {listing.zip_code}
+                                                        </td>
+                                                        <td>{listing.last_updated || 'Not Available'}</td>
+                                                        <td>{listing.review_count || 0}</td>
+                                                        <td>{listing.rating || 'N/A'}</td>
+                                                        <td>
+                                                            {listing.website ? (
+                                                                <a
+                                                                    href={listing.website}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                >
+                                                                    Visit
+                                                                </a>
+                                                            ) : (
+                                                                'N/A'
+                                                            )}
+                                                        </td>
+                                                        <td>{listing.phone_number || 'N/A'}</td>
+                                                        <td>
+                                                            <button
+                                                                className="btn btn-danger btn-sm"
+                                                                onClick={() => handleDeleteListing(listing.id)}
+                                                            >
+                                                                🗑️ Delete Listing
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -290,6 +329,7 @@ function AdminDashboard() {
                     )}
                 </div>
             )}
+
 
             {view === 'old-listings' && (
                 <div className="card p-4 shadow">

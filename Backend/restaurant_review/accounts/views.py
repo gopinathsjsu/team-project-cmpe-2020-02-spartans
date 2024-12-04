@@ -89,6 +89,7 @@ class OwnerListingsView(APIView):
     
 class AccountDetailsView(APIView):
     permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         serializer = AccountSerializer(request.user)
         return Response(serializer.data)

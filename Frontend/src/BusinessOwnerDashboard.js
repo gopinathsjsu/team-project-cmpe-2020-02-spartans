@@ -50,6 +50,7 @@ function BusinessOwnerDashboard() {
             if (response.ok) {
                 const data = await response.json();
                 setAccountInfo({
+                    id: data.id,
                     first_name: data.first_name,
                     last_name: data.last_name,
                     email: data.email,
@@ -140,7 +141,7 @@ function BusinessOwnerDashboard() {
                     </header>
 
                     <div className="dashboard-header text-center mb-4">
-                        <h2>Welcome, {accountInfo.name}</h2>
+                        <h2>Welcome, {accountInfo.first_name} {accountInfo.last_name}</h2>
                         <p className="text-muted">Email: {accountInfo.email}</p>
                     </div>
 
