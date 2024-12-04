@@ -52,6 +52,7 @@ class Restaurant(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     review_count = models.PositiveIntegerField(default=0)
     description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name

@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminDashboard.css';
 import { useNavigate } from 'react-router-dom';
+import { refreshAccessToken } from './auth';
 
 function AdminDashboard() {
     const [view, setView] = useState(''); // State to track current view
     const [allListings, setAllListings] = useState([]);
     const [duplicateListings, setDuplicateListings] = useState([]);
+    const [oldListings, setOldListings] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [role, setRole] = useState(null); // Role state
@@ -35,6 +37,37 @@ function AdminDashboard() {
             if (!response.ok) throw new Error('Failed to fetch listings');
             const data = await response.json();
             setAllListings(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchOldListings = async () => {
+        const accessToken = sessionStorage.getItem('accessToken');
+        setIsLoading(true);
+        setError(null);
+
+        // token refresh
+        if (!accessToken) {
+            const newToken = await refreshAccessToken();
+            if (!newToken) return; 
+            accessToken = newToken;
+        }
+
+        try {
+            console.log('Access Token:', accessToken);
+            const response = await fetch('http://127.0.0.1:8000/api/admin/old-listings/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) throw new Error('Failed to fetch old listings');
+            const data = await response.json();
+            setOldListings(data);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -100,9 +133,37 @@ function AdminDashboard() {
         }
     };
 
+    const handleDeleteOldListing = async (id) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this old listing? This action cannot be undone.');
+        if (!confirmDelete) return;
+    
+        const accessToken = sessionStorage.getItem('accessToken');
+        if (!accessToken) {
+            alert('You must be logged in to perform this action.');
+            return;
+        }
+        console.log('Access Token:', accessToken);
+    
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/admin/delete-old-listing/${id}/`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (!response.ok) throw new Error('Failed to delete the listing');
+            alert('Listing deleted successfully.');
+            setOldListings((prev) => prev.filter((listing) => listing.id !== id));
+        } catch (err) {
+            console.error('Error deleting old listing:', err);
+            alert('Failed to delete old listing. Please try again.');
+        }
+    };    
+
     useEffect(() => {
         if (view === 'manage') fetchAllListings();
         if (view === 'duplicates') fetchDuplicateListings();
+        if (view === 'old-listings') fetchOldListings();
     }, [view]);
 
     const handleLogout = () => {
@@ -154,6 +215,12 @@ function AdminDashboard() {
                         className={`btn btn-warning admin-option mb-3 ${view === 'duplicates' ? 'active' : ''}`}
                     >
                         🔍 Check Duplicate Listings
+                    </button>
+                    <button
+                        onClick={() => setView('old-listings')}
+                        className={`btn btn-danger admin-option mb-3 ${view === 'old-listings' ? 'active' : ''}`}
+                    >
+                        🗑️ Delete Old Listings
                     </button>
                 </div>
             </div>
@@ -219,6 +286,35 @@ function AdminDashboard() {
                         </div>
                     ) : (
                         <p>No duplicate listings found.</p>
+                    )}
+                </div>
+            )}
+
+            {view === 'old-listings' && (
+                <div className="card p-4 shadow">
+                    <h3>Old Listings</h3>
+                    {isLoading ? (
+                        <p>Loading old listings...</p>
+                    ) : error ? (
+                        <p className="text-danger">{error}</p>
+                    ) : oldListings.length > 0 ? (
+                        <ul className="list-group">
+                            {oldListings.map((listing) => (
+                                <li key={listing.id} className="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <strong>{listing.name}</strong> - {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
+                                    </span>
+                                    <button
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => handleDeleteOldListing(listing.id)}
+                                    >
+                                        🗑️ Delete Old Listing   
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No old listings found.</p>
                     )}
                 </div>
             )}

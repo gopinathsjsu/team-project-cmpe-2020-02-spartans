@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.utils.timezone import now
+from datetime import timedelta
 from django.db.models import Q, Count
 from django.db.models.functions import Lower, Trim
 from rest_framework.views import APIView
@@ -187,3 +189,33 @@ class AddListingView(APIView):
         # error debugging
         print("Validation Errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class OldListingsView(APIView):
+    permission_classes = [IsAdmin]
+
+    def get(self, request):
+        print(f"Authenticated User: {request.user}")  # Log the user
+        print(f"User Role: {request.user.role}") 
+        print(f"Authorization Header: {request.headers.get('Authorization', 'None')}")
+        if not request.user.is_authenticated:
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # cutoff is at six months
+        six_months_ago = now() - timedelta(days=180)
+
+        # Query for listings with no reviews and created over 6 months ago
+        old_listings = Restaurant.objects.filter(
+            review_count=0,
+            created_at__lt=six_months_ago
+        )
+
+        serializer = RestaurantSerializer(old_listings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, id):
+        try:
+            listing = Restaurant.objects.get(id=id, review_count=0, created_at__lt=now() - timedelta(days=180))
+            listing.delete()
+            return Response({"message": f"Listing with ID {id} has been deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        except Restaurant.DoesNotExist:
+            return Response({"error": "Listing not found or does not meet deletion criteria."}, status=status.HTTP_404_NOT_FOUND)
