@@ -14,6 +14,19 @@ const RestaurantDetails = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const CUISINE_CHOICES = [
+        { id: 1, name: 'Greek' },
+        { id: 2, name: 'Mexican' },
+        { id: 3, name: 'Italian' },
+        { id: 4, name: 'Chinese' },
+    ];
+    
+    const FOOD_TYPE_CHOICES = [
+        { id: 1, name: 'Vegan' },
+        { id: 2, name: 'Vegetarian' },
+        { id: 3, name: 'Gluten-free' },
+    ];
+
     const fetchRestaurant = async () => {
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`);
@@ -21,6 +34,12 @@ const RestaurantDetails = () => {
                 throw new Error('Failed to fetch restaurant details');
             }
             const data = await response.json();
+            data.cuisine_type = data.cuisine_type.map(
+                (id) => CUISINE_CHOICES.find((choice) => choice.id === id)?.name || 'Unknown'
+            );
+            data.food_type = data.food_type.map(
+                (id) => FOOD_TYPE_CHOICES.find((choice) => choice.id === id)?.name || 'Unknown'
+            );
             setRestaurant(data);
         } catch (error) {
             console.error('Error fetching restaurant details:', error);
