@@ -97,7 +97,7 @@ def delete_s3_object(s3_key):
 def generate_thumbnail(photo_file):
         print("generating thumbnail")
         image = Image.open(photo_file)
-        if image.mode == 'RGBA':
+        if image.mode != 'RGB':
             image = image.convert('RGB')
         image.thumbnail((150, 150))  # Resize the image to a thumbnail
 
