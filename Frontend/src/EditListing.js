@@ -44,11 +44,11 @@ function EditListing() {
 
             if (response.ok) {
                 const data = await response.json();
-                const mappedCuisine = data.cuisine_type.map((name) =>
-                    CUISINE_CHOICES.find((choice) => choice.label === name)
+                const mappedCuisine = data.cuisine_type.map((id) =>
+                    CUISINE_CHOICES.find((choice) => choice.value === id)
                 );
-                const mappedFoodType = data.food_type.map((name) =>
-                    FOOD_TYPE_CHOICES.find((choice) => choice.label === name)
+                const mappedFoodType = data.food_type.map((id) =>
+                    FOOD_TYPE_CHOICES.find((choice) => choice.value === id)
                 );
 
                 setFormData({

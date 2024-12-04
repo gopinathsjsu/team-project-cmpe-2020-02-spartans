@@ -133,6 +133,7 @@ function AddListing() {
                     hours_of_operation: '',
                     website: '',
                     phone_number: '',
+                    description: '',
                 });
                 alert('Restaurant added successfully!');
                 navigate('/BusinessOwnerDashboard');
@@ -324,6 +325,19 @@ function AddListing() {
                             onChange={handleChange}
                             required
                         />
+                    </div>
+
+                    {/* Description */}
+                    <div className="form-group mb-3">
+                        <label>Description</label>
+                        <textarea
+                            className="form-control"
+                            name="description"
+                            rows="4"
+                            value={formData.description}
+                            onChange={handleChange}
+                            placeholder="Provide a description of your restaurant"
+                        ></textarea>
                     </div>
 
                     <button type="submit" className="btn btn-primary w-100 mt-3">
