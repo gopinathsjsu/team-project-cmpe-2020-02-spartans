@@ -1,7 +1,40 @@
-.index-container {
+/* .index-container {
     background-color: #f8f8f8;
     color: #333;
     padding: 20px;
+}
+
+.index-header h1 {
+    font-size: 3em;
+    color: #ff6347;
+    text-align: center;
+    margin-top: 20px;
+} */
+.index-container {
+    background-image: url('restaurant-bg.jpg'); /* Path to your background image */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: #333;
+    padding: 20px;
+    position: relative;
+}
+
+.index-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.7); /* Faded white overlay for better contrast */
+    z-index: 0;
+}
+
+.index-header, .search-section, .restaurant-list, .map-section, .navbar {
+    position: relative;
+    z-index: 1; /* Ensure content is above the overlay */
 }
 
 .index-header h1 {
