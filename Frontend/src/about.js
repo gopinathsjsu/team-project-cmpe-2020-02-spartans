@@ -1,5 +1,6 @@
 import React from 'react';
 import './aboutpage.css'; // Custom CSS for the About Page
+import Footer from './Footer';
 
 function AboutPage() {
   return (
@@ -77,13 +78,10 @@ function AboutPage() {
       </div>
 
       {/* Call to Action Section */}
-      <div className="cta-section text-center py-5 bg-primary text-white">
-        <div className="container">
-          <h2>Get Started Today!</h2>
-          <p>Sign up and start exploring the best restaurants around you.</p>
-          <a href="/register" className="btn btn-light btn-lg">Sign Up Now</a>
-        </div>
-      </div>
+      <div>
+                {/* Main Content */}
+                <Footer />
+            </div>
     </div>
   );
 }
