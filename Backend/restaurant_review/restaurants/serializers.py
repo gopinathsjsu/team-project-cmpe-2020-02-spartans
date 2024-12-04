@@ -10,12 +10,17 @@ class   RestaurantSerializer(serializers.ModelSerializer):
 
 class RestaurantPhotoSerializer(serializers.ModelSerializer):
     thumbnail_url = serializers.SerializerMethodField()
+    high_res_url = serializers.SerializerMethodField()
     class Meta:
         model = RestaurantPhoto
-        fields = ['id', 'thumbnail_url', 'uploaded_at']
+        fields = ['id', 'thumbnail_url', 'uploaded_at','high_res_url']
     
     def get_thumbnail_url(self, obj):
-        return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.thumbnail_s3_key}"
+        # return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.thumbnail_s3_key}"
+        return f"http://localhost:9004/photos/{obj.thumbnail_s3_key}"
+    
+    def get_high_res_url(self,obj):
+        return f"http://localhost:9004/photos/{obj.photo_key}"
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField()
