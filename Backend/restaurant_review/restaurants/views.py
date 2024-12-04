@@ -104,6 +104,14 @@ class RestaurantDetailView(APIView):
             serializer = RestaurantDetailSerializer(restaurant, data=request.data, partial=True)  # Use `partial=True` to allow partial updates
             if serializer.is_valid():
                 serializer.save()
+                photos = request.FILES.getlist('photos')
+                for photo in photos:
+                    photo_key = upload_to_s3(photo)
+                    thumbnail_file = generate_thumbnail(photo)
+                    thumbnail_key = "thumbnail/" + photo_key
+                    upload_to_s3(thumbnail_file, thumbnail_key)
+                    RestaurantPhoto.objects.create(restaurant=restaurant, photo_key=photo_key, thumbnail_s3_key = thumbnail_key)
+
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Restaurant.DoesNotExist:
@@ -231,7 +239,8 @@ class DeletePhotoView(APIView):
                 return Response({"error": "Access denied."}, status=status.HTTP_403_FORBIDDEN)
 
             # Delete the photo from S3
-            if delete_s3_object(photo.s3_key):
+            # print(photo.photo_key)
+            if delete_s3_object(photo.photo_key):
                 # If S3 deletion is successful, delete the record from the database
                 photo.delete()
                 return Response({"message": "Photo deleted successfully."}, status=status.HTTP_200_OK)
