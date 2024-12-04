@@ -84,7 +84,7 @@ function AdminDashboard() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
+            const response = await fetch(`http://127.0.0.1:8000/api/admin/delete-listing/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -93,6 +93,7 @@ function AdminDashboard() {
             if (!response.ok) throw new Error('Failed to delete the listing');
             alert('Listing deleted successfully.');
             setAllListings((prev) => prev.filter((listing) => listing.id !== id));
+            setDuplicateListings((prev) => prev.filter((listing) => listing.id !== id));
         } catch (err) {
             console.error('Error deleting listing:', err);
             alert('Failed to delete listing. Please try again.');
@@ -182,6 +183,42 @@ function AdminDashboard() {
                         </ul>
                     ) : (
                         <p>No listings found.</p>
+                    )}
+                </div>
+            )}
+
+            {view === 'duplicates' && (
+                <div className="card p-4 shadow">
+                    <h3>Duplicate Listings</h3>
+                    {isLoading ? (
+                        <p>Loading duplicate listings...</p>
+                    ) : error ? (
+                        <p className="text-danger">{error}</p>
+                    ) : Object.keys(groupedDuplicates).length > 0 ? (
+                        <div>
+                            {Object.entries(groupedDuplicates).map(([key, duplicates], index) => (
+                                <div key={index} className="mb-4">
+                                    <h5 className="text-warning">Group {index + 1}</h5>
+                                    <ul className="list-group">
+                                        {duplicates.map((listing) => (
+                                            <li key={listing.id} className="list-group-item d-flex justify-content-between align-items-center">
+                                                <span>
+                                                    <strong>{listing.name}</strong> - {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
+                                                </span>
+                                                <button
+                                                    className="btn btn-danger btn-sm"
+                                                    onClick={() => handleDeleteListing(listing.id)}
+                                                >
+                                                    🗑️ Delete Listing
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p>No duplicate listings found.</p>
                     )}
                 </div>
             )}
