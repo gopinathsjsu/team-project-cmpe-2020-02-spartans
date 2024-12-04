@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from restaurants.views import DuplicateListingsView, DeleteDuplicateListingView
+from restaurants.views import DuplicateListingsView, DeleteDuplicateListingView, OldListingsView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +25,6 @@ urlpatterns = [
     path('api/admin/duplicates/', DuplicateListingsView.as_view(), name='admin_duplicate'), 
     path('api/admin/delete-listing/<int:id>/', DeleteDuplicateListingView.as_view(), name='delete_listing'),
     path('api/reviews/', include('reviews.urls')),
+    path('api/admin/old-listings/', OldListingsView.as_view(), name='old-listings'),
+    path('api/admin/delete-old-listing/<int:id>/', OldListingsView.as_view(), name='delete-old-listing'),
 ]

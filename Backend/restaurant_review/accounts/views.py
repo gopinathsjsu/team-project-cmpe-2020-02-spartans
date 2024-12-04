@@ -6,7 +6,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
-from .serializers import RegisterSerializer, LoginSerializer
+from rest_framework.permissions import IsAuthenticated
+from .serializers import RegisterSerializer, LoginSerializer, AccountSerializer
 from .models import CustomUser
 from restaurants.models import Restaurant
 from restaurants.serializers import RestaurantSerializer
@@ -32,7 +33,6 @@ class LoginView(APIView):
 
         user = authenticate(username=email, password=password)
         if user is not None:
-            from rest_framework_simplejwt.tokens import RefreshToken
             refresh = RefreshToken.for_user(user)
             return Response({
                 "refresh": str(refresh),
@@ -85,4 +85,10 @@ class OwnerListingsView(APIView):
     def get(self, request):
         restaurants = Restaurant.objects.filter(owner=request.user)
         serializer = RestaurantSerializer(restaurants, many=True)
+        return Response(serializer.data)
+    
+class AccountDetailsView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        serializer = AccountSerializer(request.user)
         return Response(serializer.data)
