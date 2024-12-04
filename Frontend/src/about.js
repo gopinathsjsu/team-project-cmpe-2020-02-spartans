@@ -47,25 +47,29 @@ function AboutPage() {
           <h2>Meet the Team</h2>
           <p className="lead">Our team is passionate about making dining experiences easier and more enjoyable for everyone.</p>
           <div className="row">
-            <div className="col-md-4">
+            <div className="col-md-3">
               <div className="team-member">
-                <img src="https://via.placeholder.com/150" alt="John Doe" className="img-fluid rounded-circle" />
-                <h4>John Doe</h4>
-                <p>Founder & CEO</p>
+                <img src="https://via.placeholder.com/150" alt="ERIC PHARM" className="img-fluid rounded-circle" />
+                <h4>ERIC PHARM</h4>
+                
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-3">
               <div className="team-member">
                 <img src="https://via.placeholder.com/150" alt="Jane Smith" className="img-fluid rounded-circle" />
-                <h4>Jane Smith</h4>
-                <p>Lead Developer</p>
+                <h4>FAISAL BUDHWANI</h4>
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-3">
               <div className="team-member">
                 <img src="https://via.placeholder.com/150" alt="Samuel Green" className="img-fluid rounded-circle" />
-                <h4>Samuel Green</h4>
-                <p>Product Manager</p>
+                <h4>HAROON RAZZACK</h4>
+              </div>
+            </div>
+            <div className="col-md-3">
+              <div className="team-member">
+                <img src="https://via.placeholder.com/150" alt="Samuel Green" className="img-fluid rounded-circle" />
+                <h4>SIDDHARTH KULKARNI</h4>
               </div>
             </div>
           </div>
