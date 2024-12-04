@@ -108,3 +108,25 @@ def generate_thumbnail(photo_file):
         buffer.content_type = 'image/jpeg'
 
         return buffer
+
+import requests
+from django.conf import settings
+
+def fetch_restaurants_from_maps(zip_code):
+    """
+    Fetch restaurants using Google Maps Places API based on zip code.
+    """
+    api_key = settings.GOOGLE_MAPS_API_KEY
+    endpoint = "https://maps.googleapis.com/maps/api/place/textsearch/json"
+    params = {
+        "query": f"restaurants in {zip_code}",
+        "key": api_key
+    }
+
+    response = requests.get(endpoint, params=params)
+    if response.status_code == 200:
+        return response.json().get("results", [])
+    else:
+        # Log error for debugging
+        print(f"Error fetching data from Google Maps: {response.status_code}")
+        return []

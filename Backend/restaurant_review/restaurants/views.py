@@ -12,7 +12,9 @@ from .models import Restaurant, RestaurantPhoto
 from .utils import upload_to_s3, delete_s3_object, generate_thumbnail
 from accounts.permissions import IsAdmin, IsBusinessOwner
 
-# View for searching restaurants using search bar
+# restaurants/views.py
+from .utils import fetch_restaurants_from_maps
+
 class RestaurantSearchView(APIView):
     def get(self, request):
         name = request.query_params.get('name', '').strip()
@@ -25,6 +27,7 @@ class RestaurantSearchView(APIView):
 
         queryset = Restaurant.objects.filter(verified=True)
 
+        # Filter restaurants in the local database
         if name:
             queryset = queryset.filter(name__icontains=name)
         if zip_code:
@@ -43,8 +46,29 @@ class RestaurantSearchView(APIView):
             except ValueError:
                 return Response({"error": "Invalid rating range"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = RestaurantSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if queryset.exists():
+            # Serialize local results if available
+            serializer = RestaurantSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        elif zip_code:
+            # Fetch from Google Maps API if no local results and zip_code is provided
+            external_results = fetch_restaurants_from_maps(zip_code)
+            if external_results:
+                external_restaurants = [
+                    {
+                        "name": place.get("name"),
+                        "address": place.get("formatted_address"),
+                        "rating": place.get("rating", "N/A"),
+                        "source": "Google Maps"
+                    }
+                    for place in external_results
+                ]
+                return Response(external_restaurants, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": "No restaurants found in external sources"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({"message": "No restaurants found"}, status=status.HTTP_404_NOT_FOUND)
+
 
 # View for listing restaurants in DB
 class RestaurantListView(ListAPIView):
