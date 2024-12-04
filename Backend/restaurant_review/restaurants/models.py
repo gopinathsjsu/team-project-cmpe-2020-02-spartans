@@ -50,9 +50,23 @@ class Restaurant(models.Model):
     phone_number = models.CharField(max_length=15)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+
     review_count = models.PositiveIntegerField(default=0)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
+
+class RestaurantPhoto(models.Model):
+    restaurant = models.ForeignKey(
+        'Restaurant', 
+        on_delete=models.CASCADE, 
+        related_name='photos'
+    )
+    photo_key = models.CharField(max_length=255)  # Store the S3 object key
+    thumbnail_s3_key = models.CharField(max_length=255, blank=True, null=True)  # Thumbnail
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Photo for {self.restaurant.name}: {self.photo_key}"

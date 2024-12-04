@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './AdminDashboard.css';
 import { useNavigate } from 'react-router-dom';
 import { refreshAccessToken } from './auth';
+import Footer from './Footer';
 
 function AdminDashboard() {
     const [view, setView] = useState(''); // State to track current view
@@ -324,6 +325,10 @@ function AdminDashboard() {
                     <p>Select an action above to get started.</p>
                 </div>
             )}
+            <div>
+                {/* Main Content */}
+                <Footer />
+            </div>
         </div>
     );
 }

@@ -37,9 +37,9 @@ function Footer() {
                 <div className="footer-section social-media">
                     <h4>Follow Us</h4>
                     <div className="social-icons">
-                        <a href="https://www.facebook.com" target="_blank" rel="noreferrer">Facebook<i className="fab fa-facebook-f"></i></a>
-                        <a href="https://www.twitter.com" target="_blank" rel="noreferrer">Twitter<i className="fab fa-twitter"></i></a>
-                        <a href="https://www.instagram.com" target="_blank" rel="noreferrer">Instagram<i className="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com" target="_blank" rel="noreferrer">Facebook<i className="fab fa-facebook-f"></i></a><br></br>
+                        <a href="https://www.twitter.com" target="_blank" rel="noreferrer">Twitter<i className="fab fa-twitter"></i></a><br></br>
+                        <a href="https://www.instagram.com" target="_blank" rel="noreferrer">Instagram<i className="fab fa-instagram"></i></a><br></br>
                         <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn<i className="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>

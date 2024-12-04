@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './UpdateInfo.css';
+import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';
 
 function UpdateInfo({ existingData }) {
+    const [view, setView] = useState(''); // State to track current view
+    const [allListings, setAllListings] = useState([]);
+    const [duplicateListings, setDuplicateListings] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [role, setRole] = useState(null); // Role state
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status
+    const navigate = useNavigate();
+    
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -22,6 +33,7 @@ function UpdateInfo({ existingData }) {
         healthSafety: '',
         policies: ''
     });
+    
 
     useEffect(() => {
         if (existingData) {
@@ -142,6 +154,10 @@ function UpdateInfo({ existingData }) {
                     {/* Submission */}
                     <button type="submit" className="btn btn-primary w-100 mt-4">Save Updates</button>
                 </form>
+            </div>
+            <div>
+                {/* Main Content */}
+                <Footer />
             </div>
         </div>
     );
