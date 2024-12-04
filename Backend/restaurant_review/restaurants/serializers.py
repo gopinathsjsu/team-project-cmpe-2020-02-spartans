@@ -1,12 +1,41 @@
 from rest_framework import serializers
-
+from django.db.models import Avg, Count
+from .models import Restaurant, CuisineType, FoodType, RestaurantPhoto
+from reviews.models import Review
 from django.conf import settings
-from .models import Restaurant, RestaurantPhoto
+from accounts.serializers import AccountSerializer
 
-class   RestaurantSerializer(serializers.ModelSerializer):
+class RestaurantSerializer(serializers.ModelSerializer):
+    owner = AccountSerializer()
+    cuisine_type = serializers.SlugRelatedField(
+        many=True, slug_field='name', queryset=CuisineType.objects.all()
+    )
+    food_type = serializers.SlugRelatedField(
+        many=True, slug_field='name', queryset=FoodType.objects.all()
+    )
+    review_count = serializers.SerializerMethodField()
+    average_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = Restaurant
-        exclude = ['owner'] 
+        fields = [
+            'id', 'name', 'address', 'city', 'state', 'zip_code', 'price_range', 
+            'rating', 'hours_of_operation', 'website', 'phone_number', 'owner',
+            'cuisine_type', 'food_type', 'description', 'review_count', 'average_rating'
+        ]
+        
+    def get_cuisine_type(self, obj):
+        return [cuisine.name for cuisine in obj.cuisine_type.all()]
+
+    def get_food_type(self, obj):
+        return [food.name for food in obj.food_type.all()]
+        
+    def get_review_count(self, obj):
+        return Review.objects.filter(restaurant=obj).count()
+
+    def get_average_rating(self, obj):
+        avg_rating = Review.objects.filter(restaurant=obj).aggregate(Avg('rating'))['rating__avg']
+        return round(avg_rating, 1) if avg_rating else None
 
 class RestaurantPhotoSerializer(serializers.ModelSerializer):
     thumbnail_url = serializers.SerializerMethodField()
@@ -16,6 +45,7 @@ class RestaurantPhotoSerializer(serializers.ModelSerializer):
     
     def get_thumbnail_url(self, obj):
         return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.thumbnail_s3_key}"
+
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     reviews = serializers.SerializerMethodField()
@@ -38,8 +68,8 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
             "phone_number",
             "latitude",
             "longitude",
-            "verified",
             "reviews",
+            "description",
             "photos",
         ]
 
@@ -47,10 +77,10 @@ class RestaurantDetailSerializer(serializers.ModelSerializer):
         return [
             {
                 "reviewer": review.user.username,
-                "comment": review.comment,
+                "comment": review.review_text,
                 "rating": review.rating,
             }
-            for review in obj.review_set.all()
+            for review in obj.reviews.all()
         ]
 
 class RestaurantListingSerializer(serializers.ModelSerializer):
