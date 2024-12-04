@@ -1,42 +1,7 @@
-
- .index-container {
-    background: linear-gradient(135deg, #c2c2df, #16213e, #0f3460, #53354a);
-    background-size: 300% 300%;
-    animation: gradientAnimation 12s ease infinite;
-    color: #000000;
+.index-container {
+    background-color: #f8f8f8;
+    color: #333;
     padding: 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.index-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.7));
-    mix-blend-mode: overlay;
-    z-index: 0;
-    animation: radialPulse 8s ease infinite;
-}
-
-@keyframes gradientAnimation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-@keyframes radialPulse {
-    0% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.2); opacity: 0.6; }
-    100% { transform: scale(1); opacity: 0.8; }
-}
-
-.index-header, .search-section, .restaurant-list, .map-section, .navbar {
-    position: relative;
-    z-index: 1; /* Ensure content is above the overlay */
 }
 
 .index-header h1 {
@@ -44,7 +9,9 @@
     color: #ff6347;
     text-align: center;
     margin-top: 20px;
-}
+} 
+ 
+
 
 .navbar {
     display: flex;
