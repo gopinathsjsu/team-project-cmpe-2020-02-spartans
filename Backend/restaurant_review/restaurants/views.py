@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q, Count
+from django.db.models.functions import Lower, Trim
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -11,7 +12,7 @@ from accounts.permissions import IsAdmin, IsBusinessOwner
 # View for searching restaurants using search bar
 class RestaurantSearchView(APIView):
     def get(self, request):
-        name = request.query_params.get('name', '').strip()
+        query = request.query_params.get('query', '').strip()
         zip_code = request.query_params.get('zip_code', '').strip()
         cuisine_type = request.query_params.get('cuisine_type', '').strip()
         food_type = request.query_params.get('food_type', '').strip()
@@ -21,8 +22,13 @@ class RestaurantSearchView(APIView):
 
         queryset = Restaurant.objects.filter()
 
-        if name:
-            queryset = queryset.filter(name__icontains=name)
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(cuisine_type__name__icontains=query) |
+                Q(food_type__name__icontains=query)
+            ).distinct()
         if zip_code:
             queryset = queryset.filter(zip_code=zip_code)
         if cuisine_type:
@@ -111,18 +117,24 @@ class RestaurantDetailView(APIView):
 # view for duplicate listing        
 class DuplicateListingsView(APIView):
     def get(self, request):
-        duplicates = Restaurant.objects.values('name', 'address', 'city', 'state', 'zip_code') \
-            .annotate(count=Count('id')) \
-            .filter(count__gt=1)
+        duplicates = Restaurant.objects.annotate(
+            normalized_name=Lower(Trim('name')),
+            normalized_address=Lower(Trim('address')),
+            normalized_city=Lower(Trim('city')),
+            normalized_state=Lower(Trim('state')),
+            normalized_zip_code=Lower(Trim('zip_code'))
+        ).values(
+            'normalized_name', 'normalized_address', 'normalized_city', 'normalized_state', 'normalized_zip_code'
+        ).annotate(count=Count('id')).filter(count__gt=1)
 
         duplicate_listings = []
         for duplicate in duplicates:
             listings = Restaurant.objects.filter(
-                name=duplicate['name'],
-                address=duplicate['address'],
-                city=duplicate['city'],
-                state=duplicate['state'],
-                zip_code=duplicate['zip_code']
+                name__iexact=duplicate['normalized_name'],
+                address__iexact=duplicate['normalized_address'],
+                city__iexact=duplicate['normalized_city'],
+                state__iexact=duplicate['normalized_state'],
+                zip_code__iexact=duplicate['normalized_zip_code']
             )
             duplicate_listings.extend(RestaurantSerializer(listings, many=True).data)
 

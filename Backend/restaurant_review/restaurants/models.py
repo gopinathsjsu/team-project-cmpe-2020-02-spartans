@@ -51,14 +51,7 @@ class Restaurant(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     review_count = models.PositiveIntegerField(default=0)
-
-    def update_rating(self):
-        reviews = self.reviews.all() 
-        if reviews.exists():
-            self.average_rating = reviews.aggregate(models.Avg('rating'))['rating__avg']
-        else:
-            self.average_rating = None
-        self.save()
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name

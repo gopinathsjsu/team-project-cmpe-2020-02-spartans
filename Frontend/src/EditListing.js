@@ -108,6 +108,7 @@ function EditListing() {
             if (response.ok) {
                 alert('Restaurant updated successfully!');
                 fetchRestaurantDetails(); // Re-fetch data to refresh the form
+                navigate('/BusinessOwnerDashboard');
             } else {
                 const errorData = await response.json();
                 console.error("Error Details:", errorData);

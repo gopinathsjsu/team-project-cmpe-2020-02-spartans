@@ -171,6 +171,7 @@ const RestaurantDetails = () => {
             <p className="details-text">Food Type: {restaurant.food_type?.join(', ')}</p>
             <p className="details-text">Price: {restaurant.price_range}</p>
             <p className="details-text">Rating: ⭐ {restaurant.rating}</p>
+            <p className="details-text">Description: {restaurant.description}</p>
             <p className="details-address">
                 Address: {restaurant.address}, {restaurant.city}, {restaurant.state}{' '}
                 {restaurant.zip_code}

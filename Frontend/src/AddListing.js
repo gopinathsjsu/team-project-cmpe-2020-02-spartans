@@ -3,8 +3,10 @@ import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddListing.css';
 import api from './api';
+import { useNavigate } from 'react-router-dom';
 
 function AddListing() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -71,12 +73,15 @@ function AddListing() {
                     website: '',
                     phone_number: '',
                 });
+                alert('Restaurant added successfully!');
+                navigate('/BusinessOwnerDashboard');
             }
         } catch (error) {
             if (error.response && error.response.data) {
             setErrorMessage(error.response.data.error || 'Failed to add listing.');
             } else {
                 setErrorMessage('An error occurred. Please try again later.');
+                alert('Failed to add restaurant. Please check your input.');
             }
         }
     };
