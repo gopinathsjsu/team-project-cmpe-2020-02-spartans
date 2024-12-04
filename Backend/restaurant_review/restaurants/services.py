@@ -1,4 +1,8 @@
 import requests
+import os
+
+# Get the Google API Key from environment variables
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 def fetch_google_places(zip_code):
     geocode_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={zip_code}&key={GOOGLE_API_KEY}"
