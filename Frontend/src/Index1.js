@@ -89,10 +89,10 @@ function Index() {
                             <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
                         )}
                         {role === "owner" && (
-                            <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
+                            <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner Dashboard</button>
                         )}
                         {role === "admin" && (
-                            <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
+                            <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin Dashboard</button>
                         )}
 
                         <button onClick={() => navigate('/about')} className="nav-item">About Us</button>

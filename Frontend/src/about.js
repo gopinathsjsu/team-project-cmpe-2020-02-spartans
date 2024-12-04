@@ -49,8 +49,8 @@ function AboutPage() {
           <div className="row">
             <div className="col-md-3">
               <div className="team-member">
-                <img src="https://via.placeholder.com/150" alt="ERIC PHARM" className="img-fluid rounded-circle" />
-                <h4>ERIC PHARM</h4>
+                <img src="https://via.placeholder.com/150" alt="ERIC PHAM" className="img-fluid rounded-circle" />
+                <h4>ERIC PHAM</h4>
                 
               </div>
             </div>
