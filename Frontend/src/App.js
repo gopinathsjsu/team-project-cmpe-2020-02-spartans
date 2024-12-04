@@ -13,7 +13,7 @@ import RestaurantList from './RestaurantList';
 import RestaurantDetails from './RestaurantDetails';
 import ManageListing from './ManageListing';
 import EditListing from './EditListing';
-import about from './about';
+import About from './about';
 
 function App() {
     return (
@@ -30,7 +30,7 @@ function App() {
                 <Route path="/restaurant/:id" element={<RestaurantDetails />} />
                 <Route path="/manage-listings" element={<ManageListing />} />
                 <Route path="/manage-listings/edit/:id" element={<EditListing />} />
-                <Route path="/about" element={<about />} />
+                <Route path="/About" element={<About />} />
             </Routes>
         </Router>
     );
