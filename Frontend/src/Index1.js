@@ -176,10 +176,12 @@ function Index() {
                                 <p>Rating: ⭐ {restaurant.rating}</p>
                                 <button onClick={() => {
                                     if (restaurant.source === 'google') {
-                                        navigate(`/restaurant/${restaurant.place_id}`);
+                                        navigate(`/restaurant/google/${restaurant.place_id}`);
+                                        console.log("Navigating to:", restaurant.source === 'google' ? `/restaurant/google/${restaurant.place_id}` : `/restaurant/${restaurant.id}`);
                                     } else {
                                         navigate(`/restaurant/${restaurant.id}`);
                                     }
+                                    
                                 }}>View Details</button>
                             </div>
                         ))

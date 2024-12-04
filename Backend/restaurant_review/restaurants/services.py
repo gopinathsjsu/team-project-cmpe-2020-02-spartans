@@ -4,6 +4,24 @@ import os
 # Get the Google API Key from environment variables
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
+# Mapping of keywords to your CuisineType model names
+CUISINE_TYPE_MAPPING = {
+    'italian': 'Italian',
+    'mexican': 'Mexican',
+    'chinese': 'Chinese',
+    'greek': 'Greek',
+    'japanese': 'Japanese',
+    # Add more mappings as needed
+}
+
+# Mapping of keywords to your FoodType model names
+FOOD_TYPE_MAPPING = {
+    'vegan': 'Vegan',
+    'vegetarian': 'Vegetarian',
+    'gluten-free': 'Gluten-free',
+    # Add more mappings as needed
+}
+
 def fetch_google_places(zip_code):
     geocode_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={zip_code}&key={GOOGLE_API_KEY}"
     geocode_response = requests.get(geocode_url)
@@ -31,6 +49,23 @@ def normalize_google_place_result(place):
         2: '$$',
         3: '$$$',
     }
+
+    # Extract Google Places types and name
+    place_types = place.get('types', [])
+    place_name = place.get('name', '').lower()
+
+    # Infer cuisine type based on name or types
+    inferred_cuisines = []
+    for keyword, cuisine_name in CUISINE_TYPE_MAPPING.items():
+        if keyword in place_name or any(keyword in place_type for place_type in place_types):
+            inferred_cuisines.append(cuisine_name)
+
+    # Infer food type based on name or types
+    inferred_food_types = []
+    for keyword, food_name in FOOD_TYPE_MAPPING.items():
+        if keyword in place_name or any(keyword in place_type for place_type in place_types):
+            inferred_food_types.append(food_name)
+
     return {
         'name': place.get('name', 'N/A'),
         'address': place.get('vicinity', 'N/A'),
