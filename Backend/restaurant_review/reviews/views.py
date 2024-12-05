@@ -8,8 +8,11 @@ from .serializers import ReviewSerializer
 from accounts.permissions import IsUser
 
 class SubmitReviewView(APIView):
-    permission_classes = [IsUser]  
+    permission_classes = [IsUser]
+
     def post(self, request, restaurant_id):
+        print(f"User: {request.user}, Role: {getattr(request.user, 'role', None)}")
+
         try:
             restaurant = Restaurant.objects.get(id=restaurant_id)
         except Restaurant.DoesNotExist:
@@ -22,10 +25,11 @@ class SubmitReviewView(APIView):
         if serializer.is_valid():
             serializer.save(user=request.user, restaurant=restaurant)
             avg_rating = Review.objects.filter(restaurant=restaurant).aggregate(Avg('rating'))['rating__avg']
-            restaurant.rating = round(avg_rating, 1) 
+            restaurant.rating = round(avg_rating, 1)
             restaurant.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GetReviewsView(APIView):
     def get(self, request, restaurant_id):
