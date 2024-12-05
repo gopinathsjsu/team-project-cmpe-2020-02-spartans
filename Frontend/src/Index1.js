@@ -178,7 +178,7 @@ function Index() {
                                 <p>Address: {restaurant.address || 'N/A'}</p>
                                 <p>
                                     Cuisine: {restaurant.cuisine_type && restaurant.cuisine_type.length > 0
-                                        ? restaurant.cuisine_type.map((id) => cuisineMap[id]).join(', ')
+                                        ? restaurant.cuisine_type.join(', ')
                                         : 'Information not available'}
                                 </p>
                                 <p>
