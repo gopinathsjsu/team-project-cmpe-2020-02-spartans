@@ -3,16 +3,18 @@ from django.utils.timezone import now
 from datetime import timedelta
 from django.db.models import Q, Count
 from django.db.models.functions import Lower, Trim
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework.permissions import IsAuthenticated
-from django.conf import settings
+from accounts.permissions import IsAdmin, IsBusinessOwner
+from .services import fetch_google_places, normalize_google_place_result, fetch_google_place_details
 from .serializers import RestaurantSerializer, RestaurantDetailSerializer, RestaurantListingSerializer
 from .models import Restaurant, RestaurantPhoto, CuisineType, FoodType
 from .utils import upload_to_s3, delete_s3_object, generate_thumbnail
-from accounts.permissions import IsAdmin, IsBusinessOwner
+
 
 # View for searching restaurants using search bar
 class RestaurantSearchView(APIView):
@@ -25,6 +27,7 @@ class RestaurantSearchView(APIView):
         min_rating = request.query_params.get('min_rating', '')
         max_rating = request.query_params.get('max_rating', '')
 
+        # Fetch restaurants from database
         queryset = Restaurant.objects.filter()
 
         if query:
@@ -52,8 +55,18 @@ class RestaurantSearchView(APIView):
             except ValueError:
                 return Response({"error": "Invalid rating range"}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = RestaurantSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        db_results = RestaurantSerializer(queryset, many=True).data
+
+        # Fetch restaurants from Google Places if zip_code is provided
+        google_results = []
+        if zip_code:
+            google_places = fetch_google_places(zip_code)
+            google_results = [normalize_google_place_result(place) for place in google_places]
+
+        # Combine database results and Google Places results
+        combined_results = db_results + google_results
+
+        return Response(combined_results, status=status.HTTP_200_OK)
 
 # View for listing restaurants in DB
 class RestaurantListView(ListAPIView):
@@ -361,3 +374,15 @@ class PhotoDetailView(APIView):
         except RestaurantPhoto.DoesNotExist:
             return Response({"error": "Photo not found."}, status=status.HTTP_404_NOT_FOUND)
 
+class GooglePlaceDetailView(APIView):
+    def get(self, request, *args, **kwargs):
+        place_id = kwargs.get('place_id')
+        if not place_id:
+            return Response({"error": "Missing place_id parameter."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Fetch details from Google Places
+        details = fetch_google_place_details(place_id)
+        if not details:
+            return Response({"error": "Could not fetch details for the provided place_id."}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(details, status=status.HTTP_200_OK)

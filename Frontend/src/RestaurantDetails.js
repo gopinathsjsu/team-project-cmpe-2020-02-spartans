@@ -3,9 +3,10 @@ import { useParams } from 'react-router-dom';
 import './RestaurantDetails.css';
 import { refreshAccessToken } from './auth';
 import { useNavigate } from 'react-router-dom';
+import { getGooglePlaceDetails } from './api';
 
 const RestaurantDetails = () => {
-    const { id } = useParams();
+    const { id, placeId } = useParams();
     const [restaurant, setRestaurant] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,6 +27,17 @@ const RestaurantDetails = () => {
         { id: 2, name: 'Vegetarian' },
         { id: 3, name: 'Gluten-free' },
     ];
+
+    useEffect(() => {
+        if (placeId) {
+            // for google places
+            fetchGooglePlace();
+        } else if (id) {
+            // for local restaurant
+            fetchRestaurant();
+            fetchReviews();
+        }
+    }, [id, placeId]);
 
     const fetchRestaurant = async () => {
         try {
@@ -48,6 +60,32 @@ const RestaurantDetails = () => {
         }
     };
 
+    const fetchGooglePlace = async () => {
+        try {
+            console.log("Fetching Google Place details for:", placeId);
+            const details = await getGooglePlaceDetails(placeId);
+            console.log("Fetched Google Place details:", details);
+            const normalizedDetails = {
+                name: details.name,
+                address: details.address,
+                rating: details.rating,
+                phone_number: details.phone_number || 'Not available',
+                website: details.website || 'Not available',
+                opening_hours: details.opening_hours ? details.opening_hours.join(', ') : 'Not available',
+                cuisine_type: ['N/A'], // Google Places does not have cuisine types
+                food_type: ['N/A'], // Google Places does not have food types
+                price_range: 'N/A', // You can decide how to represent this
+                reviews: details.reviews || [],
+                source: 'google'
+            };
+            setRestaurant(normalizedDetails);
+        } catch (error) {
+            console.error('Error fetching Google Place details:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchReviews = async () => {
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/reviews/`);
@@ -61,15 +99,16 @@ const RestaurantDetails = () => {
         }
     };
 
-    useEffect(() => {
-        fetchRestaurant();
-        fetchReviews();
-    }, [id]);
-
     const handleSubmitReview = async (e) => {
         e.preventDefault();
         let token = localStorage.getItem('accessToken'); // Retrieve token from local storage
-    
+        
+        if (placeId) {
+            // can't submit review for google places
+            setErrorMessage('Reviews cannot be submitted for Google Places restaurants through this app.');
+            return;
+        }
+
         if (!token) {
             setErrorMessage('You must be logged in to submit a review.');
             return;
@@ -186,74 +225,113 @@ const RestaurantDetails = () => {
             <div className="details-header">
                 <h1>{restaurant.name}</h1>
             </div>
-            <p className="details-text">Cuisine Type: {restaurant.cuisine_type?.join(', ')}</p>
-            <p className="details-text">Food Type: {restaurant.food_type?.join(', ')}</p>
-            <p className="details-text">Price: {restaurant.price_range}</p>
-            <p className="details-text">Rating: ⭐ {restaurant.rating}</p>
-            <p className="details-text">Description: {restaurant.description}</p>
-            <p className="details-address">
-                Address: {restaurant.address}, {restaurant.city}, {restaurant.state}{' '}
-                {restaurant.zip_code}
-            </p>
-            <p className="details-hours">Hours: {restaurant.hours_of_operation || 'Not Available'}</p>
-            <p className="details-contact">
-                Contact: {restaurant.phone_number || 'Not Available'}
-            </p>
-            <p className="details-contact">
-                Website:{' '}
-                {restaurant.website ? (
-                    <a href={restaurant.website} target="_blank" rel="noopener noreferrer">
-                        {restaurant.website}
-                    </a>
-                ) : (
-                    'Not Available'
-                )}
-            </p>
-
-            {/* Reviews Section */}
-            <div className="reviews-container">
-                <h2>User Reviews</h2>
-                {reviews.length > 0 ? (
-                    reviews.map((review) => (
-                        <div key={review.id} className="review">
-                            <p>
-                                <strong>{review.user}</strong> - ⭐ {review.rating}
-                            </p>
-                            <p>{review.review_text}</p> {/* Ensure use of 'review_text' */}
+    
+            {/* Conditional Rendering Based on Source */}
+            {restaurant.source === 'google' ? (
+                // Google Places Restaurant Details
+                <>
+                    <p className="details-text">Rating: ⭐ {restaurant.rating || 'Not Available'}</p>
+                    <p className="details-address">Address: {restaurant.address || 'Not Available'}</p>
+                    <p className="details-hours">Opening Hours: {restaurant.opening_hours || 'Not Available'}</p>
+                    <p className="details-contact">
+                        Contact: {restaurant.phone_number || 'Not Available'}
+                    </p>
+                    <p className="details-contact">
+                        Website: {restaurant.website ? (
+                            <a href={restaurant.website} target="_blank" rel="noopener noreferrer">
+                                {restaurant.website}
+                            </a>
+                        ) : (
+                            'Not Available'
+                        )}
+                    </p>
+    
+                    {/* Google Reviews Section */}
+                    {restaurant.reviews && restaurant.reviews.length > 0 && (
+                        <div className="reviews-container">
+                            <h2>User Reviews</h2>
+                            {restaurant.reviews.map((review, index) => (
+                                <div key={index} className="review">
+                                    <p>
+                                        <strong>{review.author_name}</strong> - ⭐ {review.rating}
+                                    </p>
+                                    <p>{review.text}</p>
+                                </div>
+                            ))}
                         </div>
-                    ))
-                ) : (
-                    <p>No reviews yet. Be the first to review!</p>
-                )}
-            </div>
-
-            {/* Review Form */}
-            <div className="review-form-container">
-                <h2>Submit a Review</h2>
-                {successMessage && <p className="success-message">{successMessage}</p>}
-                {errorMessage && <p className="error-message">{errorMessage}</p>}
-                <form onSubmit={handleSubmitReview}>
-                    <div className="form-group">
-                        <label htmlFor="rating">Rating:</label>
-                        <div className="stars">{renderStars()}</div>
+                    )}
+                </>
+            ) : (
+                // Local Database Restaurant Details
+                <>
+                    <p className="details-text">Cuisine Type: {restaurant.cuisine_type?.join(', ') || 'Not Available'}</p>
+                    <p className="details-text">Food Type: {restaurant.food_type?.join(', ') || 'Not Available'}</p>
+                    <p className="details-text">Price: {restaurant.price_range || 'Not Available'}</p>
+                    <p className="details-text">Rating: ⭐ {restaurant.rating || 'Not Available'}</p>
+                    <p className="details-text">Description: {restaurant.description || 'Not Available'}</p>
+                    <p className="details-address">
+                        Address: {restaurant.address}, {restaurant.city}, {restaurant.state} {restaurant.zip_code}
+                    </p>
+                    <p className="details-hours">Hours: {restaurant.hours_of_operation || 'Not Available'}</p>
+                    <p className="details-contact">
+                        Contact: {restaurant.phone_number || 'Not Available'}
+                    </p>
+                    <p className="details-contact">
+                        Website: {restaurant.website ? (
+                            <a href={restaurant.website} target="_blank" rel="noopener noreferrer">
+                                {restaurant.website}
+                            </a>
+                        ) : (
+                            'Not Available'
+                        )}
+                    </p>
+    
+                    {/* Reviews Section */}
+                    <div className="reviews-container">
+                        <h2>User Reviews</h2>
+                        {reviews.length > 0 ? (
+                            reviews.map((review) => (
+                                <div key={review.id} className="review">
+                                    <p>
+                                        <strong>{review.user}</strong> - ⭐ {review.rating}
+                                    </p>
+                                    <p>{review.review_text}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No reviews yet. Be the first to review!</p>
+                        )}
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="reviewText">Review Text:</label>
-                        <textarea
-                            id="reviewText"
-                            name="reviewText"
-                            rows="4"
-                            value={reviewText} // Updated state binding
-                            onChange={(e) => setReviewText(e.target.value)} // Updated handler
-                        />
+    
+                    {/* Review Form */}
+                    <div className="review-form-container">
+                        <h2>Submit a Review</h2>
+                        {successMessage && <p className="success-message">{successMessage}</p>}
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        <form onSubmit={handleSubmitReview}>
+                            <div className="form-group">
+                                <label htmlFor="rating">Rating:</label>
+                                <div className="stars">{renderStars()}</div>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="reviewText">Review Text:</label>
+                                <textarea
+                                    id="reviewText"
+                                    name="reviewText"
+                                    rows="4"
+                                    value={reviewText}
+                                    onChange={(e) => setReviewText(e.target.value)}
+                                />
+                            </div>
+                            <button type="submit" className="btn btn-primary">
+                                Submit Review
+                            </button>
+                        </form>
                     </div>
-                    <button type="submit" className="btn btn-primary">
-                        Submit Review
-                    </button>
-                </form>
-            </div>
+                </>
+            )}
         </div>
-    );
+    );    
 };
 
 export default RestaurantDetails;
