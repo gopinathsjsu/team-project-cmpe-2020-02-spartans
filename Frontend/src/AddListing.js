@@ -121,7 +121,9 @@ function AddListing() {
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         console.log("adding file");
-        console.log(e.target.files)
+        console.log(files)
+        console.log(...files)
+
 
         setFormData((prev) => ({
             ...prev,
@@ -153,7 +155,9 @@ function AddListing() {
             // Append other fields
             Object.keys(formData).forEach((key) => {
                 if (key === "photos_to_upload") {
-                    formData.photos_to_upload.forEach((file) => form.append("photos", file));
+                    console.log("formdata for  loop",formData);
+                    
+                    formData.photos_to_upload.forEach((file) => form.append('photos', file));
                 } else if (!["cuisine_type", "food_type"].includes(key)) {
                     form.append(key, formData[key]);
                 }
@@ -161,7 +165,10 @@ function AddListing() {
 
             console.log("Submitting Data:", Array.from(form.entries()));
 
-            const response = await api.post("/restaurants/add/", form);
+            const response = await api.post("/restaurants/add/", form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }});
             if (response.status === 201) {
                 alert("Restaurant added successfully!");
                 setFormData({
