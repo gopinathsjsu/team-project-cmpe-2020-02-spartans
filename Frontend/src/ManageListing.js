@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { refreshAccessToken } from './auth';
 import './ManageListing.css';
 import Footer from './Footer';
+import Navbar from './Navbar';
 
 
   
@@ -50,6 +51,7 @@ function ManageListings() {
 
     return (
         <>
+        <div><Navbar/></div>
         <div className="container">
             
             <h2>Manage Listings</h2>
