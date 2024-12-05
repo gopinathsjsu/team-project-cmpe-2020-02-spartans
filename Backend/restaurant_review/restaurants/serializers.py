@@ -5,7 +5,26 @@ from reviews.models import Review
 from django.conf import settings
 from accounts.serializers import AccountSerializer
 
+
+class RestaurantPhotoSerializer(serializers.ModelSerializer):
+    thumbnail_url = serializers.SerializerMethodField()
+    high_res_url = serializers.SerializerMethodField()
+    class Meta:
+        model = RestaurantPhoto
+        fields = ['id', 'thumbnail_url', 'uploaded_at','high_res_url']
+    
+    def get_thumbnail_url(self, obj):
+        return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.thumbnail_s3_key}"
+        # return f"http://localhost:9004/photos/{obj.thumbnail_s3_key}"
+    
+    def get_high_res_url(self,obj):
+        return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.photo_key}"
+
+
+        # return f"http://localhost:9004/photos/{obj.photo_key}"
+
 class RestaurantSerializer(serializers.ModelSerializer):
+    photos = RestaurantPhotoSerializer(many=True, read_only=True)
     owner = serializers.HiddenField(
         default=serializers.CurrentUserDefault() 
     )
@@ -23,7 +42,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'address', 'city', 'state', 'zip_code', 'price_range', 
             'rating', 'hours_of_operation', 'website', 'phone_number', 'owner',
-            'cuisine_type', 'food_type', 'description', 'review_count', 'average_rating'
+            'cuisine_type', 'food_type', 'description', 'review_count', 'average_rating','photos'
         ]
         
     def get_cuisine_type(self, obj):
@@ -39,14 +58,6 @@ class RestaurantSerializer(serializers.ModelSerializer):
         avg_rating = Review.objects.filter(restaurant=obj).aggregate(Avg('rating'))['rating__avg']
         return round(avg_rating, 1) if avg_rating else None
 
-class RestaurantPhotoSerializer(serializers.ModelSerializer):
-    thumbnail_url = serializers.SerializerMethodField()
-    class Meta:
-        model = RestaurantPhoto
-        fields = ['id', 'thumbnail_url', 'uploaded_at']
-    
-    def get_thumbnail_url(self, obj):
-        return f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{obj.thumbnail_s3_key}"
 
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):

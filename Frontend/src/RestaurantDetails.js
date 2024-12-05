@@ -4,6 +4,8 @@ import './RestaurantDetails.css';
 import { refreshAccessToken } from './auth';
 import { useNavigate } from 'react-router-dom';
 import { getGooglePlaceDetails } from './api';
+import ImageViewer from './ImageViewer';
+
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -16,6 +18,7 @@ const RestaurantDetails = () => {
     const [reviewText, setReviewText] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    // const [existing_photos, setExistingPhotos] = useState([]);
 
     const CUISINE_CHOICES = [
         { id: 1, name: 'Greek' },
@@ -91,6 +94,7 @@ const RestaurantDetails = () => {
                 reviews: details.reviews || [],
                 source: 'google',
                 description: details.description || 'No description available',
+                existing_photos: details.photos
             };
     
             setRestaurant(normalizedDetails);
@@ -268,6 +272,20 @@ const RestaurantDetails = () => {
                             'Not Available'
                         )}
                     </p>
+                    <div className="form-group mb-3">
+                    <label>Photos</label>
+                    <div className="d-flex flex-wrap">
+                        {restaurant.photos.map((photo, index) => (
+                            <div key={index} className="m-2">
+                                <ImageViewer 
+                                    thumbnailUrl={photo.thumbnail_url}
+                                    highResUrl={photo.high_res_url}
+                                />
+                            </div>
+                            
+                        ))}
+                    </div>
+                    </div>
     
                     {/* Google Reviews Section */}
                     {restaurant.reviews && restaurant.reviews.length > 0 && (
@@ -309,6 +327,20 @@ const RestaurantDetails = () => {
                         )}
                     </p>
     
+                    <div className="form-group mb-3">
+                    <label>Photos</label>
+                    <div className="d-flex flex-wrap">
+                        {restaurant.photos.map((photo, index) => (
+                            <div key={index} className="m-2">
+                                <ImageViewer 
+                                    thumbnailUrl={photo.thumbnail_url}
+                                    highResUrl={photo.high_res_url}
+                                />
+                            </div>
+                            
+                        ))}
+                    </div>
+                    </div>
                     {/* Reviews Section */}
                     <div className="reviews-container">
                         <h2>User Reviews</h2>

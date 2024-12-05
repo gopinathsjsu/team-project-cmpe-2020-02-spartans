@@ -31,12 +31,12 @@ def upload_to_s3(file, key=None):
         s3_client = boto3.client(
             's3',
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            endpoint_url='http://localhost:9004',
+            # endpoint_url='http://localhost:9004',
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION,
-            aws_session_token=None,
-            config=boto3.session.Config(signature_version='s3v4'),
-            verify=False
+            # aws_session_token=None,
+            # config=boto3.session.Config(signature_version='s3v4'),
+            # verify=False
         )
 
         bucket_name = settings.AWS_S3_BUCKET_NAME
@@ -80,12 +80,12 @@ def delete_s3_object(s3_key):
         s3_client = boto3.client(
             's3',
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            endpoint_url='http://localhost:9004',
+            # endpoint_url='http://localhost:9004',
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION,
-            aws_session_token=None,
-            config=boto3.session.Config(signature_version='s3v4'),
-            verify=False
+            # aws_session_token=None,
+            # config=boto3.session.Config(signature_version='s3v4'),
+            # verify=False
         )
         s3_client.delete_object(Bucket=settings.AWS_S3_BUCKET_NAME, Key=s3_key)
         return True
@@ -97,7 +97,7 @@ def delete_s3_object(s3_key):
 def generate_thumbnail(photo_file):
         print("generating thumbnail")
         image = Image.open(photo_file)
-        if image.mode == 'RGBA':
+        if image.mode != 'RGB':
             image = image.convert('RGB')
         image.thumbnail((150, 150))  # Resize the image to a thumbnail
 

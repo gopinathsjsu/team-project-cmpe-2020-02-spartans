@@ -1,25 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useParams, useNavigate } from 'react-router-dom';
+import ImageViewer from './ImageViewer';
 
 function EditListing() {
     const { id } = useParams(); // Get restaurant ID from URL
     const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         name: '',
         hours_of_operation: '',
         website: '',
         phone_number: '',
         description: '',
+        existing_photos: [], // Change to an array for multiple photos
+        new_photos: [],
         address: '',
         city: '',
         state: '',
         zip_code: '',
-        photos: null,
         cuisine_type: [],
         food_type: [],
     });
 
+    const [error, setError] = useState('');
     const CUISINE_CHOICES = [
         { value: 1, label: 'Greek' },
         { value: 2, label: 'Mexican' },
@@ -34,7 +38,9 @@ function EditListing() {
     ];
 
     useEffect(() => {
-        fetchRestaurantDetails();
+        if (id) {
+            fetchRestaurantDetails();
+        }
     }, [id]);
 
     const fetchRestaurantDetails = async () => {
@@ -61,11 +67,12 @@ function EditListing() {
                     website: data.website,
                     phone_number: data.phone_number,
                     description: data.description,
+                    existing_photos: data.photos,
+                    new_photos: [], // Photos handled separately
                     address: data.address,
                     city: data.city,
                     state: data.state,
                     zip_code: data.zip_code,
-                    photos: null, // Photos will be uploaded separately
                     cuisine_type: mappedCuisine,
                     food_type: mappedFoodType,
                 });
@@ -74,12 +81,13 @@ function EditListing() {
             }
         } catch (err) {
             console.error(err);
+            setError('Could not fetch restaurant details. Please try again later.');
         }
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSelectChange = (selected, field) => {
@@ -87,16 +95,32 @@ function EditListing() {
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, photos: e.target.files[0] });
+        const files = Array.from(e.target.files);
+        setFormData((prev) => ({
+            ...prev,
+            new_photos: [...prev.new_photos, ...files], // Add new files to the existing photos array
+        }));
+    };
+
+    const handleRemovePhoto = (index) => {
+        setFormData((prev) => ({
+            ...prev,
+            new_photos: prev.new_photos.filter((_, i) => i !== index),
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
             const accessToken = sessionStorage.getItem('accessToken');
             const form = new FormData();
+
             Object.keys(formData).forEach((key) => {
-                if (key === "cuisine_type" || key === "food_type") {
+                if (key === 'new_photos') {
+                    formData.new_photos.forEach((file) => form.append('photos', file)); // Append multiple photos
+                }
+                else if (key === "cuisine_type" || key === "food_type") {
                     formData[key]?.forEach((item) => form.append(key, item.value));
                 } else if (formData[key]) {
                     form.append(key, formData[key]);
@@ -118,29 +142,36 @@ function EditListing() {
                 fetchRestaurantDetails(); // Re-fetch data to refresh the form
                 navigate('/BusinessOwnerDashboard');
             } else {
+
                 const errorData = await response.json();
                 console.error("Error Details:", errorData);
                 alert('Failed to update restaurant. Please check your input.');
             }
         } catch (err) {
             console.error('An error occurred:', err);
+            setError('An error occurred while updating the restaurant. Please try again.');
+
         }
     };    
 
     return (
-        <div className="container">
-            <h2>Edit Restaurant</h2>
+        <div className="container mt-5">
+            <h2 className="mb-4">Edit Restaurant</h2>
+            {error && <div className="alert alert-danger">{error}</div>}
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>Name</label>
+                <div className="form-group mb-3">
+                    <label htmlFor="name">Name</label>
                     <input
                         type="text"
+                        id="name"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
                         className="form-control"
+                        required
                     />
                 </div>
+
                 <div className="form-group">
                     <label>Address</label>
                     <input
@@ -205,49 +236,84 @@ function EditListing() {
                     <label>Hours of Operation</label>
                     <input
                         type="text"
+                        id="hours_of_operation"
                         name="hours_of_operation"
                         value={formData.hours_of_operation}
                         onChange={handleInputChange}
                         className="form-control"
                     />
                 </div>
-                <div className="form-group">
-                    <label>Website</label>
+                <div className="form-group mb-3">
+                    <label htmlFor="website">Website</label>
                     <input
                         type="url"
+                        id="website"
                         name="website"
                         value={formData.website}
                         onChange={handleInputChange}
                         className="form-control"
                     />
                 </div>
-                <div className="form-group">
-                    <label>Phone Number</label>
+                <div className="form-group mb-3">
+                    <label htmlFor="phone_number">Phone Number</label>
                     <input
                         type="text"
+                        id="phone_number"
                         name="phone_number"
                         value={formData.phone_number}
                         onChange={handleInputChange}
                         className="form-control"
                     />
                 </div>
-                <div className="form-group">
-                    <label>Description</label>
+                <div className="form-group mb-3">
+                    <label htmlFor="description">Description</label>
                     <textarea
+                        id="description"
                         name="description"
                         value={formData.description}
                         onChange={handleInputChange}
                         className="form-control"
-                    ></textarea>
+                    />
                 </div>
-                <div className="form-group">
-                    <label>Photos</label>
+                <div className="form-group mb-3">
+                    <label>Existing Photos</label>
+                    <div className="d-flex flex-wrap">
+                        {formData.existing_photos.map((photo, index) => (
+                            <div key={index} className="m-2">
+                                <ImageViewer 
+                                    thumbnailUrl={photo.thumbnail_url}
+                                    highResUrl={photo.high_res_url}
+                                />
+                            </div>
+                            
+                        ))}
+                    </div>
+                </div>
+                <div className="form-group mb-3">
+                    <label htmlFor="photos">Upload Photos</label>
                     <input
                         type="file"
+                        id="photos"
                         name="photos"
+                        multiple
                         onChange={handleFileChange}
                         className="form-control"
+                        accept="image/*"
                     />
+                    <div className="mt-2">
+                        {formData.new_photos.map((file, index) => (
+                            <div key={index} className="d-flex align-items-center">
+                                <span className="me-2">{file.name}</span>
+                                <button
+                                    type="button"
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => handleRemovePhoto(index)}
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <button type="submit" className="btn btn-primary">Save Changes</button>
             </form>
