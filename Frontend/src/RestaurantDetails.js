@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './RestaurantDetails.css';
 import { refreshAccessToken } from './auth';
-import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getGooglePlaceDetails } from './api';
 import ImageViewer from './ImageViewer';
 
 import Navbar from './Navbar';
 import Footer from './Footer';
+
 
 const RestaurantDetails = () => {
     const { id, placeId } = useParams();
@@ -18,6 +19,8 @@ const RestaurantDetails = () => {
     const [reviewText, setReviewText] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const location = useLocation();
+    const { priceLevel } = location.state || {};
     // const [existing_photos, setExistingPhotos] = useState([]);
 
     const CUISINE_CHOICES = [
@@ -70,6 +73,10 @@ const RestaurantDetails = () => {
             console.log("Fetching Google Place details for:", placeId);
             const details = await getGooglePlaceDetails(placeId);
             console.log("Fetched Google Place details:", details);
+
+            if (details.price_level === undefined) {
+                console.log("Price level is not available for this place");
+            }
     
             // Price level mapping object
             const priceLevelMapping = {
@@ -78,8 +85,11 @@ const RestaurantDetails = () => {
                 3: '$$$',
             };
     
-            // Map price level
-            const priceRange = priceLevelMapping[details.price_level] || 'N/A';
+            // Safely map price level (fallback to 'Not Available' if price_level is missing)
+            const priceRange = details.price_level
+                ? priceLevelMapping[details.price_level] || 'N/A'
+                : 'Not Available';
+                
     
             const normalizedDetails = {
                 name: details.name,
@@ -88,22 +98,23 @@ const RestaurantDetails = () => {
                 phone_number: details.phone_number || 'Not available',
                 website: details.website || 'Not available',
                 opening_hours: details.opening_hours ? details.opening_hours.join(', ') : 'Not available',
-                cuisine_type: details.cuisine_type?.length > 0 ? details.cuisine_type : ['N/A'],
-                food_type: details.food_type?.length > 0 ? details.food_type : ['N/A'],
-                price_range: priceRange, // Correctly set the price range here
+                cuisine_type: details.cuisine_type?.length > 0 ? details.cuisine_type : ['Information not available'],
+                food_type: details.food_type?.length > 0 ? details.food_type : ['Information not availalble'],
+                price_range: priceRange, 
                 reviews: details.reviews || [],
                 source: 'google',
                 description: details.description || 'No description available',
-                existing_photos: details.photos
+                existing_photos: details.photos || [],
             };
     
+            console.log("Normalized Details with Price Range:", normalizedDetails);
             setRestaurant(normalizedDetails);
         } catch (error) {
             console.error('Error fetching Google Place details:', error);
         } finally {
             setLoading(false);
         }
-    };    
+    };
 
     const fetchReviews = async () => {
         try {
@@ -198,6 +209,12 @@ const RestaurantDetails = () => {
                 throw new Error('Failed to fetch updated restaurant details');
             }
             const updatedRestaurant = await updatedRestaurantResponse.json();
+            updatedRestaurant.cuisine_type = updatedRestaurant.cuisine_type.map(
+                (id) => CUISINE_CHOICES.find((choice) => choice.id === id)?.name || 'Unknown'
+            );
+            updatedRestaurant.food_type = updatedRestaurant.food_type.map(
+                (id) => FOOD_TYPE_CHOICES.find((choice) => choice.id === id)?.name || 'Unknown'
+            );
             setRestaurant(updatedRestaurant); // Update restaurant details with new rating
     
             // Fetch updated reviews
@@ -255,7 +272,7 @@ const RestaurantDetails = () => {
                 <>
                     <p className="details-text">Cuisine Type: {restaurant.cuisine_type || 'Not Available'}</p>
                     <p className="details-text">Food Type: {restaurant.food_type || 'Not Available'}</p>
-                    <p className="details-text">Price: {restaurant.price_range}</p>
+                    <p className="details-text">Price: {restaurant.priceLevel || restaurant.price_range || 'Not Available'  }</p>
                     <p className="details-text">Rating: ⭐ {restaurant.rating || 'Not Available'}</p>
                     <p className="details-description">Description: {restaurant.description || 'Not Available'}</p>
                     <p className="details-address">Address: {restaurant.address || 'Not Available'}</p>
