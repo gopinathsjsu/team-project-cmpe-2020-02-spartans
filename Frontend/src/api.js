@@ -46,20 +46,11 @@ const API_BASE_URL = 'http://127.0.0.1:8000/api/restaurants';
 export const getGooglePlaceDetails = async (placeId) => {
     try {
         const response = await axios.get(`${API_BASE_URL}/google_place/${placeId}/`);
-        
-        if (response.status !== 200) {
-            throw new Error("Failed to fetch Google Place details.");
-        }
-
-        // Check the full response data to see if price_level exists
-        console.log('Full Google Place Details Response:', response.data);
-        
         return response.data;
     } catch (error) {
         console.error("Error fetching Google Place details:", error);
         throw error;
     }
 };
-
 
 export default api;
