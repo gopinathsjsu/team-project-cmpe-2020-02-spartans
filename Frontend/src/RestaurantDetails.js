@@ -114,7 +114,7 @@ const RestaurantDetails = () => {
 
     const handleSubmitReview = async (e) => {
         e.preventDefault();
-        let token = localStorage.getItem('accessToken'); // Retrieve token from local storage
+        let token = sessionStorage.getItem('accessToken'); // Retrieve token from local storage
         
         if (placeId) {
             // can't submit review for google places
