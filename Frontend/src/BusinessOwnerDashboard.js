@@ -105,6 +105,7 @@ function BusinessOwnerDashboard() {
     };
 
     return (
+        <>
         <div className="dashboard-container container-fluid p-4">
             {!isAuthenticated ? (
                 <div className="text-center">
@@ -193,11 +194,13 @@ function BusinessOwnerDashboard() {
                     </div>
                 </>
             )}
-            <div>
-                {/* Main Content */}
-                <Footer />
-            </div>
+            
         </div>
+        <div>
+        {/* Main Content */}
+        <Footer />
+    </div>
+    </>
     );
 }
 
