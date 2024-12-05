@@ -111,6 +111,12 @@
     z-index: 0;
 }
 
+.listing-card .card-text,
+.listing-card p {
+    color: #ffffff; /* Bright white for clear readability */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Subtle shadow for contrast */
+}
+
 .listing-cards .listing-card:hover {
     transform: translateY(-8px) scale(1.03); /* Slightly less lift than action cards */
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3); /* Subtle shadow on hover */
@@ -124,6 +130,28 @@
     color: #fdcb6e; /* Bright color for titles */
     z-index: 1;
     position: relative;
+}
+
+.listing-card .card-body p strong {
+    color: #ffeaa7; /* Bright yellow for Address and Contact labels */
+    font-weight: bold; /* Keep the bold style */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Add subtle shadow for readability */
+}
+
+.listing-card .card-body p {
+    color: #ffffff; /* Bright white for the actual text content */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6); /* Subtle shadow for contrast */
+}
+
+.listing-card .card-footer p strong {
+    color: #fdcb6e; /* Bright gold for labels */
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Ensure text is readable */
+}
+
+.listing-card .card-footer p {
+    color: #ffffff; /* White for text */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* Buttons (Optional Enhancements) */

@@ -108,7 +108,7 @@ function AddListing() {
     const handleSelectChange = (selected, field) => {
         const updatedValues = selected.map((option) => option.label); 
         setFormData({ ...formData, [field]: updatedValues });
-    };
+    };    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -149,27 +149,25 @@ function AddListing() {
             //     }
             // }
             const form = new FormData();
-            const mappedCuisine = formData.cuisine_type.map((valu) =>
-                CUISINE_CHOICES.find((choice) => choice.label === valu)
+            const cuisineNames = formData.cuisine_type.map((value) =>
+                CUISINE_CHOICES.find((choice) => choice.value === value)?.label
             );
-            const mappedFoodType = formData.food_type.map((valu) =>
-                FOOD_TYPE_CHOICES.find((choice) => choice.label === valu)
+            const foodNames = formData.food_type.map((value) =>
+                FOOD_TYPE_CHOICES.find((choice) => choice.value === value)?.label
             );
-            
-            console.log(mappedCuisine, mappedFoodType)
+
+            cuisineNames.forEach((name) => form.append('cuisine_type', name));
+            foodNames.forEach((name) => form.append('food_type', name));
+            console.log(cuisineNames, foodNames)
+
             Object.keys(formData).forEach((key) => {
-                if (key === 'photo_to_upload') {
-                    formData.photos_to_upload.forEach((file) => form.append('photos', file)); // Append multiple photos
-                }
-                else if (key === "cuisine_type" || key === "food_type") {
-                    if (Array.isArray(formData[key])) {
-                        // Append integer values directly as expected by the form
-                        formData[key].forEach((item) => console.log(key, item.value));
-                    }
-                } else if (formData[key]) {
+                if (key === 'photos_to_upload') {
+                    formData.photos_to_upload.forEach((file) => form.append('photos', file));
+                } else if (!['cuisine_type', 'food_type'].includes(key)) {
                     form.append(key, formData[key]);
                 }
             });
+
         console.log('Submitting Data:', Array.from(form.entries()));
         const response = await api.post('/restaurants/add/', form);
             if (response.status === 201) {

@@ -162,30 +162,42 @@ function BusinessOwnerDashboard() {
                     </div>
 
                     <div className="listings-section">
-                        <h4>Your Listings</h4>
+                        <h4 className="text-center mb-4">Your Listings</h4>
                         {listings.length > 0 ? (
-                            <div className="listing-cards">
+                            <div className="row listing-cards">
                                 {listings.map((listing, index) => (
-                                    <div
-                                        key={index}
-                                        className="listing-card"
-                                        onClick={() => handleRestaurantClick(listing.id)}
-                                    >
-                                        <div className="card-body">
-                                            <h5 className="card-title">{listing.name}</h5>
-                                            <p className="card-text">{listing.description || 'No description available.'}</p>
-                                            <p><strong>Address:</strong> {listing.address || 'No address provided.'}</p>
-                                            <p><strong>Contact:</strong> {listing.phone_number || 'N/A'}</p>
-                                        </div>
-                                        <div className="listing-card-footer">
-                                            <p><strong>Rating:</strong> {Number(listing.rating).toFixed(2) || 'No ratings yet'}</p>
-                                            <p><strong>Reviews:</strong> {listing.review_count || 0}</p>
+                                    <div key={index} className="col-md-4 mb-4">
+                                        <div
+                                            className="card listing-card h-100 d-flex flex-column"
+                                            onClick={() => handleRestaurantClick(listing.id)}
+                                        >
+                                            <div className="card-body">
+                                                <h5 className="card-title">{listing.name}</h5>
+                                                <p className="card-text">
+                                                    {listing.description || 'No description available.'}
+                                                </p>
+                                                <p>
+                                                    <strong>Address:</strong> {listing.address || 'No address provided.'}
+                                                </p>
+                                                <p>
+                                                    <strong>Contact:</strong> {listing.phone_number || 'N/A'}
+                                                </p>
+                                            </div>
+                                            <div className="card-footer mt-auto">
+                                                <p>
+                                                    <strong>Rating:</strong>{' '}
+                                                    {Number(listing.rating).toFixed(2) || 'No ratings yet'}
+                                                </p>
+                                                <p>
+                                                    <strong>Reviews:</strong> {listing.review_count || 0}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p>No listings found.</p>
+                            <p className="text-center text-muted">No listings found.</p>
                         )}
                     </div>
                 </>

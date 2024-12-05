@@ -27,8 +27,21 @@ function Index() {
         { value: 3, label: 'Gluten-free' },
     ];
 
+    const cuisineMap = {
+        1: 'Greek',
+        2: 'Mexican',
+        3: 'Italian',
+        4: 'Chinese',
+    };
+
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
+        const cuisineNames = cuisine.map((c) =>
+            cuisinesOptions.find((option) => option.value === c.value)?.label
+        );
+        const foodTypeNames = foodType.map((f) =>
+            foodTypeOptions.find((option) => option.value === f.value)?.label
+        );
         let minRating = '';
         let maxRating = '';
         if (rating) {
@@ -44,8 +57,8 @@ function Index() {
             const queryParams = new URLSearchParams({
                 query: searchQuery,
                 zip_code: zipCode,
-                cuisine_type: cuisine.map((c) => c.value).join(","),
-                food_type: foodType.map((f) => f.value).join(","),
+                cuisine_type: cuisineNames.join(','),
+                food_type: foodTypeNames.join(','),
                 price_range: priceRange,
                 min_rating: minRating || '',
                 max_rating: maxRating || '',
@@ -165,8 +178,8 @@ function Index() {
                                 <p>Address: {restaurant.address || 'N/A'}</p>
                                 <p>
                                     Cuisine: {restaurant.cuisine_type && restaurant.cuisine_type.length > 0
-                                        ? restaurant.cuisine_type.join(', ')
-                                        : 'N/A'}
+                                        ? restaurant.cuisine_type.map((id) => cuisineMap[id]).join(', ')
+                                        : 'Information not available'}
                                 </p>
                                 <p>
                                     Food Type: {restaurant.food_type && restaurant.food_type.length > 0
