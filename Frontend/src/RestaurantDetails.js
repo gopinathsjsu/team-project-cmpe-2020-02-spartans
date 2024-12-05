@@ -275,15 +275,18 @@ const RestaurantDetails = () => {
                     <div className="form-group mb-3">
                     <label>Photos</label>
                     <div className="d-flex flex-wrap">
-                        {restaurant.photos.map((photo, index) => (
+                    {restaurant.photos && restaurant.photos.length > 0 ? (
+                        restaurant.photos.map((photo, index) => (
                             <div key={index} className="m-2">
                                 <ImageViewer 
                                     thumbnailUrl={photo.thumbnail_url}
                                     highResUrl={photo.high_res_url}
                                 />
                             </div>
-                            
-                        ))}
+                        ))
+                    ) : (
+                        <p>No photos available.</p>
+                    )}
                     </div>
                     </div>
     
