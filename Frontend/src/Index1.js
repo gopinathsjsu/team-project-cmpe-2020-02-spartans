@@ -221,7 +221,7 @@ function Index() {
                                 <p>
                                     Food Type: {restaurant.food_type && restaurant.food_type.length > 0
                                         ? restaurant.food_type.join(', ')
-                                        : 'N/A'}
+                                        : 'Information not available'}
                                 </p>
                                 <p>Price: {restaurant.price_range || 'N/A'}</p>
                                 <p>Rating: ⭐ {restaurant.rating}</p>

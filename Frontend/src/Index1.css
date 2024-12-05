@@ -99,8 +99,35 @@
     border-radius: 10px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
+    display: flex;
+    flex-direction: column;  /* Stack the content vertically */
+    justify-content: space-between;  /* Space between content and button */
+    height: 420px;  /* Ensure cards have a consistent height */
     transition: transform 0.3s;
 }
+
+.restaurant-card button {
+    align-self: flex-end; /* Align to the bottom of the card */
+    margin-top: auto; /* Push the button to the bottom by taking up available space above it */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.restaurant-card h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.restaurant-card p {
+    font-size: 1em;
+    margin: 5px 0;
+}
+
+.restaurant-card .view-details-btn:hover {
+    background: #ff6347;
+}
+
 
 .restaurant-card:hover {
     transform: scale(1.05);
