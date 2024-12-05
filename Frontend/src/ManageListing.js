@@ -49,6 +49,7 @@ function ManageListings() {
     };
 
     return (
+        <>
         <div className="container">
             
             <h2>Manage Listings</h2>
@@ -78,11 +79,13 @@ function ManageListings() {
                     <p>No listings found. Add your first restaurant!</p>
                 )}
             </div>
-            <div>
-                {/* Main Content */}
-                <Footer />
-            </div>
+            
         </div>
+        <div>
+        {/* Main Content */}
+        <Footer />
+    </div>
+    </>
     );
 }
 

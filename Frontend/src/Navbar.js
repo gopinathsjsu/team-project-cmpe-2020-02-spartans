@@ -15,6 +15,7 @@ function Navbar() {
     };
 
     return (
+     
         <nav className="navbar">
             <div className="logo" onClick={() => navigate('/')}>🍽️ Restaurant Finder</div>
             <div className="nav-links">
@@ -44,6 +45,7 @@ function Navbar() {
                 )}
             </div>
         </nav>
+      
     );
 }
 

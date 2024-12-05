@@ -347,11 +347,12 @@ function AddListing() {
                 {successMessage && <div className="alert alert-success mt-4">{successMessage}</div>}
                 {errorMessage && <div className="alert alert-danger mt-4">{errorMessage}</div>}
             </div>
-            <div>
+            
+        </div>
+        <div>
                 {/* Main Content */}
                 <Footer />
             </div>
-        </div>
         </>
     );
 }

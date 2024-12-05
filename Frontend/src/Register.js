@@ -80,7 +80,7 @@ function Register() {
 
     return (
         <>
-        <div className="container">
+        <div className="container ">
         <Navbar/>
     </div>
    
