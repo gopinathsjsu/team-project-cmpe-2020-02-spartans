@@ -106,14 +106,18 @@ function AddListing() {
     ];
 
     const handleSelectChange = (selected, field) => {
-        const updatedValues = selected.map((option) => option.label); 
-        setFormData({ ...formData, [field]: updatedValues });
-    };    
+        const updatedValues = selected.map((option) => option.label);
+        setFormData((prevData) => ({
+            ...prevData,
+            [field]: updatedValues.length === 1 ? [updatedValues[0]] : updatedValues,
+        }));
+    }; 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-    };
+    };  
+
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         console.log("adding file");
@@ -140,64 +144,46 @@ function AddListing() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // const uploadData = new FormData();
-            // for (const key in formData) {
-            //     if (key === 'photos_to_upload') {
-            //         formData[key].forEach((file) => uploadData.append('photos_to_upload', file));
-            //     } else {
-            //         uploadData.append(key, formData[key]);
-            //     }
-            // }
             const form = new FormData();
-            const cuisineNames = formData.cuisine_type.map((value) =>
-                CUISINE_CHOICES.find((choice) => choice.value === value)?.label
-            );
-            const foodNames = formData.food_type.map((value) =>
-                FOOD_TYPE_CHOICES.find((choice) => choice.value === value)?.label
-            );
 
-            cuisineNames.forEach((name) => form.append('cuisine_type', name));
-            foodNames.forEach((name) => form.append('food_type', name));
-            console.log(cuisineNames, foodNames)
+            // Append each cuisine_type and food_type value individually
+            formData.cuisine_type.forEach((value) => form.append("cuisine_type[]", value));
+            formData.food_type.forEach((value) => form.append("food_type[]", value));
 
+            // Append other fields
             Object.keys(formData).forEach((key) => {
-                if (key === 'photos_to_upload') {
-                    formData.photos_to_upload.forEach((file) => form.append('photos', file));
-                } else if (!['cuisine_type', 'food_type'].includes(key)) {
+                if (key === "photos_to_upload") {
+                    formData.photos_to_upload.forEach((file) => form.append("photos", file));
+                } else if (!["cuisine_type", "food_type"].includes(key)) {
                     form.append(key, formData[key]);
                 }
             });
 
-        console.log('Submitting Data:', Array.from(form.entries()));
-        const response = await api.post('/restaurants/add/', form);
+            console.log("Submitting Data:", Array.from(form.entries()));
+
+            const response = await api.post("/restaurants/add/", form);
             if (response.status === 201) {
-                setSuccessMessage('Restaurant listing added successfully!');
+                alert("Restaurant added successfully!");
                 setFormData({
-                    name: '',
-                    address: '',
-                    city: '',
-                    state: '',
-                    zip_code: '',
+                    name: "",
+                    address: "",
+                    city: "",
+                    state: "",
+                    zip_code: "",
                     cuisine_type: [],
                     food_type: [],
-                    price_range: '',
-                    hours_of_operation: '',
-                    website: '',
-                    phone_number: '',
-                    description: '',
-                    photos_to_upload: []
+                    price_range: "",
+                    hours_of_operation: "",
+                    website: "",
+                    phone_number: "",
+                    description: "",
+                    photos_to_upload: [],
                 });
-                alert('Restaurant added successfully!');
-                navigate('/BusinessOwnerDashboard');
+                navigate("/BusinessOwnerDashboard");
             }
         } catch (error) {
-            console.log(error);
-            if (error.response && error.response.data) {
-            setErrorMessage(error.response.data.error || 'Failed to add listing.');
-            } else {
-                setErrorMessage('An error occurred. Please try again later.');
-                alert('Failed to add restaurant. Please check your input.');
-            }
+            console.error("Error submitting form:", error);
+            alert("Failed to add restaurant. Please check your input.");
         }
     };
 
