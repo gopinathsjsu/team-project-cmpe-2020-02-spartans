@@ -27,7 +27,6 @@ function App() {
                 <Route path="/UpdateInfo" element={<UpdateInfo />} />
                 <Route path="/Register" element={<Register />} />
                 <Route path="/RestaurantList" element={<RestaurantList />} />
-                <Route path="/restaurant/google/:placeId" element={<RestaurantDetails />} />
                 <Route path="/restaurant/:id" element={<RestaurantDetails />} />
                 <Route path="/manage-listings" element={<ManageListing />} />
                 <Route path="/manage-listings/edit/:id" element={<EditListing />} />
