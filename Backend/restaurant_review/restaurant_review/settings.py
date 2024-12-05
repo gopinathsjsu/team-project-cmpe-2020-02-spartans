@@ -63,7 +63,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://ec2-52-53-245-102.us-west-1.compute.amazonaws.com"
+    "http://ec2-52-53-245-102.us-west-1.compute.amazonaws.com",
     "http://localhost:3000",  # React development server
 ]
 
