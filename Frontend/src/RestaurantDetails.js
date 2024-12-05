@@ -4,6 +4,8 @@ import './RestaurantDetails.css';
 import { refreshAccessToken } from './auth';
 import { useNavigate } from 'react-router-dom';
 import { getGooglePlaceDetails } from './api';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 const RestaurantDetails = () => {
     const { id, placeId } = useParams();
@@ -234,6 +236,10 @@ const RestaurantDetails = () => {
     }
 
     return (
+        <>
+        <div><Navbar/></div>
+        
+      
         <div className="details-container">
             <div className="details-header">
                 <h1>{restaurant.name}</h1>
@@ -348,6 +354,8 @@ const RestaurantDetails = () => {
                 </>
             )}
         </div>
+        <div><Footer/></div>
+        </>
     );    
 };
 
