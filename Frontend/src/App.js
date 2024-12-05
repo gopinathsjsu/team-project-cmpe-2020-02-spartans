@@ -15,7 +15,7 @@ import ManageListing from './ManageListing';
 import EditListing from './EditListing';
 import About from './about';
 import Profile from './Profile'
-
+import Navbar from './Navbar';
 function App() {
     return (
         <Router>
@@ -34,6 +34,7 @@ function App() {
                 <Route path="/manage-listings" element={<ManageListing />} />
                 <Route path="/manage-listings/edit/:id" element={<EditListing />} />
                 <Route path="/About" element={<About />} />
+                <Route path="/Navbar" element={<Navbar />} />
             </Routes>
         </Router>
     );

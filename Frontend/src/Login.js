@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css";
 import Footer from './Footer';
+import Navbar from './Navbar';
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -58,7 +59,14 @@ function Login() {
     };
 
     return (
+        <>
+        <div className="container">
+        <Navbar/>
+    </div>
+   
+        
         <div className="login-container">
+            
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
                 {error && <div className="error">{error}</div>}
@@ -91,6 +99,7 @@ function Login() {
             </form>
            
         </div>
+        </>
         
     );
 }
