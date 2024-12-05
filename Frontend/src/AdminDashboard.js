@@ -205,24 +205,31 @@ function AdminDashboard() {
             <div className="card mb-4 p-4 shadow">
                 <h3>Admin Actions</h3>
                 <div className="d-flex flex-column flex-md-row justify-content-around mt-3">
-                    <button
+                    <div className='mb-12'>
+                    <button 
                         onClick={() => setView('manage')}
                         className={`btn btn-primary admin-option mb-3 ${view === 'manage' ? 'active' : ''}`}
                     >
+                      
                         ⚙️ Manage Listings
-                    </button>
+                    </button> 
+                    </div>
+                    <div className='mb-12'>
                     <button
                         onClick={() => setView('duplicates')}
                         className={`btn btn-warning admin-option mb-3 ${view === 'duplicates' ? 'active' : ''}`}
                     >
                         🔍 Check Duplicate Listings
-                    </button>
+                    </button> 
+                    </div>
+                    <div className='mb-12'>
                     <button
                         onClick={() => setView('old-listings')}
                         className={`btn btn-danger admin-option mb-3 ${view === 'old-listings' ? 'active' : ''}`}
                     >
                         🗑️ Delete Old Listings
-                    </button>
+                    </button> 
+                    </div>
                 </div>
             </div>
 
