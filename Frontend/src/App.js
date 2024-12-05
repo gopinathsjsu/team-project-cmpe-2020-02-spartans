@@ -13,6 +13,8 @@ import RestaurantList from './RestaurantList';
 import RestaurantDetails from './RestaurantDetails';
 import ManageListing from './ManageListing';
 import EditListing from './EditListing';
+import About from './about';
+import Profile from './Profile'
 
 function App() {
     return (
@@ -20,15 +22,18 @@ function App() {
             <Routes>
                 <Route path="/" element={<Index />} />  {/* This sets Index as the homepage */}
                 <Route path="/login" element={<Login />} />
+                <Route path="/profile" element={<privateRoute allowedRoles={["user"]}><Profile /></privateRoute>} />
                 <Route path="/BusinessOwnerDashboard" element={<privateRoute allowedRoles={["owner"]}><BusinessOwnerDashboard /></privateRoute>} />
                 <Route path="/AdminDashboard" element={<privateRoute allowedRoles={["admin"]}><AdminDashboard /></privateRoute>} />
                 <Route path="/AddListing" element={<AddListing />} />
                 <Route path="/UpdateInfo" element={<UpdateInfo />} />
                 <Route path="/Register" element={<Register />} />
                 <Route path="/RestaurantList" element={<RestaurantList />} />
+                <Route path="/restaurant/google/:placeId" element={<RestaurantDetails />} />
                 <Route path="/restaurant/:id" element={<RestaurantDetails />} />
                 <Route path="/manage-listings" element={<ManageListing />} />
                 <Route path="/manage-listings/edit/:id" element={<EditListing />} />
+                <Route path="/About" element={<About />} />
             </Routes>
         </Router>
     );

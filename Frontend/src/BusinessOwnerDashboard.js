@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './BusinessOwnerDashboard.css';
 import { refreshAccessToken } from './auth';
+import Footer from './Footer';
 
 function BusinessOwnerDashboard() {
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [listings, setListings] = useState([]);
-    const [ownerInfo, setOwnerInfo] = useState({ name: "John Doe", email: "john.doe@example.com" });
+    const [accountInfo, setAccountInfo] = useState({ first_name: '', last_name: '', email: '' });
     const [role, setRole] = useState(null);
 
     useEffect(() => {
@@ -19,11 +20,48 @@ function BusinessOwnerDashboard() {
 
         if (accessToken) {
             fetchListings();
+            fetchAccountInfo();
+            
         } else {
             alert('You are not logged in. Redirecting to login.');
             navigate('/login');
         }
     }, [navigate]);
+
+    const fetchAccountInfo = async () => {
+        try {
+            let accessToken = sessionStorage.getItem('accessToken');
+            if (!accessToken) {
+                accessToken = await refreshAccessToken();
+                if (!accessToken) {
+                    navigate('/login');
+                    return;
+                }
+            }
+
+            const response = await fetch('http://127.0.0.1:8000/api/accounts/account-details/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setAccountInfo({
+                    id: data.id,
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    email: data.email,
+                });
+            } else {
+                throw new Error(`Failed to fetch account info. Status: ${response.status}`);
+            }
+        } catch (err) {
+            console.error('Failed to fetch account info:', err);
+        }
+    };
 
     const fetchListings = async () => {
         try {
@@ -103,8 +141,8 @@ function BusinessOwnerDashboard() {
                     </header>
 
                     <div className="dashboard-header text-center mb-4">
-                        <h2>Welcome, {ownerInfo.name}</h2>
-                        <p className="text-muted">Email: {ownerInfo.email}</p>
+                        <h2>Welcome, {accountInfo.first_name} {accountInfo.last_name}</h2>
+                        <p className="text-muted">Email: {accountInfo.email}</p>
                     </div>
 
                     <div className="actions-section row mb-5">
@@ -113,14 +151,6 @@ function BusinessOwnerDashboard() {
                                 <span role="img" aria-label="add">🏢</span>
                                 <h5>
                                     <button onClick={() => navigate('/AddListing')}>Add New Listing</button>
-                                </h5>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="action-card">
-                                <span role="img" aria-label="update">📝</span>
-                                <h5>
-                                    <button onClick={() => navigate('/UpdateInfo')}>Update Business Info</button>
                                 </h5>
                             </div>
                         </div>
@@ -150,7 +180,7 @@ function BusinessOwnerDashboard() {
                                                 <p className="card-text">{listing.description}</p>
                                                 <p><strong>Address:</strong> {listing.address}</p>
                                                 <p><strong>Contact:</strong> {listing.phone_number}</p>
-                                                <p><strong>Rating:</strong> {listing.average_rating || 'No ratings yet'}</p>
+                                                <p><strong>Rating:</strong> {Number(listing.rating).toFixed(2) || 'No ratings yet'}</p>
                                                 <p><strong>Reviews:</strong> {listing.review_count || 0}</p>
                                             </div>
                                         </div>
@@ -163,6 +193,10 @@ function BusinessOwnerDashboard() {
                     </div>
                 </>
             )}
+            <div>
+                {/* Main Content */}
+                <Footer />
+            </div>
         </div>
     );
 }

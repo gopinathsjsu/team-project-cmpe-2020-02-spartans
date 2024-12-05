@@ -8,7 +8,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password', 'confirm_password', 'role', 'business_name', 'address', 'contact']
+        fields = ['first_name', 'last_name', 'username', 'email', 'password', 'confirm_password', 'role', 'business_name', 'address', 'contact']
 
     def validate(self, data):
         if data['password'] != data['confirm_password']:
@@ -20,6 +20,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('confirm_password') 
         user = CustomUser.objects.create_user(
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password'],
@@ -39,4 +41,9 @@ class LoginSerializer(serializers.Serializer):
         if not user:
             raise serializers.ValidationError({"error": "Invalid email or password"})
         return user
+    
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'first_name', 'last_name', 'email', 'date_joined']
     

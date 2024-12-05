@@ -1,0 +1,65 @@
+.about-container {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .hero-section {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 50px 0;
+  }
+  
+  .mission-section {
+    background-color: #f4f4f4;
+    padding: 60px 0;
+  }
+  
+  .features-section {
+    background-color: #ffffff;
+    padding: 60px 0;
+  }
+  
+  .feature-item {
+    margin-bottom: 30px;
+  }
+  
+  .feature-item h3 {
+    color: #2c3e50;
+  }
+  
+  .team-section {
+    background-color: #f4f4f4;
+    padding: 60px 0;
+  }
+  
+  .team-member {
+    text-align: center;
+  }
+  
+  .team-member img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 15px;
+  }
+  
+  .cta-section {
+    background-color: #e74c3c;
+    color: white;
+    padding: 50px 0;
+  }
+  
+  .cta-section a {
+    text-decoration: none;
+    background-color: #fff;
+    color: #e74c3c;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cta-section a:hover {
+    background-color: #c0392b;
+    color: white;
+  }
+  

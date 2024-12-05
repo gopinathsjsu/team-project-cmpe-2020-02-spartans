@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
 import { useParams, useNavigate } from 'react-router-dom';
 import ImageViewer from './ImageViewer';
 
@@ -13,10 +14,24 @@ function EditListing() {
         phone_number: '',
         description: '',
         existing_photos: [], // Change to an array for multiple photos
-        new_photos: []
+        new_photos: [],
+        cuisine_type: [],
+        food_type: [],
     });
 
     const [error, setError] = useState('');
+    const CUISINE_CHOICES = [
+        { value: 1, label: 'Greek' },
+        { value: 2, label: 'Mexican' },
+        { value: 3, label: 'Italian' },
+        { value: 4, label: 'Chinese' },
+    ];
+
+    const FOOD_TYPE_CHOICES = [
+        { value: 1, label: 'Vegan' },
+        { value: 2, label: 'Vegetarian' },
+        { value: 3, label: 'Gluten-free' },
+    ];
 
     useEffect(() => {
         if (id) {
@@ -35,6 +50,13 @@ function EditListing() {
 
             if (response.ok) {
                 const data = await response.json();
+                const mappedCuisine = data.cuisine_type.map((id) =>
+                    CUISINE_CHOICES.find((choice) => choice.value === id)
+                );
+                const mappedFoodType = data.food_type.map((id) =>
+                    FOOD_TYPE_CHOICES.find((choice) => choice.value === id)
+                );
+
                 setFormData({
                     name: data.name,
                     hours_of_operation: data.hours_of_operation,
@@ -42,7 +64,9 @@ function EditListing() {
                     phone_number: data.phone_number,
                     description: data.description,
                     existing_photos: data.photos,
-                    new_photos: [] // Photos handled separately
+                    new_photos: [], // Photos handled separately
+                    cuisine_type: mappedCuisine,
+                    food_type: mappedFoodType,
                 });
             } else {
                 throw new Error('Failed to fetch restaurant details.');
@@ -56,6 +80,10 @@ function EditListing() {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSelectChange = (selected, field) => {
+        setFormData({ ...formData, [field]: selected });
     };
 
     const handleFileChange = (e) => {
@@ -83,11 +111,16 @@ function EditListing() {
             Object.keys(formData).forEach((key) => {
                 if (key === 'new_photos') {
                     formData.new_photos.forEach((file) => form.append('photos', file)); // Append multiple photos
+                }
+                else if (key === "cuisine_type" || key === "food_type") {
+                    formData[key]?.forEach((item) => form.append(key, item.value));
                 } else if (formData[key]) {
                     form.append(key, formData[key]);
                 }
             });
-
+    
+            console.log("Submitting Form Data:", Array.from(form.entries()));
+    
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
                 method: 'PUT',
                 headers: {
@@ -95,19 +128,23 @@ function EditListing() {
                 },
                 body: form,
             });
-
+    
             if (response.ok) {
                 alert('Restaurant updated successfully!');
-                navigate('/manage-listings');
+                fetchRestaurantDetails(); // Re-fetch data to refresh the form
+                navigate('/BusinessOwnerDashboard');
             } else {
-                const errorResponse = await response.json();
-                throw new Error(errorResponse?.message || 'Failed to update restaurant.');
+
+                const errorData = await response.json();
+                console.error("Error Details:", errorData);
+                alert('Failed to update restaurant. Please check your input.');
             }
         } catch (err) {
-            console.error(err);
+            console.error('An error occurred:', err);
             setError('An error occurred while updating the restaurant. Please try again.');
+
         }
-    };
+    };    
 
     return (
         <div className="container mt-5">
@@ -126,8 +163,29 @@ function EditListing() {
                         required
                     />
                 </div>
-                <div className="form-group mb-3">
-                    <label htmlFor="hours_of_operation">Hours of Operation</label>
+
+                <div className="form-group">
+                    <label>Cuisine Type</label>
+                    <Select
+                        options={CUISINE_CHOICES}
+                        isMulti
+                        value={formData.cuisine_type}
+                        onChange={(selected) => handleSelectChange(selected, 'cuisine_type')}
+                        placeholder="Select Cuisine Types"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Food Type</label>
+                    <Select
+                        options={FOOD_TYPE_CHOICES}
+                        isMulti
+                        value={formData.food_type}
+                        onChange={(selected) => handleSelectChange(selected, 'food_type')}
+                        placeholder="Select Food Types"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Hours of Operation</label>
                     <input
                         type="text"
                         id="hours_of_operation"

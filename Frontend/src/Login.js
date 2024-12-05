@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Login.css";
+import Footer from './Footer';
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -88,7 +89,9 @@ function Login() {
                     {isLoading ? "Logging in..." : "Login"}
                 </button>
             </form>
+           
         </div>
+        
     );
 }
 

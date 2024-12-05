@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { refreshAccessToken } from './auth';
 import './ManageListing.css';
+import Footer from './Footer';
 
 function ManageListings() {
     const navigate = useNavigate();
@@ -73,6 +74,10 @@ function ManageListings() {
                 ) : (
                     <p>No listings found. Add your first restaurant!</p>
                 )}
+            </div>
+            <div>
+                {/* Main Content */}
+                <Footer />
             </div>
         </div>
     );

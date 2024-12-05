@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import Select from 'react-select';
 import './Index1.css';
 import Footer from './Footer';
@@ -15,21 +14,17 @@ function Index() {
     const [restaurants, setRestaurants] = useState([]);
     const navigate = useNavigate();
 
-    // Google Maps Configuration
-    const mapContainerStyle = { width: '100%', height: '300px' };
-    const center = { lat: 37.7749, lng: -122.4194 }; // Example coordinates (San Francisco)
-
     const cuisinesOptions = [
-        { value: 'greek', label: 'Greek' },
-        { value: 'mexican', label: 'Mexican' },
-        { value: 'italian', label: 'Italian' },
-        { value: 'chinese', label: 'Chinese' },
+        { value: 1, label: 'Greek' },
+        { value: 2, label: 'Mexican' },
+        { value: 3, label: 'Italian' },
+        { value: 4, label: 'Chinese' },
     ];
 
     const foodTypeOptions = [
-        { value: 'vegetarian', label: 'Vegetarian' },
-        { value: 'vegan', label: 'Vegan' },
-        { value: 'gluten-free', label: 'Gluten-free' },
+        { value: 1, label: 'Vegan' },
+        { value: 2, label: 'Vegetarian' },
+        { value: 3, label: 'Gluten-free' },
     ];
 
     const handleSearchSubmit = async (e) => {
@@ -47,7 +42,7 @@ function Index() {
 
         try {
             const queryParams = new URLSearchParams({
-                name: searchQuery,
+                query: searchQuery,
                 zip_code: zipCode,
                 cuisine_type: cuisine.map((c) => c.value).join(","),
                 food_type: foodType.map((f) => f.value).join(","),
@@ -61,7 +56,8 @@ function Index() {
                 throw new Error("Failed to fetch restaurants");
             }
             const data = await response.json();
-            setRestaurants(data);
+            const filteredRestaurants = data.filter(restaurant => restaurant.price_range && restaurant.price_range !== 'N/A');
+            setRestaurants(filteredRestaurants);
         } catch (error) {
             console.error("Error fetching restaurants:", error);
         }
@@ -89,10 +85,10 @@ function Index() {
                             <button onClick={() => navigate('/profile')} className="nav-item">My Profile</button>
                         )}
                         {role === "owner" && (
-                            <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner</button>
+                            <button onClick={() => navigate('/BusinessOwnerDashboard')} className="nav-item">Business Owner Dashboard</button>
                         )}
                         {role === "admin" && (
-                            <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin</button>
+                            <button onClick={() => navigate('/AdminDashboard')} className="nav-item">Admin Dashboard</button>
                         )}
 
                         <button onClick={() => navigate('/about')} className="nav-item">About Us</button>
@@ -158,20 +154,6 @@ function Index() {
                     <button type="submit" className="search-btn">Search</button>
                 </form>
             </div>
-
-            <div className="map-section">
-                <LoadScript googleMapsApiKey="AIzaSyC8ArnRrgrsSp34RuGVOqGbbh0JuXBj2ug">
-                    <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={10}>
-                        {restaurants.map((restaurant, index) => (
-                            <Marker 
-                                key={index} 
-                                position={{ lat: restaurant.latitude, lng: restaurant.longitude }}
-                                title={restaurant.name}
-                            />
-                        ))}
-                    </GoogleMap>
-                </LoadScript>
-            </div>
                             
             <div className="restaurant-list">
                 {restaurants.length > 0 ? (
@@ -180,18 +162,34 @@ function Index() {
                         .map((restaurant, index) => (
                             <div className="restaurant-card" key={index}>
                                 <h3>{restaurant.name}</h3>
-                                <p>Cuisine: {restaurant.cuisine_type}</p>
-                                <p>Food Type: {restaurant.food_type}</p>
-                                <p>Price: {restaurant.price_range}</p>
+                                <p>Address: {restaurant.address || 'N/A'}</p>
+                                <p>
+                                    Cuisine: {restaurant.cuisine_type && restaurant.cuisine_type.length > 0
+                                        ? restaurant.cuisine_type.join(', ')
+                                        : 'N/A'}
+                                </p>
+                                <p>
+                                    Food Type: {restaurant.food_type && restaurant.food_type.length > 0
+                                        ? restaurant.food_type.join(', ')
+                                        : 'N/A'}
+                                </p>
+                                <p>Price: {restaurant.price_range || 'N/A'}</p>
                                 <p>Rating: ⭐ {restaurant.rating}</p>
-                                <button onClick={() => navigate(`/restaurant/${restaurant.id}`)}>View Details</button>
+                                <button onClick={() => {
+                                    if (restaurant.source === 'google') {
+                                        navigate(`/restaurant/google/${restaurant.place_id}`);
+                                        console.log("Navigating to:", restaurant.source === 'google' ? `/restaurant/google/${restaurant.place_id}` : `/restaurant/${restaurant.id}`);
+                                    } else {
+                                        navigate(`/restaurant/${restaurant.id}`);
+                                    }
+                                    
+                                }}>View Details</button>
                             </div>
                         ))
                 ) : (
                     <p>No restaurants found matching your criteria.</p>
                 )}
             </div>
-
 
             <div>
                 {/* Main Content */}
