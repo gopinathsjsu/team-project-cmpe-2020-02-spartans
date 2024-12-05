@@ -343,26 +343,49 @@ function AdminDashboard() {
                     ) : error ? (
                         <p className="text-danger">{error}</p>
                     ) : oldListings.length > 0 ? (
-                        <ul className="list-group">
-                            {oldListings.map((listing) => (
-                                <li key={listing.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>
-                                        <strong>{listing.name}</strong> - {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
-                                    </span>
-                                    <button
-                                        className="btn btn-danger btn-sm"
-                                        onClick={() => handleDeleteOldListing(listing.id)}
-                                    >
-                                        🗑️ Delete Old Listing   
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                        <div>
+                            <table className="table table-hover shadow-sm mt-4">
+                                <thead className="thead-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th>Last Updated</th>
+                                        <th>Reviews</th>
+                                        <th>Rating</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {oldListings.map((listing) => (
+                                        <tr key={listing.id}>
+                                            <td>{listing.name}</td>
+                                            <td>
+                                                {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
+                                            </td>
+                                            <td>{listing.last_updated || 'Not Available'}</td>
+                                            <td>{listing.review_count || 0}</td>
+                                            <td>{listing.rating || 'N/A'}</td>
+                                            <td>
+                                                <div className="d-flex flex-column">
+                                                    <button
+                                                        className="btn btn-danger btn-sm"
+                                                        onClick={() => handleDeleteOldListing(listing.id)}
+                                                    >
+                                                        🗑️ Delete Listing
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     ) : (
                         <p>No old listings found.</p>
                     )}
                 </div>
             )}
+
 
             {!view && (
                 <div className="text-center mt-4">
