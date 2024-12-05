@@ -4,6 +4,8 @@ import { refreshAccessToken } from './auth';
 import './ManageListing.css';
 import Footer from './Footer';
 
+
+  
 function ManageListings() {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
@@ -48,6 +50,7 @@ function ManageListings() {
 
     return (
         <div className="container">
+            
             <h2>Manage Listings</h2>
             <div className="listings-section">
                 {listings.length > 0 ? (
