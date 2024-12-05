@@ -205,24 +205,31 @@ function AdminDashboard() {
             <div className="card mb-4 p-4 shadow">
                 <h3>Admin Actions</h3>
                 <div className="d-flex flex-column flex-md-row justify-content-around mt-3">
-                    <button
+                    <div className='mb-12'>
+                    <button 
                         onClick={() => setView('manage')}
                         className={`btn btn-primary admin-option mb-3 ${view === 'manage' ? 'active' : ''}`}
                     >
+                      
                         ⚙️ Manage Listings
-                    </button>
+                    </button> 
+                    </div>
+                    <div className='mb-12'>
                     <button
                         onClick={() => setView('duplicates')}
                         className={`btn btn-warning admin-option mb-3 ${view === 'duplicates' ? 'active' : ''}`}
                     >
                         🔍 Check Duplicate Listings
-                    </button>
+                    </button> 
+                    </div>
+                    <div className='mb-12'>
                     <button
                         onClick={() => setView('old-listings')}
                         className={`btn btn-danger admin-option mb-3 ${view === 'old-listings' ? 'active' : ''}`}
                     >
                         🗑️ Delete Old Listings
-                    </button>
+                    </button> 
+                    </div>
                 </div>
             </div>
 
@@ -271,53 +278,50 @@ function AdminDashboard() {
                                         <table className="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th>Business Owner</th>
                                                     <th>Name</th>
                                                     <th>Address</th>
-                                                    <th>Last Updated</th>
+                                                    <th>Website</th>
                                                     <th>Review Count</th>
                                                     <th>Rating</th>
-                                                    <th>Website</th>
+                                                    <th>Last Updated</th>
                                                     <th>Phone Number</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {duplicates.map((listing) => (
-                                                    <tr key={listing.id}>
-                                                        <td>{listing.owner.first_name} {listing.owner.last_name}</td>
-                                                        <td>{listing.name}</td>
-                                                        <td>
-                                                            {listing.address}, {listing.city}, {listing.state}{' '}
-                                                            {listing.zip_code}
-                                                        </td>
-                                                        <td>{listing.last_updated || 'Not Available'}</td>
-                                                        <td>{listing.review_count || 0}</td>
-                                                        <td>{listing.rating || 'N/A'}</td>
-                                                        <td>
-                                                            {listing.website ? (
-                                                                <a
-                                                                    href={listing.website}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                >
-                                                                    Visit
-                                                                </a>
-                                                            ) : (
-                                                                'N/A'
-                                                            )}
-                                                        </td>
-                                                        <td>{listing.phone_number || 'N/A'}</td>
-                                                        <td>
-                                                            <button
-                                                                className="btn btn-danger btn-sm"
-                                                                onClick={() => handleDeleteListing(listing.id)}
+                                            {duplicates.map((listing) => (
+                                                <tr key={listing.id}>
+                                                    <td>{listing.name}</td>
+                                                    <td>
+                                                        {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
+                                                    </td>
+                                                    <td>
+                                                        {listing.website ? (
+                                                            <a
+                                                                href={listing.website}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
                                                             >
-                                                                🗑️ Delete Listing
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                                Visit
+                                                            </a>
+                                                        ) : (
+                                                            'N/A'
+                                                        )}
+                                                    </td>
+                                                    <td>{listing.review_count || 0}</td>
+                                                    <td>{listing.rating || 'N/A'}</td>
+                                                    <td>{listing.last_updated || 'Not Available'}</td>
+                                                    <td>{listing.phone_number || 'N/A'}</td>
+                                                    <td>
+                                                        <button
+                                                            className="btn btn-danger btn-sm"
+                                                            onClick={() => handleDeleteListing(listing.id)}
+                                                        >
+                                                            🗑️ Delete Listing
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                             </tbody>
                                         </table>
                                     </div>
@@ -339,26 +343,49 @@ function AdminDashboard() {
                     ) : error ? (
                         <p className="text-danger">{error}</p>
                     ) : oldListings.length > 0 ? (
-                        <ul className="list-group">
-                            {oldListings.map((listing) => (
-                                <li key={listing.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>
-                                        <strong>{listing.name}</strong> - {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
-                                    </span>
-                                    <button
-                                        className="btn btn-danger btn-sm"
-                                        onClick={() => handleDeleteOldListing(listing.id)}
-                                    >
-                                        🗑️ Delete Old Listing   
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                        <div>
+                            <table className="table table-hover shadow-sm mt-4">
+                                <thead className="thead-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th>Last Updated</th>
+                                        <th>Reviews</th>
+                                        <th>Rating</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {oldListings.map((listing) => (
+                                        <tr key={listing.id}>
+                                            <td>{listing.name}</td>
+                                            <td>
+                                                {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
+                                            </td>
+                                            <td>{listing.last_updated || 'Not Available'}</td>
+                                            <td>{listing.review_count || 0}</td>
+                                            <td>{listing.rating || 'N/A'}</td>
+                                            <td>
+                                                <div className="d-flex flex-column">
+                                                    <button
+                                                        className="btn btn-danger btn-sm"
+                                                        onClick={() => handleDeleteOldListing(listing.id)}
+                                                    >
+                                                        🗑️ Delete Listing
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     ) : (
                         <p>No old listings found.</p>
                     )}
                 </div>
             )}
+
 
             {!view && (
                 <div className="text-center mt-4">

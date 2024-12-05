@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { refreshAccessToken } from './auth';
 import './ManageListing.css';
 import Footer from './Footer';
+import Navbar from './Navbar';
 
+
+  
 function ManageListings() {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
@@ -47,7 +50,10 @@ function ManageListings() {
     };
 
     return (
+        <>
+        <div><Navbar/></div>
         <div className="container">
+            
             <h2>Manage Listings</h2>
             <div className="listings-section">
                 {listings.length > 0 ? (
@@ -75,11 +81,13 @@ function ManageListings() {
                     <p>No listings found. Add your first restaurant!</p>
                 )}
             </div>
-            <div>
-                {/* Main Content */}
-                <Footer />
-            </div>
+            
         </div>
+        <div>
+        {/* Main Content */}
+        <Footer />
+    </div>
+    </>
     );
 }
 

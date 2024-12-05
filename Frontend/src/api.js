@@ -1,65 +1,65 @@
-import axios from 'axios';
-import { refreshAccessToken } from './auth';
+    import axios from 'axios';
+    import { refreshAccessToken } from './auth';
 
-const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api/',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
+    const api = axios.create({
+        baseURL: 'http://127.0.0.1:8000/api/',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
-// Add a request interceptor
-api.interceptors.request.use(
-    async (config) => {
-        let accessToken = localStorage.getItem('accessToken');
+    // Add a request interceptor
+    api.interceptors.request.use(
+        async (config) => {
+            let accessToken = sessionStorage.getItem('accessToken');
 
-        // Check if access token is expired
-        if (!accessToken || isTokenExpired(accessToken)) {
-            accessToken = await refreshAccessToken();
+            // Check if access token is expired
+            if (!accessToken || isTokenExpired(accessToken)) {
+                accessToken = await refreshAccessToken();
+            }
+
+            if (accessToken) {
+                config.headers.Authorization = `Bearer ${accessToken}`;
+            }
+
+            return config;
+        },
+        (error) => {
+            return Promise.reject(error);
         }
+    );
 
-        if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
+    // Check if token is expired
+    const isTokenExpired = (token) => {
+        try {
+            const [, payload] = token.split('.');
+            const decoded = JSON.parse(atob(payload));
+            return decoded.exp * 1000 < Date.now();
+        } catch (error) {
+            console.error('Failed to parse token:', error);
+            return true;
         }
+    };
 
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
+    const API_BASE_URL = 'http://127.0.0.1:8000/api/restaurants';
 
-// Check if token is expired
-const isTokenExpired = (token) => {
-    try {
-        const [, payload] = token.split('.');
-        const decoded = JSON.parse(atob(payload));
-        return decoded.exp * 1000 < Date.now();
-    } catch (error) {
-        console.error('Failed to parse token:', error);
-        return true;
-    }
-};
+    export const getGooglePlaceDetails = async (placeId) => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/google_place/${placeId}/`);
+            
+            if (response.status !== 200) {
+                throw new Error("Failed to fetch Google Place details.");
+            }
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api/restaurants';
-
-export const getGooglePlaceDetails = async (placeId) => {
-    try {
-        const response = await axios.get(`${API_BASE_URL}/google_place/${placeId}/`);
-        
-        if (response.status !== 200) {
-            throw new Error("Failed to fetch Google Place details.");
+            // Check the full response data to see if price_level exists
+            console.log('Full Google Place Details Response:', response.data);
+            
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching Google Place details:", error);
+            throw error;
         }
-
-        // Check the full response data to see if price_level exists
-        console.log('Full Google Place Details Response:', response.data);
-        
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching Google Place details:", error);
-        throw error;
-    }
-};
+    };
 
 
-export default api;
+    export default api;

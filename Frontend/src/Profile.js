@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Footer from './Footer';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -107,6 +108,10 @@ const Profile = () => {
                     </button>
                 </div>
             )}
+            <div>
+                {/* Main Content */}
+                <Footer />
+            </div>
         </div>
     );
 };

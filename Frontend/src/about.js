@@ -96,14 +96,14 @@ function AboutPage() {
           <div className="row">
             <div className="col-md-3">
               <div className="team-member">
-                <img src="https://via.placeholder.com/150" alt="ERIC PHAM" className="img-fluid rounded-circle" />
+                <img src={require('./Eric.png')} alt="ERIC PHAM" className="img-fluid rounded-circle" />
                 <h4>ERIC PHAM</h4>
                 
               </div>
             </div>
             <div className="col-md-3">
               <div className="team-member">
-                <img src="https://via.placeholder.com/150" alt="Jane Smith" className="img-fluid rounded-circle" />
+                <img src={require('./Faisal.jpg')} alt="Jane Smith" className="img-fluid rounded-circle" />
                 <h4>FAISAL BUDHWANI</h4>
               </div>
             </div>
@@ -115,7 +115,7 @@ function AboutPage() {
             </div>
             <div className="col-md-3">
               <div className="team-member">
-                <img src="https://via.placeholder.com/150" alt="Samuel Green" className="img-fluid rounded-circle" />
+                <img src= {require('./SID.jpeg')} alt="Samuel Green" className="img-fluid rounded-circle" />
                 <h4>SIDDHARTH KULKARNI</h4>
               </div>
             </div>

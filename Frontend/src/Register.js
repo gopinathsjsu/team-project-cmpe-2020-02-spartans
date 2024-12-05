@@ -3,6 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Register.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 function Register() {
     const [isBusinessOwner, setIsBusinessOwner] = useState(false);
@@ -77,7 +79,11 @@ function Register() {
     };
 
     return (
-        
+        <>
+        <div className="container ">
+        <Navbar/>
+    </div>
+   
         <div className="container register-container d-flex justify-content-center align-items-center mt-5">
             <div className="card p-4 shadow-lg register-card">
                 <h2 className="text-center mb-4">Register as {isBusinessOwner ? "Business Owner" : "User"}</h2>
@@ -206,6 +212,8 @@ function Register() {
                 {message && <p className="mt-3 text-center">{message}</p>}
             </div>
         </div>
+        <div><Footer/></div>
+        </>
     );
 }
 

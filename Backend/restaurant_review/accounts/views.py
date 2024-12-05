@@ -44,6 +44,7 @@ class LoginView(APIView):
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
+
         print("Incoming data:", attrs) 
         email = attrs.get('email')
         password = attrs.get('password')
@@ -59,6 +60,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise AuthenticationFailed('User account is disabled.')
 
         data = super().validate(attrs)
+        user = self.user
         data['role'] = user.role
         return data
 

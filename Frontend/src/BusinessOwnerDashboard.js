@@ -105,6 +105,7 @@ function BusinessOwnerDashboard() {
     };
 
     return (
+        <>
         <div className="dashboard-container container-fluid p-4">
             {!isAuthenticated ? (
                 <div className="text-center">
@@ -147,17 +148,15 @@ function BusinessOwnerDashboard() {
 
                     <div className="actions-section row mb-5">
                         <div className="col-md-4">
-                            <div className="action-card">
+                            <div className="action-card" onClick={() => navigate('/AddListing')}>
                                 <span role="img" aria-label="add">🏢</span>
-                                <h5>
-                                    <button onClick={() => navigate('/AddListing')}>Add New Listing</button>
-                                </h5>
+                                <h5>Add Listing</h5>
                             </div>
                         </div>
                         <div className="col-md-4">
                             <div className="action-card" onClick={() => navigate('/manage-listings')}>
                                 <span role="img" aria-label="view">📋</span>
-                                <h5>Manage Your Listings</h5>
+                                <h5>Manage/Edit Your Listings</h5>
                             </div>
                         </div>
                     </div>
@@ -165,24 +164,22 @@ function BusinessOwnerDashboard() {
                     <div className="listings-section">
                         <h4>Your Listings</h4>
                         {listings.length > 0 ? (
-                            <div className="listing-cards row">
+                            <div className="listing-cards">
                                 {listings.map((listing, index) => (
                                     <div
                                         key={index}
-                                        className="col-md-4 mb-3"
+                                        className="listing-card"
                                         onClick={() => handleRestaurantClick(listing.id)}
-                                        style={{ cursor: 'pointer' }}
                                     >
-                                        <div className="listing-card card">
-                                            <div className="card-body">
-                                           
-                                                <h5 className="card-title">{listing.name}</h5>
-                                                <p className="card-text">{listing.description}</p>
-                                                <p><strong>Address:</strong> {listing.address}</p>
-                                                <p><strong>Contact:</strong> {listing.phone_number}</p>
-                                                <p><strong>Rating:</strong> {Number(listing.rating).toFixed(2) || 'No ratings yet'}</p>
-                                                <p><strong>Reviews:</strong> {listing.review_count || 0}</p>
-                                            </div>
+                                        <div className="card-body">
+                                            <h5 className="card-title">{listing.name}</h5>
+                                            <p className="card-text">{listing.description || 'No description available.'}</p>
+                                            <p><strong>Address:</strong> {listing.address || 'No address provided.'}</p>
+                                            <p><strong>Contact:</strong> {listing.phone_number || 'N/A'}</p>
+                                        </div>
+                                        <div className="listing-card-footer">
+                                            <p><strong>Rating:</strong> {Number(listing.rating).toFixed(2) || 'No ratings yet'}</p>
+                                            <p><strong>Reviews:</strong> {listing.review_count || 0}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -193,11 +190,13 @@ function BusinessOwnerDashboard() {
                     </div>
                 </>
             )}
-            <div>
-                {/* Main Content */}
-                <Footer />
-            </div>
+            
         </div>
+        <div>
+        {/* Main Content */}
+        <Footer />
+    </div>
+    </>
     );
 }
 

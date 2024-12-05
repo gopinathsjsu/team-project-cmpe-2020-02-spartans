@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { getGooglePlaceDetails } from './api';
 import ImageViewer from './ImageViewer';
 
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 const RestaurantDetails = () => {
     const { id, placeId } = useParams();
@@ -118,7 +120,7 @@ const RestaurantDetails = () => {
 
     const handleSubmitReview = async (e) => {
         e.preventDefault();
-        let token = localStorage.getItem('accessToken'); // Retrieve token from local storage
+        let token = sessionStorage.getItem('accessToken'); // Retrieve token from local storage
         
         if (placeId) {
             // can't submit review for google places
@@ -238,6 +240,10 @@ const RestaurantDetails = () => {
     }
 
     return (
+        <>
+        <div><Navbar/></div>
+        
+      
         <div className="details-container">
             <div className="details-header">
                 <h1>{restaurant.name}</h1>
@@ -380,6 +386,8 @@ const RestaurantDetails = () => {
                 </>
             )}
         </div>
+        <div><Footer/></div>
+        </>
     );    
 };
 

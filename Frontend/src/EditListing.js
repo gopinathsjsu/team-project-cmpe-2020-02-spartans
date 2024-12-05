@@ -15,6 +15,10 @@ function EditListing() {
         description: '',
         existing_photos: [], // Change to an array for multiple photos
         new_photos: [],
+        address: '',
+        city: '',
+        state: '',
+        zip_code: '',
         cuisine_type: [],
         food_type: [],
     });
@@ -65,6 +69,10 @@ function EditListing() {
                     description: data.description,
                     existing_photos: data.photos,
                     new_photos: [], // Photos handled separately
+                    address: data.address,
+                    city: data.city,
+                    state: data.state,
+                    zip_code: data.zip_code,
                     cuisine_type: mappedCuisine,
                     food_type: mappedFoodType,
                 });
@@ -164,6 +172,46 @@ function EditListing() {
                     />
                 </div>
 
+                <div className="form-group">
+                    <label>Address</label>
+                    <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        className="form-control"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>City</label>
+                    <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        className="form-control"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>State</label>
+                    <input
+                        type="text"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleInputChange}
+                        className="form-control"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Zip Code</label>
+                    <input
+                        type="text"
+                        name="zip_code"
+                        value={formData.zip_code}
+                        onChange={handleInputChange}
+                        className="form-control"
+                    />
+                </div>
                 <div className="form-group">
                     <label>Cuisine Type</label>
                     <Select
