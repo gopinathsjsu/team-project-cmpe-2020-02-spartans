@@ -6,6 +6,7 @@ import ImageViewer from './ImageViewer';
 function EditListing() {
     const { id } = useParams(); // Get restaurant ID from URL
     const navigate = useNavigate();
+    const [error, setError] = useState('');
 
     const [formData, setFormData] = useState({
         name: '',
@@ -23,7 +24,6 @@ function EditListing() {
         food_type: [],
     });
 
-    const [error, setError] = useState('');
     const CUISINE_CHOICES = [
         { value: 1, label: 'Greek' },
         { value: 2, label: 'Mexican' },
@@ -54,12 +54,13 @@ function EditListing() {
 
             if (response.ok) {
                 const data = await response.json();
-                const mappedCuisine = data.cuisine_type.map((id) =>
-                    CUISINE_CHOICES.find((choice) => choice.value === id)
-                );
-                const mappedFoodType = data.food_type.map((id) =>
-                    FOOD_TYPE_CHOICES.find((choice) => choice.value === id)
-                );
+                const mappedCuisine = data.cuisine_type
+                    .map((id) => CUISINE_CHOICES.find((choice) => choice.value === id))
+                    .filter(Boolean);
+
+                const mappedFoodType = data.food_type
+                    .map((id) => FOOD_TYPE_CHOICES.find((choice) => choice.value === id))
+                    .filter(Boolean);
 
                 setFormData({
                     name: data.name,
@@ -91,7 +92,10 @@ function EditListing() {
     };
 
     const handleSelectChange = (selected, field) => {
-        setFormData({ ...formData, [field]: selected });
+        setFormData((prev) => ({
+            ...prev,
+            [field]: selected || [], 
+        }));
     };
 
     const handleFileChange = (e) => {
