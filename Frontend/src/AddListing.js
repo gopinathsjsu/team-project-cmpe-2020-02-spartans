@@ -80,6 +80,7 @@ function AddListing() {
         hours_of_operation: '',
         website: '',
         phone_number: '',
+        photos_to_upload: []
     });
 
     const [successMessage, setSuccessMessage] = useState('');
@@ -113,12 +114,42 @@ function AddListing() {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        console.log("adding file");
+        console.log(e.target.files)
+
+        setFormData((prev) => ({
+            ...prev,
+            photos_to_upload: [...prev.photos_to_upload, ...files], // Add new files to the existing photos array
+        }));
+        console.log(formData);
+
+    };
+
+    const handleRemovePhoto = (index) => {
+        console.log("removing file");
+        setFormData((prev) => ({
+            ...prev,
+            photos_to_upload: prev.photos_to_upload.filter((_, i) => i !== index),
+        }));
+        console.log(formData);
+
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-        console.log('Submitting Data:', formData);
-        const response = await api.post('/restaurants/add/', formData);
+            const uploadData = new FormData();
+            for (const key in formData) {
+                if (key === 'photos_to_upload') {
+                    formData[key].forEach((file) => uploadData.append('photos_to_upload', file));
+                } else {
+                    uploadData.append(key, formData[key]);
+                }
+            }
+        console.log('Submitting Data:', uploadData);
+        const response = await api.post('/restaurants/add/', uploadData);
             if (response.status === 201) {
                 setSuccessMessage('Restaurant listing added successfully!');
                 setFormData({
@@ -134,6 +165,7 @@ function AddListing() {
                     website: '',
                     phone_number: '',
                     description: '',
+                    photos_to_upload: []
                 });
                 alert('Restaurant added successfully!');
                 navigate('/BusinessOwnerDashboard');
@@ -340,6 +372,32 @@ function AddListing() {
                         ></textarea>
                     </div>
 
+                    <div className="form-group mb-3">
+                        <label htmlFor="photos">Upload Photos</label>
+                        <input
+                            type="file"
+                            id="photos"
+                            name="photos"
+                            multiple
+                            onChange={handleFileChange}
+                            className="form-control"
+                            accept="image/*"
+                        />
+                        <div className="mt-2">
+                            {formData.photos_to_upload.map((file, index) => (
+                                <div key={index} className="d-flex align-items-center">
+                                    <span className="me-2">{file.name}</span>
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => handleRemovePhoto(index)}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                     <button type="submit" className="btn btn-primary w-100 mt-3">
                         Add Restaurant
                     </button>

@@ -278,7 +278,7 @@ class UpdateRestaurantListingView(APIView):
         except Restaurant.DoesNotExist:
             return Response({"error": "Listing not found or access denied."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = RestaurantListingSerializer(listing, data=request.data, partial=True)
+        serializer = RestaurantSerializer(listing, data=request.data, partial=True)
         if serializer.is_valid():
             listing = serializer.save()
             photos = request.FILES.getlist('photos')
