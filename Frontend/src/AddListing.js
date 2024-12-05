@@ -140,16 +140,38 @@ function AddListing() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const uploadData = new FormData();
-            for (const key in formData) {
-                if (key === 'photos_to_upload') {
-                    formData[key].forEach((file) => uploadData.append('photos_to_upload', file));
-                } else {
-                    uploadData.append(key, formData[key]);
+            // const uploadData = new FormData();
+            // for (const key in formData) {
+            //     if (key === 'photos_to_upload') {
+            //         formData[key].forEach((file) => uploadData.append('photos_to_upload', file));
+            //     } else {
+            //         uploadData.append(key, formData[key]);
+            //     }
+            // }
+            const form = new FormData();
+            const mappedCuisine = formData.cuisine_type.map((valu) =>
+                CUISINE_CHOICES.find((choice) => choice.label === valu)
+            );
+            const mappedFoodType = formData.food_type.map((valu) =>
+                FOOD_TYPE_CHOICES.find((choice) => choice.label === valu)
+            );
+            
+            console.log(mappedCuisine, mappedFoodType)
+            Object.keys(formData).forEach((key) => {
+                if (key === 'photo_to_upload') {
+                    formData.photos_to_upload.forEach((file) => form.append('photos', file)); // Append multiple photos
                 }
-            }
-        console.log('Submitting Data:', uploadData);
-        const response = await api.post('/restaurants/add/', uploadData);
+                else if (key === "cuisine_type" || key === "food_type") {
+                    if (Array.isArray(formData[key])) {
+                        // Append integer values directly as expected by the form
+                        formData[key].forEach((item) => console.log(key, item.value));
+                    }
+                } else if (formData[key]) {
+                    form.append(key, formData[key]);
+                }
+            });
+        console.log('Submitting Data:', Array.from(form.entries()));
+        const response = await api.post('/restaurants/add/', form);
             if (response.status === 201) {
                 setSuccessMessage('Restaurant listing added successfully!');
                 setFormData({
@@ -171,6 +193,7 @@ function AddListing() {
                 navigate('/BusinessOwnerDashboard');
             }
         } catch (error) {
+            console.log(error);
             if (error.response && error.response.data) {
             setErrorMessage(error.response.data.error || 'Failed to add listing.');
             } else {
