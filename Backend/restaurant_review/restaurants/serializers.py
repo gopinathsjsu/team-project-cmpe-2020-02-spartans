@@ -6,7 +6,9 @@ from django.conf import settings
 from accounts.serializers import AccountSerializer
 
 class RestaurantSerializer(serializers.ModelSerializer):
-    owner = AccountSerializer()
+    owner = serializers.HiddenField(
+        default=serializers.CurrentUserDefault() 
+    )
     cuisine_type = serializers.SlugRelatedField(
         many=True, slug_field='name', queryset=CuisineType.objects.all()
     )

@@ -246,9 +246,9 @@ class AddRestaurantListingView(APIView):
         if not request.user.is_authenticated:
             return Response({"detail": "Authentication credentials were not provided."}, status=401)
 
-        serializer = RestaurantSerializer(data=request.data)
+        serializer = RestaurantSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            restaurant = serializer.save(owner=request.user)
+            restaurant = serializer.save()
             photos = request.FILES.getlist('photos')  # Expecting multiple photos
             for photo in photos:
                 photo_key = upload_to_s3(photo)
