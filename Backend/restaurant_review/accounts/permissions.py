@@ -12,5 +12,5 @@ class IsBusinessOwner(BasePermission):
 
 class IsUser(BasePermission):
     def has_permission(self, request, view):
-        # Check if the user is authenticated and has the role 'user'
+        print(f"Authenticated: {request.user.is_authenticated}, Role: {getattr(request.user, 'role', None)}")
         return request.user.is_authenticated and getattr(request.user, 'role', None) == 'user'
