@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 function Register() {
     const [isBusinessOwner, setIsBusinessOwner] = useState(false);
     const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
         username: '',
         email: '',
         password: '',
@@ -16,6 +18,7 @@ function Register() {
         contact: ''
     });
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -28,6 +31,8 @@ function Register() {
     const toggleRegistrationType = () => {
         setIsBusinessOwner(!isBusinessOwner);
         setFormData({
+            firstName: '',
+            lastName: '',
             username: '',
             email: '',
             password: '',
@@ -49,6 +54,8 @@ function Register() {
     
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/accounts/register/', {
+                first_name: formData.firstName.trim(),
+                last_name: formData.lastName.trim(),
                 username: formData.username.trim(),
                 email: formData.email.trim(),
                 password: formData.password.trim(),
@@ -58,7 +65,8 @@ function Register() {
                 address: isBusinessOwner ? formData.address.trim() : undefined,
                 contact: isBusinessOwner ? formData.contact.trim() : undefined,
             });
-            setMessage(response.data.message); 
+            alert(response.data.message || "Registration successful! Please log in.");
+            navigate('/login');
         } catch (error) {
             if (error.response) {
                 alert("Error: " + JSON.stringify(error.response.data));
@@ -80,6 +88,30 @@ function Register() {
 
                 <form onSubmit={handleSubmit}>
                     {/* Shared Fields */}
+                    <div className="form-group mb-3">
+                        <label>First Name</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group mb-3">
+                        <label>Last Name</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+
                     <div className="form-group mb-3">
                         <label>Username</label>
                         <input

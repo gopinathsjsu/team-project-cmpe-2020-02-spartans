@@ -65,6 +65,17 @@ const RestaurantDetails = () => {
             console.log("Fetching Google Place details for:", placeId);
             const details = await getGooglePlaceDetails(placeId);
             console.log("Fetched Google Place details:", details);
+    
+            // Price level mapping object
+            const priceLevelMapping = {
+                1: '$',
+                2: '$$',
+                3: '$$$',
+            };
+    
+            // Map price level
+            const priceRange = priceLevelMapping[details.price_level] || 'N/A';
+    
             const normalizedDetails = {
                 name: details.name,
                 address: details.address,
@@ -72,19 +83,21 @@ const RestaurantDetails = () => {
                 phone_number: details.phone_number || 'Not available',
                 website: details.website || 'Not available',
                 opening_hours: details.opening_hours ? details.opening_hours.join(', ') : 'Not available',
-                cuisine_type: ['N/A'], // Google Places does not have cuisine types
-                food_type: ['N/A'], // Google Places does not have food types
-                price_range: 'N/A', // You can decide how to represent this
+                cuisine_type: details.cuisine_type?.length > 0 ? details.cuisine_type : ['N/A'],
+                food_type: details.food_type?.length > 0 ? details.food_type : ['N/A'],
+                price_range: priceRange, // Correctly set the price range here
                 reviews: details.reviews || [],
-                source: 'google'
+                source: 'google',
+                description: details.description || 'No description available',
             };
+    
             setRestaurant(normalizedDetails);
         } catch (error) {
             console.error('Error fetching Google Place details:', error);
         } finally {
             setLoading(false);
         }
-    };
+    };    
 
     const fetchReviews = async () => {
         try {
@@ -230,7 +243,11 @@ const RestaurantDetails = () => {
             {restaurant.source === 'google' ? (
                 // Google Places Restaurant Details
                 <>
+                    <p className="details-text">Cuisine Type: {restaurant.cuisine_type || 'Not Available'}</p>
+                    <p className="details-text">Food Type: {restaurant.food_type || 'Not Available'}</p>
+                    <p className="details-text">Price: {restaurant.price_range}</p>
                     <p className="details-text">Rating: ⭐ {restaurant.rating || 'Not Available'}</p>
+                    <p className="details-description">Description: {restaurant.description || 'Not Available'}</p>
                     <p className="details-address">Address: {restaurant.address || 'Not Available'}</p>
                     <p className="details-hours">Opening Hours: {restaurant.opening_hours || 'Not Available'}</p>
                     <p className="details-contact">

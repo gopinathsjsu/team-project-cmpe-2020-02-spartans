@@ -56,7 +56,8 @@ function Index() {
                 throw new Error("Failed to fetch restaurants");
             }
             const data = await response.json();
-            setRestaurants(data);
+            const filteredRestaurants = data.filter(restaurant => restaurant.price_range && restaurant.price_range !== 'N/A');
+            setRestaurants(filteredRestaurants);
         } catch (error) {
             console.error("Error fetching restaurants:", error);
         }
