@@ -56,12 +56,9 @@ function Index() {
 
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
-        const cuisineNames = cuisine.map((c) =>
-            cuisinesOptions.find((option) => option.value === c.value)?.label
-        );
-        const foodTypeNames = foodType.map((f) =>
-            foodTypeOptions.find((option) => option.value === f.value)?.label
-        );
+        const cuisineIds = cuisine.map((c) => c.value);
+        const foodTypeIds = foodType.map((f) => f.value);
+
         let minRating = '';
         let maxRating = '';
         if (rating) {
@@ -88,8 +85,8 @@ function Index() {
             const queryParams = new URLSearchParams({
                 query: searchQuery,
                 zip_code: zipCode,
-                cuisine_type: cuisineNames.join(','),
-                food_type: foodTypeNames.join(','),
+                cuisine_type: cuisineIds.join(','),
+                food_type: foodTypeIds.join(','),
                 price_range: priceRange,
                 min_rating: minRating || '',
                 max_rating: maxRating || '',
