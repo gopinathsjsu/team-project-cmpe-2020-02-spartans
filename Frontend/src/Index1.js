@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import './Index1.css';
@@ -12,6 +12,7 @@ function Index() {
     const [priceRange, setPriceRange] = useState('');
     const [rating, setRating] = useState('');
     const [restaurants, setRestaurants] = useState([]);
+    const [searchHistory, setSearchHistory] = useState([]);
     const navigate = useNavigate();
 
     const cuisinesOptions = [
@@ -34,6 +35,25 @@ function Index() {
         4: 'Chinese',
     };
 
+    useEffect(() => {
+        const savedParams = localStorage.getItem('searchParams');
+        const savedResults = localStorage.getItem('searchResults');
+
+        if (savedParams) {
+            const params = JSON.parse(savedParams);
+            setSearchQuery(params.searchQuery);
+            setZipCode(params.zipCode);
+            setCuisine(params.cuisine);
+            setFoodType(params.foodType);
+            setPriceRange(params.priceRange);
+            setRating(params.rating);
+        }
+
+        if (savedResults) {
+            setRestaurants(JSON.parse(savedResults));
+        }
+    }, []);
+
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
         const cuisineNames = cuisine.map((c) =>
@@ -53,6 +73,17 @@ function Index() {
         }
         console.log("Searching for:", searchQuery, zipCode, cuisine, foodType, priceRange, rating);
 
+        const searchParams = {
+            searchQuery,
+            zipCode,
+            cuisine,
+            foodType,
+            priceRange,
+            rating,
+        };
+
+        localStorage.setItem('searchParams', JSON.stringify(searchParams));
+
         try {
             const queryParams = new URLSearchParams({
                 query: searchQuery,
@@ -69,6 +100,7 @@ function Index() {
                 throw new Error("Failed to fetch restaurants");
             }
             const data = await response.json();
+            localStorage.setItem('searchResults', JSON.stringify(data));
             const filteredRestaurants = data.filter(restaurant => restaurant.price_range && restaurant.price_range !== 'N/A');
             setRestaurants(filteredRestaurants);
         } catch (error) {
@@ -79,6 +111,11 @@ function Index() {
     // Get login status and role
     const isLoggedIn = !!sessionStorage.getItem("accessToken");
     const role = sessionStorage.getItem("role");
+
+    useEffect(() => {
+        const savedHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        setSearchHistory(savedHistory);
+    }, []);
 
     const handleLogout = () => {
         sessionStorage.clear(); // Clear session data
