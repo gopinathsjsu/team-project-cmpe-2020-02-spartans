@@ -278,53 +278,50 @@ function AdminDashboard() {
                                         <table className="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th>Business Owner</th>
                                                     <th>Name</th>
                                                     <th>Address</th>
-                                                    <th>Last Updated</th>
+                                                    <th>Website</th>
                                                     <th>Review Count</th>
                                                     <th>Rating</th>
-                                                    <th>Website</th>
+                                                    <th>Last Updated</th>
                                                     <th>Phone Number</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {duplicates.map((listing) => (
-                                                    <tr key={listing.id}>
-                                                        <td>{listing.owner.first_name} {listing.owner.last_name}</td>
-                                                        <td>{listing.name}</td>
-                                                        <td>
-                                                            {listing.address}, {listing.city}, {listing.state}{' '}
-                                                            {listing.zip_code}
-                                                        </td>
-                                                        <td>{listing.last_updated || 'Not Available'}</td>
-                                                        <td>{listing.review_count || 0}</td>
-                                                        <td>{listing.rating || 'N/A'}</td>
-                                                        <td>
-                                                            {listing.website ? (
-                                                                <a
-                                                                    href={listing.website}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                >
-                                                                    Visit
-                                                                </a>
-                                                            ) : (
-                                                                'N/A'
-                                                            )}
-                                                        </td>
-                                                        <td>{listing.phone_number || 'N/A'}</td>
-                                                        <td>
-                                                            <button
-                                                                className="btn btn-danger btn-sm"
-                                                                onClick={() => handleDeleteListing(listing.id)}
+                                            {duplicates.map((listing) => (
+                                                <tr key={listing.id}>
+                                                    <td>{listing.name}</td>
+                                                    <td>
+                                                        {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
+                                                    </td>
+                                                    <td>
+                                                        {listing.website ? (
+                                                            <a
+                                                                href={listing.website}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
                                                             >
-                                                                🗑️ Delete Listing
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                                Visit
+                                                            </a>
+                                                        ) : (
+                                                            'N/A'
+                                                        )}
+                                                    </td>
+                                                    <td>{listing.review_count || 0}</td>
+                                                    <td>{listing.rating || 'N/A'}</td>
+                                                    <td>{listing.last_updated || 'Not Available'}</td>
+                                                    <td>{listing.phone_number || 'N/A'}</td>
+                                                    <td>
+                                                        <button
+                                                            className="btn btn-danger btn-sm"
+                                                            onClick={() => handleDeleteListing(listing.id)}
+                                                        >
+                                                            🗑️ Delete Listing
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                             </tbody>
                                         </table>
                                     </div>
