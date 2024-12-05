@@ -127,7 +127,7 @@ function EditListing() {
                 }
             });
     
-            console.log("Submitting Form Data:", Array.from(form.entries()));
+            console.log("Submitting Form Data:", form.cuisine_type);
     
             const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
                 method: 'PUT',
