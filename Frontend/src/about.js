@@ -109,7 +109,7 @@ function AboutPage() {
             </div>
             <div className="col-md-3">
               <div className="team-member">
-                <img src="https://via.placeholder.com/150" alt="Samuel Green" className="img-fluid rounded-circle" />
+                <img src="Haroon.png" alt="Samuel Green" className="img-fluid rounded-circle" />
                 <h4>HAROON RAZZACK</h4>
               </div>
             </div>
