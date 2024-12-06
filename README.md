@@ -3,6 +3,14 @@
 # Team Spartan
 Eric Pham, Haroon Razzack, Faisal Budhwani, Siddharth Kulkarni
 
+# Area of Contribution
+Eric Pham:
+
+Haroon Razzack:
+
+Faisal Budhwani:
+
+Siddharth Kulkarni:
 # XP Core Values
 **Feedback:**
 Our team held regular meetings to review all the code we created. Throughout the project, each of us gave and received constructive feedback on the features implemented and how we could improve them further. Feedback was incorporated to improve our code quality and project outcomes. Feedback from testing played a crucial role when debugging errors in the RestaurantSearchView. After implementing the filters, test results were analyzed using tools like Postman and log statements. We iteratively adjusted the filters based on feedback from tests, refining the logic for the core search features. This constant feedback loop helped identify and resolve edge cases efficiently. Additionally we made use of pair programming to resolve issues together and speed up developement.
