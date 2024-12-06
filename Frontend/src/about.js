@@ -109,7 +109,7 @@ function AboutPage() {
             </div>
             <div className="col-md-3">
               <div className="team-member">
-                <img src="Haroon.png" alt="Haroon Razzack" className="img-fluid rounded-circle" />
+                <img src={require('./Haroon.png')} alt="Haroon Razzack" className="img-fluid rounded-circle" />
                 <h4>HAROON RAZZACK</h4>
               </div>
             </div>
