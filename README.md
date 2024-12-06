@@ -8,8 +8,11 @@ Our team held regular meetings to review all the code we created. Throughout the
 Our team was able to follow this core value as we all contributed to creating a collaborative and welcoming environment. All of our team members have different backgrounds and experiences so we were able to support each other by sharing ideas and knowledge. Everything produced in the project was through collaboration as we collectively decided on features and priorities.
 
 **Deployment Diagram**
+
 ![image](https://github.com/user-attachments/assets/d7c9478f-9205-497d-bef9-091ff2e9f485)
 
 **Component Diagram**
-https://media.discordapp.net/attachments/1278899184422092835/1313647747894607942/image.png?ex=6753884d&is=675236cd&hm=17bdee4de49ba70dcd61d6538f40112a2f1ee1adda78f9681482ca596d6589d6&=&format=webp&quality=lossless&width=2160&height=558
+
+![image](https://github.com/user-attachments/assets/de88258e-0193-40b4-96fa-75495f29b2b0)
+
 
