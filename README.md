@@ -1,120 +1,15 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/nqsiO_r4)
 
-# Restaurant Review App Backend Setup
+### XP Core Values
+**Feedback:**
+Our team held regular meetings to review all the code we created. Throughout the project, each of us gave and received constructive feedback on the features implemented and how we could improve them further. Feedback was incorporated to improve our code quality and project outcomes.
 
-This is the backend for the Restaurant Review application. It is built using **Django** and **PostgreSQL**. Follow the instructions below to set up the development environment.
+**Respect:**
+Our team was able to follow this core value as we all contributed to creating a collaborative and welcoming environment. All of our team members have different backgrounds and experiences so we were able to support each other by sharing ideas and knowledge. Everything produced in the project was through collaboration as we collectively decided on features and priorities.
 
-## Table of Contents
-- [Prerequisites](#prerequisites)
-- [Project Setup](#project-setup)
-- [Running the Development Server](#running-the-development-server)
-- [Managing Dependencies](#managing-dependencies)
-- [Contributing](#contributing)
+**Deployment Diagram**
+![image](https://github.com/user-attachments/assets/d7c9478f-9205-497d-bef9-091ff2e9f485)
 
----
-
-## Prerequisites
-
-Make sure you have the following installed on your local machine:
-- Python 3.8+ ([Install Python](https://www.python.org/downloads/))
-- PostgreSQL ([Install PostgreSQL](https://www.postgresql.org/download/))
-
-## Project Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/your-repo-url.git
-cd team-project-cmpe-2020-02/Backend
-```
-
-### 2. Create and Activate a Virtual Environment
-
-#### On macOS/Linux:
-
-```bash
-python3 -m venv venv  # Create virtual environment
-source venv/bin/activate  # Activate virtual environment
-```
-
-#### On Windows:
-
-```bash
-python -m venv venv  # Create virtual environment
-.env\Scriptsctivate  # Activate virtual environment
-```
-
-### 3. Install Dependencies
-
-Once the virtual environment is activated, install the necessary dependencies from the `requirements.txt` file:
-
-```bash
-pip install -r requirements.txt
-```
-or 
-```bash
-pip3 install -r requirements.txt
-```
-
-## Running the Development Server
-
-After setting up the environment and the database, run the Django development server:
-
-```bash
-python manage.py runserver
-```
-
-You can now access the app in your browser at `http://127.0.0.1:8000/`.
-
-## Managing Dependencies
-
-### Adding New Dependencies
-
-If you need to install new Python packages, use `pip` or `pip3` as usual:
-
-```bash
-pip install package-name
-```
-
-Then, update the `requirements.txt` file to reflect the new dependencies:
-
-```bash
-pip freeze > requirements.txt
-```
-
-Commit the updated `requirements.txt` to version control.
-
-### Setting Up the Environment for Other Developers
-
-For other developers, the setup process involves:
-1. Cloning the repository.
-2. Creating a virtual environment.
-3. Installing dependencies via `requirements.txt`.
-
-This ensures everyone has the same environment.
-
-## Contributing
-
-### Steps for Contributing:
-1. Create a new branch for your feature/bug fix:
-   ```bash
-   git checkout -b feature/branch-name 
-   ```
-
-3. Make your changes and commit them:
-   ```bash
-   git add .
-   git commit -m "Description of the changes"
-   ```
-
-4. Push your changes to the remote branch:
-   ```bash
-   git push origin feature/branch-name
-   ```
-
-5. Create a pull request for code review and merging.
-
----
-
-Thank you for contributing!
+**Component Diagram**
+https://media.discordapp.net/attachments/1278899184422092835/1313647747894607942/image.png?ex=6753884d&is=675236cd&hm=17bdee4de49ba70dcd61d6538f40112a2f1ee1adda78f9681482ca596d6589d6&=&format=webp&quality=lossless&width=2160&height=558
 
