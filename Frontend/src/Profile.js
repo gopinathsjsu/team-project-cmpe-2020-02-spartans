@@ -7,7 +7,7 @@ const Profile = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const API_URL = process.env.REACT_APP_API_URL;
     const role = sessionStorage.getItem("role");
     const isLoggedIn = !!sessionStorage.getItem("accessToken");
 
@@ -20,7 +20,7 @@ const Profile = () => {
                     throw new Error("No access token found. Please log in.");
                 }
 
-                const response = await fetch('http://127.0.0.1:8000/api/accounts/account-details/', {
+                const response = await fetch(`${API_URL}/accounts/account-details/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },

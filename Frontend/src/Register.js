@@ -21,6 +21,7 @@ function Register() {
     });
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+    const API_URL = process.env.REACT_APP_API_URL;
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -55,7 +56,7 @@ function Register() {
         }
     
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/accounts/register/', {
+            const response = await axios.post(`${API_URL}/accounts/register/`, {
                 first_name: formData.firstName.trim(),
                 last_name: formData.lastName.trim(),
                 username: formData.username.trim(),

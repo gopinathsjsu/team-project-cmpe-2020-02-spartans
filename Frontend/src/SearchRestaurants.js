@@ -35,7 +35,7 @@ function SearchRestaurants() {
         console.log('Constructed Query Params:', queryParams); 
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);
+            const response = await fetch(`${API_URL}/restaurants/search/?${queryParams}`);
             if (!response.ok) throw new Error('Failed to fetch restaurants');
             const data = await response.json();
             setRestaurants(data);

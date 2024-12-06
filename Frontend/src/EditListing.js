@@ -7,6 +7,7 @@ function EditListing() {
     const { id } = useParams(); // Get restaurant ID from URL
     const navigate = useNavigate();
     const [error, setError] = useState('');
+    const API_URL = process.env.REACT_APP_API_URL;
 
     const [formData, setFormData] = useState({
         name: '',
@@ -46,7 +47,7 @@ function EditListing() {
     const fetchRestaurantDetails = async () => {
         try {
             const accessToken = sessionStorage.getItem('accessToken');
-            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
+            const response = await fetch(`${API_URL}/restaurants/${id}/`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
@@ -133,7 +134,7 @@ function EditListing() {
     
             console.log("Submitting Form Data:", form.cuisine_type);
     
-            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`, {
+            const response = await fetch(`${API_URL}/restaurants/${id}/`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

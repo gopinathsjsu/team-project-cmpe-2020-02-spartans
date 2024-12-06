@@ -15,6 +15,7 @@ function AdminDashboard() {
     const [role, setRole] = useState(null); // Role state
     const [isLoggedIn, setIsLoggedIn] = useState(false); // Login status
     const navigate = useNavigate();
+    const API_URL = process.env.REACT_APP_API_URL;
 
     // Fetch user role and login status
     useEffect(() => {
@@ -34,7 +35,7 @@ function AdminDashboard() {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/restaurants/');
+            const response = await fetch(`${API_URL}/restaurants/`);
             if (!response.ok) throw new Error('Failed to fetch listings');
             const data = await response.json();
             setAllListings(data);
@@ -59,7 +60,7 @@ function AdminDashboard() {
 
         try {
             console.log('Access Token:', accessToken);
-            const response = await fetch('http://127.0.0.1:8000/api/admin/old-listings/', {
+            const response = await fetch(`${API_URL}/admin/old-listings/`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -81,7 +82,7 @@ function AdminDashboard() {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/admin/duplicates/');
+            const response = await fetch(`${API_URL}/admin/duplicates/`);
             if (!response.ok) throw new Error('Failed to fetch duplicate listings');
             const data = await response.json();
             setDuplicateListings(data);
@@ -118,7 +119,7 @@ function AdminDashboard() {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/admin/delete-listing/${id}/`, {
+            const response = await fetch(`${API_URL}/admin/delete-listing/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -146,7 +147,7 @@ function AdminDashboard() {
         console.log('Access Token:', accessToken);
     
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/admin/delete-old-listing/${id}/`, {
+            const response = await fetch(`${API_URL}/admin/delete-old-listing/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

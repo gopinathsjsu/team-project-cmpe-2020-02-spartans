@@ -1,8 +1,9 @@
     import axios from 'axios';
     import { refreshAccessToken } from './auth';
-
+    const API_URL = process.env.REACT_APP_API_URL;
+    
     const api = axios.create({
-        baseURL: 'http://127.0.0.1:8000/api/',
+        baseURL: API_URL,
         headers: {
             'Content-Type': 'application/json',
         },
@@ -41,11 +42,9 @@
         }
     };
 
-    const API_BASE_URL = 'http://127.0.0.1:8000/api/restaurants';
-
     export const getGooglePlaceDetails = async (placeId) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/google_place/${placeId}/`);
+            const response = await axios.get(`${API_URL}/restaurants/google_place/${placeId}/`);
             
             if (response.status !== 200) {
                 throw new Error("Failed to fetch Google Place details.");

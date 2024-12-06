@@ -35,6 +35,8 @@ function Index() {
         4: 'Chinese',
     };
 
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const handleSearchSubmit = async (e) => {
         e.preventDefault();
         const cuisineIds = cuisine.map((c) => c.value);
@@ -61,8 +63,8 @@ function Index() {
                 min_rating: minRating || '',
                 max_rating: maxRating || '',
             }).toString();
-
-            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/search/?${queryParams}`);
+            const response = await fetch(`${API_URL}/restaurants/search/?${queryParams}`);
+            
             if (!response.ok) {
                 throw new Error("Failed to fetch restaurants");
             }

@@ -21,6 +21,7 @@ const RestaurantDetails = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const location = useLocation();
     const { priceLevel } = location.state || {};
+    const API_URL = process.env.REACT_APP_API_URL;
     // const [existing_photos, setExistingPhotos] = useState([]);
 
     const CUISINE_CHOICES = [
@@ -49,7 +50,7 @@ const RestaurantDetails = () => {
 
     const fetchRestaurant = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`);
+            const response = await fetch(`${API_URL}/restaurants/${id}/`);
             if (!response.ok) {
                 throw new Error('Failed to fetch restaurant details');
             }
@@ -118,7 +119,7 @@ const RestaurantDetails = () => {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/reviews/`);
+            const response = await fetch(`${API_URL}/restaurants/${id}/reviews/`);
             if (!response.ok) {
                 throw new Error('Failed to fetch reviews');
             }
@@ -160,7 +161,7 @@ const RestaurantDetails = () => {
         };
     
         try {
-            let response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/reviews/add/`, {
+            let response = await fetch(`${API_URL}/restaurants/${id}/reviews/add/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -180,7 +181,7 @@ const RestaurantDetails = () => {
                 token = newToken;
     
                 // Retry the request with the new token
-                response = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/reviews/add/`, {
+                response = await fetch(`${API_URL}/restaurants/${id}/reviews/add/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -204,7 +205,7 @@ const RestaurantDetails = () => {
             }
     
             // Fetch updated restaurant details
-            const updatedRestaurantResponse = await fetch(`http://127.0.0.1:8000/api/restaurants/${id}/`);
+            const updatedRestaurantResponse = await fetch(`${API_URL}/restaurants/${id}/`);
             if (!updatedRestaurantResponse.ok) {
                 throw new Error('Failed to fetch updated restaurant details');
             }

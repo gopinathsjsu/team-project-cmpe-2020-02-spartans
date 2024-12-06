@@ -27,6 +27,7 @@ function AddListing() {
         }
     }, [navigate]);
 
+    const API_URL = process.env.REACT_APP_API_URL;
     const fetchListings = async () => {
         try {
             let accessToken = sessionStorage.getItem('accessToken');
@@ -38,7 +39,7 @@ function AddListing() {
                 }
             }
 
-            const response = await fetch('http://127.0.0.1:8000/api/accounts/owner/listings/', {
+            const response = await fetch('${API_URL}/accounts/owner/listings/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

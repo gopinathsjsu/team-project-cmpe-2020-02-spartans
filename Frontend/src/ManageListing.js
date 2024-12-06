@@ -10,6 +10,7 @@ import Navbar from './Navbar';
 function ManageListings() {
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
+    const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         fetchListings();
@@ -26,7 +27,7 @@ function ManageListings() {
                 }
             }
 
-            const response = await fetch('http://127.0.0.1:8000/api/accounts/owner/listings/', {
+            const response = await fetch(`${API_URL}/accounts/owner/listings/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

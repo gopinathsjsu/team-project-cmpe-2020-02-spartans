@@ -11,6 +11,7 @@ function BusinessOwnerDashboard() {
     const [listings, setListings] = useState([]);
     const [accountInfo, setAccountInfo] = useState({ first_name: '', last_name: '', email: '' });
     const [role, setRole] = useState(null);
+    const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const accessToken = sessionStorage.getItem('accessToken');
@@ -39,7 +40,7 @@ function BusinessOwnerDashboard() {
                 }
             }
 
-            const response = await fetch('http://127.0.0.1:8000/api/accounts/account-details/', {
+            const response = await fetch(`${API_URL}/accounts/account-details/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,7 +75,7 @@ function BusinessOwnerDashboard() {
                 }
             }
 
-            const response = await fetch('http://127.0.0.1:8000/api/accounts/owner/listings/', {
+            const response = await fetch(`${API_URL}/accounts/owner/listings/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
