@@ -149,8 +149,8 @@ function AddListing() {
             const form = new FormData();
 
             // Append each cuisine_type and food_type value individually
-            formData.cuisine_type.forEach((value) => form.append("cuisine_type[]", value));
-            formData.food_type.forEach((value) => form.append("food_type[]", value));
+            formData.cuisine_type.forEach((value) => form.append("cuisine_type", value));
+            formData.food_type.forEach((value) => form.append("food_type", value));
 
             // Append other fields
             Object.keys(formData).forEach((key) => {
