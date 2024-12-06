@@ -30,7 +30,7 @@ Haroon Razzack: Worked on the Backend APIs, django models, diagrams, and testing
 
 Eric Pham: Worked on the Backend APIs, PostgreSQL database with AWS RDS, EC2 setup
 
-Faisal:
+Faisal: Worked on Front-End Implementation, CSS and Javascript Implementation and Validation
 
 Siddharth:
 
