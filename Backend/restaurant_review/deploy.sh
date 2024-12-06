@@ -3,7 +3,7 @@ set -e
 
 # Replace {YOUR_GIT_REOPO_URL} with your actual Git repository URL
 # GIT_REPO_URL="https://github.com/gopinathsjsu/team-project-cmpe-2020-02-spartans.git"
-GIT_REPO_URL="https://<siddharthck>:<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>@github.com/gopinathsjsu/team-project-cmpe-2020-02-spartans.git"
+GIT_REPO_URL="https://siddharthck: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@github.com/gopinathsjsu/team-project-cmpe-2020-02-spartans.git"
 
 # Replace {YOUR_PROJECT_MAIN_DIR_NAME} with your actual project directory name
 PROJECT_MAIN_DIR_NAME="team-project-cmpe-2020-02-spartans"

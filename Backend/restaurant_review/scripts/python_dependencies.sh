@@ -22,6 +22,6 @@ source "/home/ubuntu/$PROJECT_MAIN_DIR_NAME/venv/bin/activate"
 
 # Install dependencies
 echo "Installing Python dependencies..."
-pip install -r "/home/ubuntu/$PROJECT_MAIN_DIR_NAME/requirements.txt"
+pip install -r "/home/ubuntu/$PROJECT_MAIN_DIR_NAME/restaurant_reviews/requirements.txt"
 
 echo "Dependencies installed successfully."
